@@ -1,4 +1,4 @@
-# TechnoTalks
+# Techno walk with Santhosh
 
 This repo contains the presentations from the youtube channel: Techno walk with Santhosh
 
