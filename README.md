@@ -1,5 +1,3 @@
-# Techno walk with Santhosh
-
 This repo contains the presentations from my youtube channel:
 
 > [SanthoshMeetsTech](https://www.youtube.com/channel/UCR_Fuegjqal0Fvy6En2Bs3Q)
