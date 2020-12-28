@@ -2,7 +2,7 @@
 
 This repo contains the presentations from my youtube channel:
 
-> [Techno walk with Santhosh](https://www.youtube.com/channel/UCR_Fuegjqal0Fvy6En2Bs3Q)
+> [SanthoshMeetsTech](https://www.youtube.com/channel/UCR_Fuegjqal0Fvy6En2Bs3Q)
 
 Subscribe to my channel and get latest updates. 
 
