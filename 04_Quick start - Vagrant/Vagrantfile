@@ -1,12 +1,15 @@
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/focal64"
-  config.vm.provision :shell, path: "bootstrap.sh"
+  
+  config.vm.provision :"shell", path: "bootstrap.sh"
   config.vm.network :forwarded_port, guest: 80, host: 4567
   config.vm.network :forwarded_port, guest: 2222, host: 2222
   
-  #config.vm.provision "puppet" do |puppet|
-	#puppet.manifests_path = "manifests"
-	#puppet.manifest_file = "default.pp"
-  #end
+  config.vm.provision :"shell", path: "installpuppet.sh"
+  
+  config.vm.provision "puppet" do |puppet|
+	puppet.manifests_path = "manifests"
+	puppet.manifest_file = "default.pp"
+  end
   
 end

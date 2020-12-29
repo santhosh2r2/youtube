@@ -1,0 +1,95 @@
+puppet agent -t --config .\puppet.conf
+
+cd C:\Users\basdemo\.puppetlabs\etc\puppet\
+rm .\ssl\
+mkdir ssl\certs
+
+curl -k https://puppet:8140/puppet-ca/v1/certificate/ca > "C:/Users/basdemo/.puppetlabs/etc/puppet/ssl/certs/ca.pem"
+
+docker exec -it pupperware_puppet_1 /bin/bash
+
+puppet node clean $client_certname
+puppet node deactivate $client_certname
+
+------------------------------------------------
+
+Environment:
+Server ip: 192.168.91.152 hostname: puppet.localdomain
+Client ip: 192.168.91.169 hostname: agent01.localdomain
+
+update hosts [ubuntu: /etc/hosts; windows: C:\Windows\System32\drivers\etc\hosts]
+
+192.168.91.152 puppet.localdomain puppet
+192.168.91.169 agent01.localdomain agent01
+
+Prerequisites:
+sudo apt update
+sudo apt install -y ntp ntpdate
+sudo ntpdate -u 0.ubuntu.pool.ntp.org
+timedatectl list-timezones
+sudo timedatectl set-timezone Europe/Berlin
+
+PuppetLabs repo:
+wget https://apt.puppetlabs.com/puppet6-release-bionic.deb
+sudo dpkg -i puppet6-release-bionic.deb
+sudo apt update
+
+Server:
+sudo apt install -y puppetserver
+
+#memory allocation
+sudo vim /etc/default/puppetserver
+JAVA_ARGS="-Xms512m -Xmx512m -Djruby.logger.class=com.puppetlabs.jruby_utils.jruby.Slf4jLogger"
+
+sudo /opt/puppetlabs/bin/puppetserver ca setup
+
+sudo systemctl start puppetserver
+sudo systemctl enable puppetserver
+
+Agent:
+sudo apt install -y puppet-agent
+sudo vim /etc/puppetlabs/puppet/puppet.conf
+	[main]
+	certname = agent01.localdomain
+	server = puppet.localdomain
+	environment = production
+	runinterval = 15m
+
+sudo /opt/puppetlabs/bin/puppet resource service puppet ensure=running enable=true
+
+Sign cert:
+sudo /opt/puppetlabs/bin/puppetserver ca list
+#select the agent hostname
+sudo /opt/puppetlabs/bin/puppetserver ca sign --certname agent01.localdomain
+sudo /opt/puppetlabs/bin/puppetserver ca sign --all
+
+Verify agent:
+sudo /opt/puppetlabs/bin/puppet agent --test
+
+Create a sample mainfest (server):
+sudo vim /etc/puppetlabs/code/environments/production/manifests/site.pp
+
+node 'agent01.localdomain' { 
+     file { '/tmp/puppetdir': 
+             ensure => 'directory', 
+             owner => 'root', 
+             group => 'root', 
+             mode => '0755', # Directory permissions
+          }
+}
+
+#Run the puppet agent to retrieve the configuration
+sudo /opt/puppetlabs/bin/puppet agent --test
+
+#verify that directory is actually created
+ls -ld /tmp/puppetdir/
+
+node 'agent01.localdomain' {
+      file { '/tmp/puppetfile':
+            ensure => 'present', 
+            owner => 'root', 
+            group => 'root', 
+            mode => '0644', # File permissions
+            content => "This File is created by Puppet Server" 
+           }
+}
