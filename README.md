@@ -1,14 +1,13 @@
 This repo contains the presentations from my youtube channel:
 
-> [Santhosh Ramesh](https://www.youtube.com/channel/UCR_Fuegjqal0Fvy6En2Bs3Q)
+> [<div style="display:flex; align-items:center; width: 400px;height: 100px;"><div>Santhosh Ramesh</div><img src="./_static/logo.png" alt="..." style="width:5rem; height:5rem; border-radius:50%;"></div>](https://www.youtube.com/channel/UCR_Fuegjqal0Fvy6En2Bs3Q) 
 
 The videos are boardly categorized into the following sections:
 
 1. [Installation](#Install)
 2. [Quick Start](#QuickStart)
 
-
-Like, Share and Subscribe to my youtube channel and get latest updates.
+**Like**, **Share** and **Subscribe** to my youtube channel and get latest updates.
 
 ## Installation
 
