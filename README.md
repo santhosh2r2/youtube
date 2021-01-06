@@ -11,9 +11,9 @@ The videos are boardly categorized into the following sections:
 
 ## Installation
 
-| Id  | Description | Link                         |
-| :-: | :---------- | :--------------------------- |
-|  1  | Vagrant     | https://youtu.be/Ae-K0EqWTXo |
+| Id  | Description                                    | Link                         |
+| :-: | :--------------------------------------------- | :--------------------------- |
+|  1  | Install Vagrant on Windows 10 and Ubuntu 20.04 | https://youtu.be/Ae-K0EqWTXo |
 
 ## QuickStart
 
@@ -22,5 +22,5 @@ The videos are boardly categorized into the following sections:
 |  1  | GITLAB                       | https://youtu.be/_MCBpYeG4uc |
 |  2  | Create a VM using vmware     | https://youtu.be/gm9HzKOYab4 |
 |  3  | Docker                       |                              |
-|  4  | Vagrant                      | https://youtu.be/lJCfhSvORCQ |
+|  4  | Create a VM using Vagrant    | https://youtu.be/lJCfhSvORCQ |
 |  5  | Create a VM using virtualbox | https://youtu.be/P-b3KoXaris |
