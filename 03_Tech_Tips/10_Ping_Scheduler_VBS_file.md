@@ -1,4 +1,9 @@
-# Excel Ping automation script
+# Build your own Ping Tester #3 | Automate using Windows Task Scheduler
+
+Checkout my other videos:
+
+- Build your own Ping Tester #1 | Ping to multiple devices using Excel: https://youtu.be/kbcKiL9Uks8
+- Build your own Ping Tester #2 | Ping Monitor & Ping Scheduler: https://youtu.be/J6vAPjDEDfQ
 
 1. Copy below code to a text file.
 2. Change the `ExcelFilePath` variable according to where the excel file is saved.
