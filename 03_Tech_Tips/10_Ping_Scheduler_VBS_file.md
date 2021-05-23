@@ -1,15 +1,23 @@
 # Build your own Ping Tester #3 | Automate using Windows Task Scheduler
 
-Checkout my other videos:
+### Checkout my other videos:
 
 - Build your own Ping Tester #1 | Ping to multiple devices using Excel: https://youtu.be/kbcKiL9Uks8
 - Build your own Ping Tester #2 | Ping Monitor & Ping Scheduler: https://youtu.be/J6vAPjDEDfQ
+
+### Automate using Windows Task Scheduler
+
+> Checkout out the video:
+>
+> `Build your own Ping Tester #3 | Automate using Windows Task Scheduler:` https://youtu.be/R2RXYCONe00
+
+#### Instructions to convert the code into VBS script file
 
 1. Copy below code to a text file.
 2. Change the `ExcelFilePath` variable according to where the excel file is saved.
 3. If necessary, change `MacroPath`. (if you followed my other videos, it usually, `Module1.Ping`)
 4. Rename the text file extension to \*.vbs
-5. Setup a task in the windows task scheduler (follow the instructions along from the video: https://www.youtube.com/watch?v=R2RXYCONe00)
+5. Setup a task in the windows task scheduler (follow the instructions along from the video)
 
 ```vb
 'Input Excel File's Full Path
@@ -48,3 +56,20 @@ ExcelApp.Quit
 'If you would like, Leaves an onscreen message!
 'MsgBox "Your Automated Task successfully ran at " & TimeValue(Now), vbInformation
 ```
+
+#### Creating a Task in windows task scheduler
+
+1. Goto `Start Menu` and select `Windows Task Scheduler`
+2. On the right panel, select `Create Task`
+3. Goto `Triggers` section and add a new trigger. Set the following for a daily scheduling
+
+   - Begin Task: `On a schedule`
+   - Settings: `Daily`
+   - Make sure under Advanced Settings: `Enabled` is checked.
+   - If required, Advanced Settings: Repeat task every `15 minutes` for a duration of `1 day`. This way the ping testing occurs every 15 minutes.
+
+4. Goto `Actions` sections and set the following:
+   - Select an action: `Start a program`
+   - Settings -> Programs/Script: `C:\Windows\System32\cscript.exe`
+   - Add arguments (optional): Select the path to the `*.vbs` file.
+5. Press `OK` and close the task creation.
