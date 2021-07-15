@@ -1,6 +1,6 @@
 This repo contains the presentations from my youtube channel:
 
-> [<div style="display:flex; align-items:center; width: 400px;height: 100px;"><div>Santhosh Ramesh</div><img src="./_static/logo.png" alt="..." style="width:5rem; height:5rem; border-radius:50%;"></div>](https://www.youtube.com/channel/UCR_Fuegjqal0Fvy6En2Bs3Q)
+> [<img src="./_static/logo.png" alt="..." width=32 height=32>](https://www.youtube.com/channel/UCR_Fuegjqal0Fvy6En2Bs3Q)
 
 The videos are boardly categorized into the following sections:
 
