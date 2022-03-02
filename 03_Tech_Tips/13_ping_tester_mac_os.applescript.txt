@@ -1,0 +1,13 @@
+#ping function
+on ping(hostIp)
+	try
+		#display dialog hostIp
+		set result to (do shell script "ping -c 1 -W 1000 " & hostIp)
+		
+		if result contains "64 bytes" then
+			return "OK"
+		end if
+	on error e
+		return "NOT OK"
+	end try
+end ping
