@@ -1,0 +1,101 @@
+'Clear the range contents
+Sub Clear_Range()
+    
+    Dim lastRow As Integer
+    lastRow = Cells(Rows.Count, 1).End(xlUp).Row
+    If lastRow > 4 Then
+        ActiveSheet.Range("A5:D" & lastRow).ClearContents
+    End If
+
+End Sub
+
+
+'Import E-Mails from Outlook subroutine
+Sub Import_Emails()
+    
+    'Empty the range
+    Clear_Range
+    
+    'Create an Outlook Application object
+    Dim OutlookApp As Outlook.Application
+    
+    'Create an Namespace object
+    Dim OutlookNamespace As Namespace
+    
+    'Create a Outlook folder object
+    Dim Folder As MAPIFolder
+    
+    'Object to store the retrieved E-Mails
+    Dim OutlookItems As Outlook.items
+    
+    'Temporary object, used for iteration
+    Dim OutlookMail As Variant
+
+    'Get the folder name from excel sheet
+    Dim FolderName As String
+    FolderName = ActiveSheet.Range("D1").Value
+    
+    'Create an instance of Outlook
+    Set OutlookApp = New Outlook.Application
+    'Set the namespace
+    Set OutlookNamespace = OutlookApp.GetNamespace("MAPI")
+    'Error handling
+    On Error GoTo ExitSub
+    
+    
+    'If the checkbox is not checked, then the folder is at the same level as inbox
+    If ActiveSheet.OLEObjects("check").Object.Value = False Then
+        Set Folder = OutlookNamespace.GetDefaultFolder(olFolderInbox).Parent.Folders(FolderName)
+    End If
+    
+    'If the checkbox is active, then it is a sub-folder of inbox
+    If ActiveSheet.OLEObjects("check").Object.Value = True Then
+        Set Folder = OutlookNamespace.GetDefaultFolder(olFolderInbox).Folders(FolderName)
+    End If
+    
+        
+    'Get the folder items and sort according to the recieved time
+    Set OutlookItems = Folder.items
+    OutlookItems.Sort "ReceivedTime", True
+    
+    'Results counter starting from Row 5
+    Dim i As Integer
+    i = 5
+    
+    'Print the output
+    For Each OutlookMail In OutlookItems
+        
+        If OutlookMail.ReceivedTime >= ActiveSheet.Range("B1").Value Then
+            ActiveSheet.Cells(i, 1).Value = OutlookMail.ReceivedTime
+            ActiveSheet.Cells(i, 2).Value = OutlookMail.SenderName
+            ActiveSheet.Cells(i, 3).Value = OutlookMail.Subject
+            ActiveSheet.Cells(i, 4).Value = OutlookMail.Body
+            i = i + 1
+        End If
+        
+    Next OutlookMail
+    
+    'Display the total number of e-mails retrieved
+    ActiveSheet.Range("B2").Value = i - 5
+    ActiveSheet.Range("B2").Font.Color = vbBlack
+    
+    'Reset the obejcts
+    Set OutlookItems = Nothing
+    Set Folder = Nothing
+    Set OutlookNamespace = Nothing
+    Set OutlookApp = Nothing
+    
+    Exit Sub
+    
+'Error handling function
+ExitSub:
+    ActiveSheet.Range("B2").Value = "Folder name not found"
+    ActiveSheet.Range("B2").Font.Color = vbRed
+    
+    Set OutlookItems = Nothing
+    Set Folder = Nothing
+    Set OutlookNamespace = Nothing
+    Set OutlookApp = Nothing
+    
+    
+End Sub
