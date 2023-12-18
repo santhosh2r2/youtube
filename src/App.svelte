@@ -8,4 +8,8 @@
 </main>
 
 <style>
+  :global(body){
+    width: 50%;
+    margin: 0 auto;
+  }
 </style>
