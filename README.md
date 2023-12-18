@@ -1,27 +1,41 @@
-This repo contains the presentations from my youtube channel:
+# Website
 
-> [<img src="./_static/logo.png" alt="..." width=32 height=32>](https://www.youtube.com/channel/UCR_Fuegjqal0Fvy6En2Bs3Q)
+This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
 
-The videos are boardly categorized into the following sections:
+### Installation
 
-1. [Installation](#Install)
-2. [Quick Start](#QuickStart)
+```
+$ yarn
+```
 
-**Like**, **Share** and **Subscribe** to my youtube channel and get latest updates.
+### Local Development
 
-## Installation
+```
+$ yarn start
+```
 
-| Id  | Description                                    | Link                         |
-| :-: | :--------------------------------------------- | :--------------------------- |
-|  1  | Install Vagrant on Windows 10 and Ubuntu 20.04 | https://youtu.be/Ae-K0EqWTXo |
-|  2  | Install Docker on Windows 10 and Ubuntu 20.04  | https://youtu.be/L1my1gKvhjw |
+This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
 
-## QuickStart
+### Build
 
-| Id  | Description                  | Link                         |
-| :-: | :--------------------------- | :--------------------------- |
-|  1  | GITLAB                       | https://youtu.be/_MCBpYeG4uc |
-|  2  | Create a VM using vmware     | https://youtu.be/gm9HzKOYab4 |
-|  3  | Docker 101                   |                              |
-|  4  | Create a VM using Vagrant    | https://youtu.be/lJCfhSvORCQ |
-|  5  | Create a VM using virtualbox | https://youtu.be/P-b3KoXaris |
+```
+$ yarn build
+```
+
+This command generates static content into the `build` directory and can be served using any static contents hosting service.
+
+### Deployment
+
+Using SSH:
+
+```
+$ USE_SSH=true yarn deploy
+```
+
+Not using SSH:
+
+```
+$ GIT_USER=<Your GitHub username> yarn deploy
+```
+
+If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
