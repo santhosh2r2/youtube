@@ -9,18 +9,18 @@ import { themes as prismThemes } from 'prism-react-renderer';
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Santhosh Ramesh',
-  tagline: "Let's learn together!",
-  favicon: 'img/favicon.ico',
+  tagline: "Tech enthusiast",
+  favicon: 'img/pic.jpg',
 
   // Set the production url of your site here
-  url: 'https://santhosh_mwpa.github',
+  url: 'https://santhosh2r2.github',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/youtube/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'santhosh.ramesh', // Usually your GitHub org/user name.
+  organizationName: 'santhosh2r2', // Usually your GitHub org/user name.
   projectName: 'youtube', // Usually your repo name.
 
   onBrokenLinks: 'throw',
@@ -48,6 +48,8 @@ const config = {
         },
         blog: {
           showReadingTime: true,
+          blogSidebarTitle: 'All posts',
+          blogSidebarCount: 'ALL',
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           // editUrl:
@@ -64,12 +66,12 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       // Replace with your project's social card
-      image: 'img/docusaurus-social-card.jpg',
+      image: 'img/pic.jpg',
       navbar: {
         title: 'Home',
         logo: {
           alt: 'My Site Logo',
-          src: 'img/logo.svg',
+          src: 'img/pic.jpg',
         },
         items: [
           {
@@ -78,9 +80,15 @@ const config = {
             position: 'left',
             label: 'Tutorial',
           },
-          { to: '/blog', label: 'Blog', position: 'left' },
           {
-            href: 'https://github.com/santhosh_mwpa/youtube',
+            type: 'docSidebar',
+            sidebarId: 'installationSidebar',
+            position: 'left',
+            label: 'Installation',
+          },
+          { to: '/blog', label: 'Quick Tips', position: 'left' },
+          {
+            href: 'https://github.com/santhosh2r2/youtube',
             label: 'GitHub',
             position: 'right',
           },
