@@ -10,7 +10,7 @@ import { themes as prismThemes } from 'prism-react-renderer';
 const config = {
   title: 'Santhosh Ramesh',
   tagline: "Tech enthusiast",
-  favicon: 'img/pic.jpg',
+  favicon: 'pic.jpg',
 
   // Set the production url of your site here
   url: 'https://santhosh2r2.github',
@@ -66,12 +66,12 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       // Replace with your project's social card
-      image: 'img/pic.jpg',
+      image: 'pic.jpg',
       navbar: {
         title: 'Home',
         logo: {
           alt: 'My Site Logo',
-          src: 'img/pic.jpg',
+          src: 'pic.jpg',
         },
         items: [
           {
