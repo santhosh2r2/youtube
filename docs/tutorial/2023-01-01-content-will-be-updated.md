@@ -2,7 +2,7 @@
 slug: content-will-be-updated
 title: Content Will be updated
 authors: sramesh
-tags: [install]
+tags: [tutorial]
 sidebar_position: 1
 ---
 
