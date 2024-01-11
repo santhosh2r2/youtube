@@ -13,7 +13,7 @@ const config = {
   favicon: 'pic.jpg',
 
   // Set the production url of your site here
-  url: 'https://santhosh2r2.github',
+  url: 'https://santhosh2r2.github.io',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/youtube/',
@@ -22,6 +22,7 @@ const config = {
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'santhosh2r2', // Usually your GitHub org/user name.
   projectName: 'youtube', // Usually your repo name.
+  deploymentBranch: 'gh-pages',
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
