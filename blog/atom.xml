@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://santhosh2r2.github.io/youtube/blog</id>
+    <title>Santhosh Ramesh Blog</title>
+    <updated>2023-12-04T00:00:00.000Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://santhosh2r2.github.io/youtube/blog"/>
+    <subtitle>Santhosh Ramesh Blog</subtitle>
+    <icon>https://santhosh2r2.github.io/youtube/pic.jpg</icon>
+    <entry>
+        <title type="html"><![CDATA[How to find Hostname and open ports for an IP-Address in MacOS]]></title>
+        <id>https://santhosh2r2.github.io/youtube/blog/hostname-macos</id>
+        <link href="https://santhosh2r2.github.io/youtube/blog/hostname-macos"/>
+        <updated>2023-12-04T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Sample files to download]]></summary>
+        <content type="html"><![CDATA[<h2 class="anchor anchorWithStickyNavbar_LWe7" id="sample-files-to-download">Sample files to download<a href="https://santhosh2r2.github.io/youtube/blog/hostname-macos#sample-files-to-download" class="hash-link" aria-label="Direct link to Sample files to download" title="Direct link to Sample files to download">​</a></h2>
+<ul>
+<li><a target="_blank" href="https://santhosh2r2.github.io/youtube/assets/files/53_macos_hostname_lookup-4e04643b60a49124df8a6950a954f240.xlsm">53_macos_hostname_lookup.xlsm</a></li>
+<li><a target="_blank" href="https://santhosh2r2.github.io/youtube/assets/files/host-8649942d937012affb26751d6c45276c.applescript">host.applescript</a></li>
+<li><a target="_blank" href="https://santhosh2r2.github.io/youtube/assets/files/port-87299931c4ce32ba949002b86d591fa5.applescript">port.applescript</a></li>
+</ul>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/PAVKb0gCaTY?si=tlbhhFIpC_2J13LE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>]]></content>
+        <author>
+            <name>Santhosh Ramesh</name>
+            <uri>https://www.youtube.com/channel/UCR_Fuegjqal0Fvy6En2Bs3Q</uri>
+        </author>
+        <category label="excel" term="excel"/>
+        <category label="vba" term="vba"/>
+        <category label="macos" term="macos"/>
+    </entry>
+</feed>

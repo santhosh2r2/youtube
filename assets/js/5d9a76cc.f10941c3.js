@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunktest=self.webpackChunktest||[]).push([[192],{7160:e=>{e.exports=JSON.parse('{"label":"vba","permalink":"/youtube/blog/tags/vba","allTagsPath":"/youtube/blog/tags","count":1,"unlisted":false}')}}]);

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+    <channel>
+        <title>Santhosh Ramesh Blog</title>
+        <link>https://santhosh2r2.github.io/youtube/blog</link>
+        <description>Santhosh Ramesh Blog</description>
+        <lastBuildDate>Mon, 04 Dec 2023 00:00:00 GMT</lastBuildDate>
+        <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
+        <generator>https://github.com/jpmonette/feed</generator>
+        <language>en</language>
+        <item>
+            <title><![CDATA[How to find Hostname and open ports for an IP-Address in MacOS]]></title>
+            <link>https://santhosh2r2.github.io/youtube/blog/hostname-macos</link>
+            <guid>https://santhosh2r2.github.io/youtube/blog/hostname-macos</guid>
+            <pubDate>Mon, 04 Dec 2023 00:00:00 GMT</pubDate>
+            <description><![CDATA[Sample files to download]]></description>
+            <content:encoded><![CDATA[<h2 class="anchor anchorWithStickyNavbar_LWe7" id="sample-files-to-download">Sample files to download<a href="https://santhosh2r2.github.io/youtube/blog/hostname-macos#sample-files-to-download" class="hash-link" aria-label="Direct link to Sample files to download" title="Direct link to Sample files to download">​</a></h2>
+<ul>
+<li><a target="_blank" href="https://santhosh2r2.github.io/youtube/assets/files/53_macos_hostname_lookup-4e04643b60a49124df8a6950a954f240.xlsm">53_macos_hostname_lookup.xlsm</a></li>
+<li><a target="_blank" href="https://santhosh2r2.github.io/youtube/assets/files/host-8649942d937012affb26751d6c45276c.applescript">host.applescript</a></li>
+<li><a target="_blank" href="https://santhosh2r2.github.io/youtube/assets/files/port-87299931c4ce32ba949002b86d591fa5.applescript">port.applescript</a></li>
+</ul>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/PAVKb0gCaTY?si=tlbhhFIpC_2J13LE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>]]></content:encoded>
+            <category>excel</category>
+            <category>vba</category>
+            <category>macos</category>
+        </item>
+    </channel>
+</rss>
