@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunktest=self.webpackChunktest||[]).push([[828],{7571:t=>{t.exports=JSON.parse('{"label":"virtualization","permalink":"/youtube/blog/tags/virtualization","allTagsPath":"/youtube/blog/tags","count":1,"unlisted":false}')}}]);
