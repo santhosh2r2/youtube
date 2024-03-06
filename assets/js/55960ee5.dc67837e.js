@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunktest=self.webpackChunktest||[]).push([[121],{8070:t=>{t.exports=JSON.parse('[{"label":"install","permalink":"/youtube/docs/tags/install","count":1},{"label":"tutorial","permalink":"/youtube/docs/tags/tutorial","count":1}]')}}]);

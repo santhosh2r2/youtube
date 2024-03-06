@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunktest=self.webpackChunktest||[]).push([[4271],{8209:s=>{s.exports=JSON.parse('{"label":"whatsapp","permalink":"/youtube/blog/tags/whatsapp","allTagsPath":"/youtube/blog/tags","count":1,"unlisted":false}')}}]);
