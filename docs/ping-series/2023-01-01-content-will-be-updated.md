@@ -1,8 +1,8 @@
 ---
 slug: content-will-be-updated
-title: Content Will be updated
+title: PING
 authors: sramesh
-tags: [install]
+tags: [ping-series, excel, vba]
 sidebar_position: 1
 ---
 

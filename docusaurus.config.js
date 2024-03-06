@@ -85,6 +85,11 @@ const config = {
             sidebarId: 'installationSidebar',
             position: 'left',
             label: 'Installation',
+          },{
+            type: 'docSidebar',
+            sidebarId: 'pingSeriesSidebar',
+            position: 'left',
+            label: 'Ping Series',
           },
           { to: '/blog', label: 'Quick Tips', position: 'left' },
           {
