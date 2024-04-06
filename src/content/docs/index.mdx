@@ -1,0 +1,30 @@
+---
+title: Welcome to my tech-blog
+description: Companion website to my Youtube channel
+template: splash
+hero:
+  tagline: Companion website to my Youtube channel
+  image:
+    file: ../../assets/pic.jpg
+  actions:
+    - text: Blog
+      link: /blog/
+      icon: right-arrow
+      variant: primary
+    - text: Github source
+      link: https://github.com/santhosh2r2/youtube.git
+      icon: external
+---
+
+import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+## Next steps
+
+<CardGrid stagger>
+	<Card title="Tutorials" icon="open-book" >
+		Click [here](/blog/).
+	</Card>
+	<Card title="Installations" icon="setting" >
+		Click [here](/install/).
+	</Card>
+</CardGrid>

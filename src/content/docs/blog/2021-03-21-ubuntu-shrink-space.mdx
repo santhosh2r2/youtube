@@ -1,0 +1,36 @@
+---
+slug: ubuntu-shrink-space
+title: How to retrieve unused space from Ubuntu VM using vmware player
+excerpt: the easy way
+authors: [sramesh]
+tags: [ubuntu, virtualization, vmware]
+date: 2021-03-21
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+## Steps to retrieve unused space
+
+<Steps>
+
+1. Defragment (no need to un/remount anything). Ignore any errors. Some files like symlinks and device files can't be defragmented.
+
+    ```bash
+    sudo e4defrag /
+    ```
+
+2. Zero-fill all unused space so VMware knows it's indeed unused:
+
+    ```bash
+    dd if=/dev/zero of=wipefile bs=1M; sync; rm wipefile
+    ```
+
+3. Run the shrink operation:
+
+    ```bash
+    sudo vmware-toolbox-cmd disk shrinkonly
+    ```
+
+</Steps>
+
+<iframe src="https://www.youtube.com/embed/-k4WNjemK5I?si=GBZwwNTsPdksNcXm" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
