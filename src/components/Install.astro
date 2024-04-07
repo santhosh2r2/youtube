@@ -3,8 +3,7 @@ import { getCollection, getEntry } from "astro:content";
 
 const allInstallPosts = await getCollection("docs", ({ data }) => {
     if (!data.sidebar.hidden && data.template !== "splash" && !data.date) {
-        console.log({ data });
-
+        // console.log({ data });
         return data;
     }
 });
