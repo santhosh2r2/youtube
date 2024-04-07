@@ -1,7 +1,7 @@
 ---
-import { getCollection, getEntry } from "astro:content";
+import { getCollection } from "astro:content";
 
-const allInstallPosts = await getCollection("docs", ({ data }) => {
+const allInstallGuides = await getCollection("docs", ({ data }) => {
     if (!data.sidebar.hidden && data.template !== "splash" && !data.date) {
         // console.log({ data });
         return data;
@@ -10,9 +10,9 @@ const allInstallPosts = await getCollection("docs", ({ data }) => {
 ---
 
 {
-    allInstallPosts.map((p) => (
+    allInstallGuides.map((p) => (
         <>
-            <a href={p.slug}>{p.data.title}</a>
+            <a href={p.slug.replace("install/", "")}>{p.data.title}</a>
             <br />
         </>
     ))

@@ -13,10 +13,10 @@ export default defineConfig({
         src: "./src/assets/pic.jpg",
         // replacesTitle: true,
       },
-      // social: {
-      //   github: 'https://github.com/santhosh2r2/youtube',
-      //   youtube: "https://www.youtube.com/channel/UCR_Fuegjqal0Fvy6En2Bs3Q",
-      // },
+      social: {
+        // github: 'https://github.com/santhosh2r2/youtube',
+        youtube: "https://www.youtube.com/channel/UCR_Fuegjqal0Fvy6En2Bs3Q",
+      },
       sidebar: [
         {
           label: 'Installation',
