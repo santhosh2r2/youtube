@@ -4,8 +4,8 @@ type: content
 authors: sramesh
 tags: [ping, excel, vba, Windows]
 ---
-
-```diff
+### Final PING function
+```diff lang="vb" title="Ping.vba"
 Sub Ping()
     'clear the status column
     Range("B2:B1000").Clear
@@ -46,8 +46,8 @@ End Sub
 
 ```
 
-
-```vb title="export-as-pdf.vba"
+### Send Email function
+```vb title="send-email.vba"
 
 Sub Send_Email()
     
@@ -138,6 +138,7 @@ End Sub
 
 ```
 
+### Range to HTML function
 ```vb title="range-to-html.vba"
 Function RangetoHTML(rng As Range)
     'Ron de Bruin Microsoft Office MVP - Excel
@@ -193,6 +194,27 @@ Function RangetoHTML(rng As Range)
     Set TempWB = Nothing
 End Function
 ```
+
+### Export as PDF function
+```vb title="export-as-pdf.vba"
+Function Export_as_PDF()
+
+    'Create and assign variables
+    Dim saveLocation As String
+    Dim fileName As String
+    fileName = "Ping_results_" + Format(Now, "yyyy_MM_dd_HH_mm_ss_ms") + ".pdf"
+    saveLocation = ActiveWorkbook.Path + "\" + fileName
+    
+    'Return the filename
+    Export_as_PDF = saveLocation
+    
+    'Save Ping results which is in Range("A1:C25") as PDF
+    ActiveSheet.Range("A1:C25").ExportAsFixedFormat Type:=xlTypePDF, _
+        fileName:=saveLocation, OpenAfterPublish:=False
+
+End Function
+```
+
 :::tip
 Set cell format to `;;;**` to make cell to star(*) format.
 :::
