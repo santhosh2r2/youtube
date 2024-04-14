@@ -1,0 +1,35 @@
+---
+title: Elevate to administrator permission
+type: content
+authors: sramesh
+tags: [bat-file, administrator, Windows]
+---
+
+```bat title="open-as-administrator.bat"
+
+REM Test if Admin
+CALL NET SESSION >nul 2>&1
+IF NOT %ERRORLEVEL% == 0 (
+
+	rem Start batch again with UAC
+        echo Set UAC = CreateObject^("Shell.Application"^) > "%temp%\getadmin.vbs"
+        echo UAC.ShellExecute "%~s0", "", "", "runas", 1 >> "%temp%\getadmin.vbs"
+        "%temp%\getadmin.vbs"
+        del "%temp%\getadmin.vbs"
+        exit /B
+
+    rem Program will now start again automatically with admin rights! 
+    rem pause
+    goto :eof
+)
+
+echo Started with Admin privilliges...
+
+REM Here you can enter your custom code
+REM In this example, `hosts` file is started with admin rights
+
+CD C:\Windows\System32\drivers\etc
+
+notepad hosts
+
+```

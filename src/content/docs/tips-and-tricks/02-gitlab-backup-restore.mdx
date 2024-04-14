@@ -1,0 +1,52 @@
+---
+title: Gitlab 13.0+ Backup and Restore
+type: content
+authors: sramesh
+tags: [gitlab, omnibus installation]
+---
+
+
+## Pre-Requisites
+
+* These instructions are for Gitlab Instances with exact same version of CE/EE
+* The following commands are applicable for Version 13 and above
+* Installed using Omnibus method
+
+:::note
+The following files should be backed up manually:
+
+    `/etc/gitlab/gitlab-secrets.json`
+
+    `/etc/gitlab/gitlab.rb`
+:::
+
+## Backup
+
+```sh title="backup.sh"
+sudo gitlab-backup create
+```
+
+## Restore
+
+```sh title="restore.sh"
+# Have run `sudo gitlab-ctl reconfigure` at least once.
+# GitLab is running. If not, start it using sudo gitlab-ctl start
+
+# 1. Copy the backup to the newer instance
+sudo cp 11493107454_2018_04_25_10.6.4-ce_gitlab_backup.tar /var/opt/gitlab/backups/
+sudo chown git.git /var/opt/gitlab/backups/11493107454_2018_04_25_10.6.4-ce_gitlab_backup.tar
+
+# 2. Stop the processes:
+sudo gitlab-ctl stop unicorn && sudo gitlab-ctl stop puma && sudo gitlab-ctl stop sidekiq
+
+# 3. restore the backup [specify the timestamp]
+sudo gitlab-backup restore BACKUP=11493107454_2018_04_25_10.6.4-ce
+
+# 4. Restore `gitlab.rb` & `gitlab-secrets.json` files
+
+# 5. Reconfigure, restart and check GitLab:
+sudo gitlab-ctl reconfigure
+sudo gitlab-ctl restart
+sudo gitlab-rake gitlab:check SANITIZE=true
+
+```

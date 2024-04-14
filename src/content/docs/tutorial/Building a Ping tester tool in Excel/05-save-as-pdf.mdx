@@ -1,0 +1,32 @@
+---
+title: Ping results save as PDF
+type: content
+authors: sramesh
+tags: [ping, excel, vba, Windows]
+---
+
+```vb title="export-as-pdf.vba"
+Sub Export_as_PDF()
+
+    'Create and assign variables
+    Dim saveLocation As String
+    Dim fileName As String
+    
+    fileName = "Ping_results_" + Format(Now, "yyyy_MM_dd_HH_mm_ss_ms") + ".pdf"
+    
+    saveLocation = ActiveWorkbook.Path + "\" + fileName
+    
+    'Save selected Range as PDF
+    ' Quality - xlQualityMinimum / xlQualityStandard
+    ActiveSheet.Range("A1:C25").ExportAsFixedFormat Type:=xlTypePDF, _
+        fileName:=saveLocation, _
+        OpenAfterPublish:=True, _
+        IncludeDocProperties:=True, _
+        IgnorePrintAreas:=False, _
+        Quality:=xlQualityStandard, _
+        From:=1, _
+        To:=1
+
+End Sub
+
+```

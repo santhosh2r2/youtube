@@ -1,6 +1,8 @@
 ---
 import { getCollection } from "astro:content";
 
+const { folder } = Astro.props;
+
 const allInstallGuides = await getCollection("docs", ({ data }) => {
     if (!data.sidebar.hidden && data.template !== "splash" && !data.date) {
         // console.log({ data });
@@ -12,7 +14,7 @@ const allInstallGuides = await getCollection("docs", ({ data }) => {
 {
     allInstallGuides.map((p) => (
         <>
-            <a href={p.slug.replace("install/", "")}>{p.data.title}</a>
+            <a href={p.slug.replace(`${folder}`, "")}>{p.data.title}</a>
             <br />
         </>
     ))

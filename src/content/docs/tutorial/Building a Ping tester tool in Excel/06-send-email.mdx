@@ -1,0 +1,198 @@
+---
+title: Send the ping results via E-mail
+type: content
+authors: sramesh
+tags: [ping, excel, vba, Windows]
+---
+
+```diff
+Sub Ping()
+    'clear the status column
+    Range("B2:B1000").Clear
+    
+    Dim hostIp As String
+    
+    For i = 2 To Cells(Rows.Count, 1).End(xlUp).Row
+    
+        hostIp = ActiveSheet.Cells(i, 1).Value
+        
+        If Not hostIp = "" Then
+        
+            Dim objShell, returnCode
+            
+            Set objShell = CreateObject("wscript.shell")
+            returnCode = objShell.Run("ping -n 1 -w 1000 " & hostIp, 0, True)
+            
+            If returnCode = 0 Then
+                ActiveSheet.Cells(i, 2).Value = "Online"
+                ActiveSheet.Cells(i, 2).Font.Color = vbGreen
+                ActiveSheet.Cells(i, 3).Value = Now
+            Else
+                ActiveSheet.Cells(i, 2).Value = "Offline"
+                ActiveSheet.Cells(i, 2).Font.Color = vbRed
+            End If
+        End If
+        
+    Next
+
++    'Send the results to E-Mail
++    Send_Email
+        
++    'Save as PDF file
++    Export_as_PDF
+    
+        
+End Sub
+
+```
+
+
+```vb title="export-as-pdf.vba"
+
+Sub Send_Email()
+    
+    'create a temporary PDF file for E-Mail attachment
+    Dim pdfFileName As String
+    pdfFileName = Export_as_PDF
+      
+    'get current time for displaying in the E-Mail
+    Dim currTime As Variant
+    currTime = Format(Now, "yyyy_MM_dd_hhmmss")
+        
+    'retrieve the E-Mail settings from the worksheet
+    Dim ws As Worksheet
+    Set ws = ActiveWorkbook.Sheets("settings")
+
+    Dim strFrom As String
+    Dim strTo As String
+    Dim strCc As String
+    Dim strBcc As String
+    Dim strSubject As String
+    Dim strBody As String
+    
+    strFrom = ws.Range("B2").Value
+    strTo = ws.Range("B3").Value
+    strCc = ws.Range("B4").Value
+    strBcc = ws.Range("B5").Value
+    strSubject = ws.Range("B6").Value + currTime
+    strBody = ws.Range("B7").Value + currTime
+
+    'create the Collobration data object
+    Dim CDO_Mail As Object
+    Dim CDO_Config As Object
+    Dim SMTP_Config As Variant
+
+    Set CDO_Mail = CreateObject("CDO.Message")
+    On Error GoTo Error_Handling
+    
+    Set CDO_Config = CreateObject("CDO.Configuration")
+    CDO_Config.Load -1
+    
+    'set the SMTP configuration
+    Set SMTP_Config = CDO_Config.Fields
+        
+    With SMTP_Config
+     'default values
+     .Item("http://schemas.microsoft.com/cdo/configuration/sendusing") = 2
+     .Item("http://schemas.microsoft.com/cdo/configuration/smtpauthenticate") = 1
+     .Item("http://schemas.microsoft.com/cdo/configuration/smtpusessl") = True
+     
+     'smtp settings
+     .Item("http://schemas.microsoft.com/cdo/configuration/smtpserver") = ws.Range("B9").Value
+     .Item("http://schemas.microsoft.com/cdo/configuration/sendusername") = ws.Range("B10").Value
+     .Item("http://schemas.microsoft.com/cdo/configuration/sendpassword") = ws.Range("B11").Value
+     .Item("http://schemas.microsoft.com/cdo/configuration/smtpserverport") = ws.Range("B12").Value
+     .Update
+    End With
+    
+    'setup the E-Mail and send it
+    With CDO_Mail
+     Set .Configuration = CDO_Config
+     
+     'E-Mail address
+     .From = strFrom
+     .To = strTo
+     .CC = strCc
+     .BCC = strBcc
+     
+     'E-Mail subject
+     .Subject = strSubject
+     
+     'E-Mail content
+     .HTMLBody = strBody + vbCrLf + vbCrLf + RangetoHTML(ActiveSheet.Range("A1:C25"))
+ 
+     'E-Mail attachment
+     .AddAttachment pdfFileName
+     
+     'E-Mail send
+     .Send
+    End With
+    
+    'removing the PDF file
+    Kill pdfFileName
+    
+Error_Handling:
+    If Err.Description <> "" Then MsgBox Err.Description
+  
+End Sub
+
+```
+
+```vb title="range-to-html.vba"
+Function RangetoHTML(rng As Range)
+    'Ron de Bruin Microsoft Office MVP - Excel
+    'https://www.rondebruin.nl/win/s1/outlook/bmail2.htm
+    Dim fso As Object
+    Dim ts As Object
+    Dim TempFile As String
+    Dim TempWB As Workbook
+
+    TempFile = Environ$("temp") & "\" & Format(Now, "dd-mm-yy h-mm-ss") & ".htm"
+
+    'Copy the range and create a new workbook to past the data in
+    rng.Copy
+    Set TempWB = Workbooks.Add(1)
+    With TempWB.Sheets(1)
+        .Cells(1).PasteSpecial Paste:=8
+        .Cells(1).PasteSpecial xlPasteValues, , False, False
+        .Cells(1).PasteSpecial xlPasteFormats, , False, False
+        .Cells(1).Select
+        Application.CutCopyMode = False
+        On Error Resume Next
+        .DrawingObjects.Visible = True
+        .DrawingObjects.Delete
+        On Error GoTo 0
+    End With
+
+    'Publish the sheet to a htm file
+    With TempWB.PublishObjects.Add( _
+         SourceType:=xlSourceRange, _
+         fileName:=TempFile, _
+         Sheet:=TempWB.Sheets(1).Name, _
+         Source:=TempWB.Sheets(1).UsedRange.Address, _
+         HtmlType:=xlHtmlStatic)
+        .Publish (True)
+    End With
+
+    'Read all data from the htm file into RangetoHTML
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    Set ts = fso.GetFile(TempFile).OpenAsTextStream(1, -2)
+    RangetoHTML = ts.readall
+    ts.Close
+    RangetoHTML = Replace(RangetoHTML, "align=center x:publishsource=", _
+                          "align=left x:publishsource=")
+
+    'Close TempWB
+    TempWB.Close savechanges:=False
+
+    'Delete the htm file we used in this function
+    Kill TempFile
+
+    Set ts = Nothing
+    Set fso = Nothing
+    Set TempWB = Nothing
+End Function
+```
+:::tip
+Set cell format to `;;;**` to make cell to star(*) format.
+:::

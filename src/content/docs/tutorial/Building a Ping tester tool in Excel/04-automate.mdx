@@ -1,0 +1,63 @@
+---
+title: Automate function
+type: content
+authors: sramesh
+tags: [ping, excel, vba, VBScript, windows]
+---
+
+In the previous post [here](../03-scheduler), we saw how to scheduler the ping function.
+
+## Automate using Windows Task Scheduler
+
+* Create a `VBScript` file with the following content.
+
+> Make sure to update the Excel file location and the ping function location in VBA.
+
+
+```vb title="ping.vbscript"
+
+'Input Excel File's Full Path
+  ExcelFilePath =               ' Copy here the excel file full path
+
+'Input Module/Macro name within the Excel File
+  MacroPath = "Modul1.Ping"     ' Check the function location
+
+'Create an instance of Excel
+  Set ExcelApp = CreateObject("Excel.Application")
+
+'Do you want this Excel instance to be visible?
+  ExcelApp.Visible = False
+
+'Prevent any App Launch Alerts (ie Update External Links)
+  ExcelApp.DisplayAlerts = False
+
+'Open Excel File
+  Set wb = ExcelApp.Workbooks.Open(ExcelFilePath)
+
+'Execute Macro Code
+  ExcelApp.Run MacroPath
+
+'Save Excel File (if applicable)
+  wb.Save
+
+'Reset Display Alerts Before Closing
+  ExcelApp.DisplayAlerts = True
+
+'Close Excel File
+  wb.Close
+
+'End instance of Excel
+  ExcelApp.Quit
+
+'Leaves an onscreen message!
+  MsgBox "Your Automated Task successfully ran at " & TimeValue(Now), vbInformation
+
+
+```
+
+* Setup a task in the windows task scheduler. 
+* After execution, the results are saved in file.
+
+Checkout the video for full explanation.
+
+<iframe src="https://www.youtube.com/embed/R2RXYCONe00?si=Zja0Bor0nHlQpEF_" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>

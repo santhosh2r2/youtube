@@ -1,0 +1,64 @@
+---
+title: Scheduler function
+type: content
+authors: sramesh
+tags: [ping, excel, vba, VBScript, windows]
+---
+
+In the previous post [here](../02-monitor), we saw how to monitor the ping function.
+
+There is another use case, which requires to execute ping function at a particular time of day.
+
+To perform this function, we extend the monitor capability to setup a scheduler.
+
+## Scheduler function
+
+* Set the time in Excel sheet
+
+```vb title="scheduler.vba"
+
+Sub Set_Schedule_Time()
+
+    ActiveSheet.Range("F15").Value = "Scheduled"
+    
+    Application.OnTime TimeValue(ActiveSheet.Range("F14").Value), "Ping"
+    
+End Sub
+
+
+```
+
+```vb title="reset-scheduler.vba"
+
+Sub Reset_Schedule_Time()
+
+    ActiveSheet.Range("F15").Value = "Not Scheduled"
+    
+    Application.OnTime EarliestTime:=TimeValue(ActiveSheet.Range("F14").Value), _
+        Procedure:="Ping", Schedule:=False
+End Sub
+
+```
+
+
+:::tip
+
+Resetting the values while closing the workbook.
+
+```vb
+Private Sub Workbook_BeforeClose(Cancel As Boolean)
+    If Tabelle1.Range("F15").Value = "Scheduled" Then
+        Reset_Schedule_Time
+        ThisWorkbook.Save
+    End If
+End Sub
+```
+:::
+
+
+:::note
+Make sure the computer/laptop is connected to the same network and the hostname is known (or entered in the `hosts` file in __**C:\Windows\System32\drivers\etc\hosts**__ )
+
+:::
+
+Checkout the next post about scheduler [here](../04-automate)

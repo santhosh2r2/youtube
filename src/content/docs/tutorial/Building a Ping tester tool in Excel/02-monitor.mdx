@@ -1,0 +1,51 @@
+---
+title: Montior function
+type: content
+authors: sramesh
+tags: [ping, excel, vba, VBScript, windows]
+---
+
+After the basic function from the post [here](../01-basics), it is evident, that the ping function is one time executable. 
+
+In order to execute continuously, we add a monitor capability to the ping funciton.
+
+## Monitor function
+
+* Create 2 buttons "Start" and "Stop"
+    * Start button intiates the monitor function and sets the status to "Running"
+    * Stop button stops monitoring and sets the status to "Idle"
+
+```vb title="start-monitoring.vba"
+
+Sub Start_Monitoring()
+
+    ActiveSheet.Range("F8").Value = "Monitoring"
+
+    Do Until ActiveSheet.Range("F8").Value = "IDLE"
+        
+        Ping
+        
+        If ActiveSheet.Range("F8").Value = "IDLE" Then Exit Do
+    
+    Loop
+
+End Sub
+
+```
+
+```vb title="stop-monitoring.vba"
+
+Sub Stop_Monitoring()
+
+    ActiveSheet.Range("F8").Value = "IDLE"
+
+End Sub
+
+```
+
+:::note
+Make sure the computer/laptop is connected to the same network and the hostname is known (or entered in the `hosts` file in __**C:\Windows\System32\drivers\etc\hosts**__ )
+
+:::
+
+Checkout the next post about scheduler [here](../03-scheduler)

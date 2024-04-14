@@ -15,14 +15,28 @@ export default defineConfig({
       },
       social: {
         // github: 'https://github.com/santhosh2r2/youtube',
-        youtube: "https://www.youtube.com/channel/UCR_Fuegjqal0Fvy6En2Bs3Q",
+        youtube: "https://www.youtube.com/channel/UCR_Fuegjqal0Fvy6En2Bs3Q?sub_confirmation=1",
       },
-      favicon:"/image/pic.jpg",
+      favicon: "/image/pic.jpg",
       sidebar: [
         {
-          label: 'Installation',
+          label: 'Tutorials',
           autogenerate: {
-            directory: 'install'
+            directory: 'tutorial', collapsed: true,
+          }
+        },
+        {
+          label: 'Installation',
+
+          autogenerate: {
+            directory: 'install', collapsed: true,
+          }
+        },
+        {
+          label: 'Tips & Tricks',
+          collapsed: true,
+          autogenerate: {
+            directory: 'tips-and-tricks', collapsed: true,
           }
         },
         {
@@ -38,7 +52,7 @@ export default defineConfig({
             sramesh: {
               name: "Santhosh Balaji Ramesh",
               title: "Software Engineer",
-              url: "https://www.youtube.com/channel/UCR_Fuegjqal0Fvy6En2Bs3Q",
+              url: "https://www.youtube.com/channel/UCR_Fuegjqal0Fvy6En2Bs3Q?sub_confirmation=1",
               picture: "https://github.com/santhosh2r2.png"
             }
           }

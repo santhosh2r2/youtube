@@ -1,0 +1,69 @@
+---
+title: Basic function
+type: content
+authors: sramesh
+tags: [ping, excel, vba]
+---
+
+## What is PING ?
+* The ping command is a very common method for troubleshooting the accessibility of devices. It uses a series of Internet Control Message Protocol (ICMP) Echo messages to determine:
+    * Whether a remote host is active or inactive
+    * The round-trip delay in communicating with the host
+    * Packet loss
+* Sends an echo request to remote device
+* Only successful, if the remote device sends back the echo reply within the allotted waiting period [timeout]
+
+## Basic Ping function in Excel
+
+* Column A contains ip-address
+* Column B gives the status
+
+```vb title="Ping.vba"
+
+Sub Ping()
+
+    'clear the status column
+    Range("B2:B1000").Clear
+    
+    Dim hostIp As String
+    
+    For i = 2 To Cells(Rows.Count, 1).End(xlUp).Row
+    
+        hostIp = ActiveSheet.Cells(i, 1).Value
+        
+        If Not hostIp = "" Then
+        
+            Dim objShell, returnCode
+            
+            Set objShell = CreateObject("wscript.shell")
+            returnCode = objShell.Run("ping -n 1 -w 1000 " & hostIp, 0, True)
+            
+            If returnCode = 0 Then
+                ActiveSheet.Cells(i, 2).Value = "Online"
+                ActiveSheet.Cells(i, 2).Font.Color = vbGreen
+            Else
+                ActiveSheet.Cells(i, 2).Value = "Offline"
+                ActiveSheet.Cells(i, 2).Font.Color = vbRed
+            End If
+        End If
+        
+    Next
+
+
+End Sub
+
+```
+
+## Download
+
+<ul>
+{
+["05_Ping_Tester.xlsm"].map(file => (
+    <li>
+        <a href={`/youtube/resource/05/${file}`}>{file}</a>
+    </li>
+    ))
+}
+</ul>
+
+Checkout the monitor post [here](../02-monitor).
