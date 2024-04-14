@@ -13,9 +13,15 @@ export default defineConfig({
         src: "./src/assets/pic.jpg",
         // replacesTitle: true,
       },
+      // components: {
+      //   // Override the default `SocialIcons` component.
+      //   SocialIcons: './src/components/EmailLink.astro',
+      // },
       social: {
-        // github: 'https://github.com/santhosh2r2/youtube',
         youtube: "https://www.youtube.com/channel/UCR_Fuegjqal0Fvy6En2Bs3Q?sub_confirmation=1",
+        linkedin: "https://www.linkedin.com/in/santhosh-balaji-ramesh/",
+        github: 'https://github.com/santhosh2r2/youtube',
+        email: "mailto:santhosh.mwpa@gmail.com"
       },
       favicon: "/image/pic.jpg",
       sidebar: [

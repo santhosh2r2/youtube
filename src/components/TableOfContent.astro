@@ -1,0 +1,60 @@
+---
+import { getCollection } from "astro:content";
+import { groupBy } from "./utlis";
+
+const { folder } = Astro.props;
+
+const collection: any[] = [];
+
+await getCollection("docs", (collectionEntry) => {
+    // console.log({ collection });
+    let data = collectionEntry.data;
+    if (
+        !data.sidebar.hidden &&
+        data.template !== "splash" &&
+        collectionEntry.id.toLowerCase().startsWith(folder + "/")
+    ) {
+        let isSubFolder = collectionEntry.id.match(/\//gi)?.length || 0;
+        let subFolderName = "";
+        if (isSubFolder > 1) {
+            subFolderName = collectionEntry.id.match(/(?<=\/)(.*?)(?=\/)/gi)[0];
+        }
+
+        let { slug } = collectionEntry;
+        let { title } = data;
+
+        collection.push({ subFolderName, slug, title });
+    }
+});
+
+const groupedData = groupBy(collection, "subFolderName");
+const groupedCollection: any[] = Object.entries(groupedData).map(
+    ([key, value]) => ({
+        key,
+        value,
+    }),
+);
+---
+
+{
+    groupedCollection.map(({ key, value }) => {
+        return (
+            <>
+                <>
+                    <h3>{key || "General"}</h3>
+                    <br />
+                </>
+                {value.map((p) => {
+                    return (
+                        <>
+                            <a href={p.slug.replace(`${folder}/`, "")}>
+                                {p.title}
+                            </a>
+                            <br />
+                        </>
+                    );
+                })}
+            </>
+        );
+    })
+}

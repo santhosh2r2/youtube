@@ -1,0 +1,7 @@
+---
+import type { Props } from '@astrojs/starlight/props';
+import Default from '@astrojs/starlight/components/SocialIcons.astro';
+---
+<!-- https://starlight.astro.build/guides/overriding-components/#reuse-a-built-in-components -->
+<a href="mailto:santhosh.mwpa@gmail.com">E-mail Me</a>
+<Default {...Astro.props}><slot /></Default>
