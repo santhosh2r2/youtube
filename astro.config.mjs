@@ -46,6 +46,12 @@ export default defineConfig({
           }
         },
         {
+          label: 'Boilerplates',
+          autogenerate: {
+            directory: 'boilerplate', collapsed: true,
+          }
+        },
+        {
           label: 'Blog',
           autogenerate: {
             directory: 'blog'

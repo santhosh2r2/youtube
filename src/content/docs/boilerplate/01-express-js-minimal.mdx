@@ -1,0 +1,131 @@
+---
+title: Express JS - basic
+type: content
+authors: sramesh
+tags: [nodejs, express]
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+## What is Express.js ? 
+
+At the time of writing, Express (v4.18.3) is Fast, unopinionated, minimalist web framework for Node.js
+
+## Bolierplate code (at the minimum)
+<Steps>
+
+1. Create a folder and initialize a node project (with default values)
+
+    ```bash frame="none"
+    npm init -y
+    ```
+
+2. Install the `express` package and middleware `body-parser` 
+
+    ```bash frame="none" "body-parser"
+    npm install --save express body-parser
+    ```
+
+3. Create a file called `index.js` and copy the following code
+
+    ```js title="index.js" "port"
+    const express = require('express');
+    const app = express();
+    const port = 3000;
+
+    // Define a route
+    app.get('/', (req, res) => {
+        res.send('Hello, Express!');
+    });
+
+    // Start the server
+    app.listen(port, () => {
+        console.log(`Server is listening at http://localhost:${port}`);
+    });
+
+    ```
+
+4. Run the server using following command
+
+    ```bash frame="none"
+    node index.js
+    ```
+
+5. The server should be started at `http://localhost:3000`. Upon opening the link, "Hello, Express!" will be served
+
+</Steps>
+
+
+This is a very minum setup required to start a Express server.
+
+## Body Parser middleware
+
+In the above code, `body-parser` middleware is installed. This is usually required, in case developing an JSON-based API.
+
+So, we can now extend the server code like below, to get users and set (update) a particular user.
+
+```diff lang="js" {2,7-9} title="index.js" description="with body-parser" "newName"
+const express = require('express');
+const bodyParser = require('body-parser');
+
+const app = express();
+const port = 3000;
+
+// Body Parser middleware
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+// Sample data
+let users = [
+  { id: 1, name: 'John Doe' },
+  { id: 2, name: 'Jane Smith' },
+  { id: 3, name: 'Bob Johnson' }
+];
+
+// GET route to retrieve all users
+app.get('/users', (req, res) => {
+  res.json(users);
+});
+
+// POST route to update user data
+app.post('/users/:id', (req, res) => {
+  const userId = parseInt(req.params.id);
+  const newName = req.body.name;
+
+  const userIndex = users.findIndex(user => user.id === userId);
+
+  if (userIndex !== -1) {
+    users[userIndex].name = newName;
+    res.json({ message: 'User updated successfully', user: users[userIndex] });
+  } else {
+    res.status(404).json({ message: 'User not found' });
+  }
+});
+
+// Start the server
+app.listen(port, () => {
+  console.log(`Server is listening at http://localhost:${port}`);
+});
+
+```
+### Test the above code
+<Steps>
+
+1. To get __all__ users, go to the location `http://localhost:3000/users`
+
+2. To post (or update) an user, you can simply use any **REST Client** extensions or if `cURL` is available, then the following code updates **user2**
+
+    ```sh frame="none" "POST"
+    curl -X POST http://localhost:3000/users/2 \
+    -H "Content-Type: application/json" \
+    -d '{"name": "New User"}'
+    ```
+
+3. Upon successfull execution, the following result should be shown.
+    ```json
+    {   
+        "message":"User updated successfully",
+        "user": { "id":2, "name":"New User" }
+    }
+    ```
+</Steps>
