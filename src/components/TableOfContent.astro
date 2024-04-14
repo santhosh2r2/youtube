@@ -17,7 +17,8 @@ await getCollection("docs", (collectionEntry) => {
         let isSubFolder = collectionEntry.id.match(/\//gi)?.length || 0;
         let subFolderName = "";
         if (isSubFolder > 1) {
-            subFolderName = collectionEntry.id.match(/(?<=\/)(.*?)(?=\/)/gi)[0];
+            let temp = collectionEntry.id.match(/(?<=\/)(.*?)(?=\/)/gi);
+            subFolderName = temp != null ? temp[0] : "";
         }
 
         let { slug } = collectionEntry;
@@ -44,16 +45,22 @@ const groupedCollection: any[] = Object.entries(groupedData).map(
                     <h3>{key || "General"}</h3>
                     <br />
                 </>
-                {value.map((p) => {
-                    return (
-                        <>
-                            <a href={p.slug.replace(`${folder}/`, "")}>
-                                {p.title}
-                            </a>
-                            <br />
-                        </>
-                    );
-                })}
+                {value.map(
+                    (p: {
+                        slug: string;
+                        title: string;
+                        subFolderName: string;
+                    }) => {
+                        return (
+                            <>
+                                <a href={p.slug.replace(`${folder}/`, "")}>
+                                    {p.title}
+                                </a>
+                                <br />
+                            </>
+                        );
+                    },
+                )}
             </>
         );
     })
