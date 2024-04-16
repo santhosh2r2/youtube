@@ -1,5 +1,4 @@
 ---
-slug: send-whatsapp-message-excel
 title: Send WhatsApp message using Excel the right way!!!
 excerpt: Using any unauthorized request like https://wa.me/send... or https://web.whatsapp.com/send... or https://api.whatsapp.com/send... might lead to account bans.
 authors: [sramesh]

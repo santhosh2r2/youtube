@@ -51,12 +51,6 @@ export default defineConfig({
             directory: 'boilerplate', collapsed: true,
           }
         },
-        {
-          label: 'Blog',
-          autogenerate: {
-            directory: 'blog'
-          }
-        },
       ],
       plugins: [
         starlightBlog({
