@@ -18,5 +18,6 @@
     "starlight-blog": "^0.5.1",
     "starlight-image-zoom": "^0.2.0",
     "typescript": "^5.4.4"
-  }
+  },
+  "packageManager": "pnpm@8.6.9"
 }
