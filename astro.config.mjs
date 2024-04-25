@@ -1,6 +1,7 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
-import starlightBlog from 'starlight-blog'
+import starlightBlog from 'starlight-blog';
+import starlightImageZoom from 'starlight-image-zoom';
 
 // https://astro.build/config
 export default defineConfig({
@@ -53,6 +54,7 @@ export default defineConfig({
         },
       ],
       plugins: [
+        starlightImageZoom(),
         starlightBlog({
           authors: {
             sramesh: {
@@ -62,7 +64,7 @@ export default defineConfig({
               picture: "https://github.com/santhosh2r2.png"
             }
           }
-        })
+        }),
       ]
     }),
   ]
