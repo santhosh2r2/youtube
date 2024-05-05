@@ -33,15 +33,8 @@ export default defineConfig({
           }
         },
         {
-          label: 'Installation',
-
-          autogenerate: {
-            directory: 'install', collapsed: true,
-          }
-        },
-        {
           label: 'Tips & Tricks',
-          collapsed: true,
+          collapsed: false,
           autogenerate: {
             directory: 'tips-and-tricks', collapsed: true,
           }
@@ -52,7 +45,17 @@ export default defineConfig({
             directory: 'boilerplate', collapsed: true,
           }
         },
+        {
+          label: 'Installation',
+
+          autogenerate: {
+            directory: 'install', collapsed: true,
+          }
+        },
       ],
+      editLink: {
+        baseUrl: "https://github.com/santhosh2r2/youtube/tree/main",
+      },
       plugins: [
         starlightImageZoom(),
         starlightBlog({

@@ -35,6 +35,8 @@ const groupedCollection: any[] = Object.entries(groupedData).map(
         value,
     }),
 );
+
+import { Card, CardGrid, LinkCard } from "@astrojs/starlight/components";
 ---
 
 {
@@ -45,22 +47,24 @@ const groupedCollection: any[] = Object.entries(groupedData).map(
                     <h3>{key || "General"}</h3>
                     <br />
                 </>
-                {value.map(
-                    (p: {
-                        slug: string;
-                        title: string;
-                        subFolderName: string;
-                    }) => {
-                        return (
-                            <>
-                                <a href={p.slug.replace(`${folder}/`, "")}>
-                                    {p.title}
-                                </a>
-                                <br />
-                            </>
-                        );
-                    },
-                )}
+                <>
+                    <CardGrid>
+                        {value.map(
+                            (p: {
+                                slug: string;
+                                title: string;
+                                subFolderName: string;
+                            }) => {
+                                return (
+                                    <LinkCard
+                                        title={p.title}
+                                        href={p.slug.replace(`${folder}/`, "")}
+                                    />
+                                );
+                            },
+                        )}
+                    </CardGrid>
+                </>
             </>
         );
     })
