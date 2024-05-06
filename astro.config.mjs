@@ -14,10 +14,11 @@ export default defineConfig({
         src: "./src/assets/pic.jpg",
         // replacesTitle: true,
       },
-      // components: {
-      //   // Override the default `SocialIcons` component.
-      //   SocialIcons: './src/components/EmailLink.astro',
-      // },
+      components: {
+        // Override the default `SocialIcons` component.
+        // SocialIcons: './src/components/EmailLink.astro',
+        SiteTitle: './src/components/overrides/SiteTitle.astro'
+      },
       social: {
         youtube: "https://www.youtube.com/channel/UCR_Fuegjqal0Fvy6En2Bs3Q?sub_confirmation=1",
         linkedin: "https://www.linkedin.com/in/santhosh-balaji-ramesh/",

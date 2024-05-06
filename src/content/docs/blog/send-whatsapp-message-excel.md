@@ -4,9 +4,6 @@ excerpt: Using any unauthorized request like https://wa.me/send... or https://we
 authors: [sramesh]
 tags: [excel, vba, whatsapp]
 date: 2024-03-04
-head:
-    - tag: title
-      content: Send WhatsApp message feat. Excel
 lastUpdate: 2024-04-14
 ---
 

@@ -8,18 +8,68 @@ date: 2024-05-05
 
 ## Introduction
 
-## History
+**Ping** is a utility tool used for monitoring the accessibility of host available in a network. It is virtually installed in every operating system that has networking capability.
+
+## A brief history
+
+- The ping utility was written by **[Mike Muuss](https://en.wikipedia.org/wiki/Mike_Muuss)** in December **1983** during his time at the Ballistic Research Laboratory, now the [US Army Research Laboratory](https://en.wikipedia.org/wiki/US_Army_Research_Laboratory). 
+- A remark by **[David Mills](https://en.wikipedia.org/wiki/David_L._Mills)** on using **ICMP** echo packets for _IP_ network diagnosis and measurements prompted Muuss to create the utility to troubleshoot network problems.  
+- He named it after the sound that sonar makes, since its methodology is analogous to sonar's echolocation.
+- The backronym `Packet InterNet Groper` for PING has been used for over <u>30 years</u>, and although Muuss says that from his point of view PING was not intended as an acronym, he has acknowledged Mills' expansion of the name.
+
+- Further reading:
+  - [Story of Ping](https://ftp.arl.army.mil/~mike/ping.html)
+  - [Wikipedia link](https://en.wikipedia.org/wiki/Ping_(networking_utility))
+  - [Linux source code for ping](https://github.com/torvalds/linux/blob/master/net/ipv4/ping.c)
 
 ## How it works?
 
-### Sample execution in ubuntu
+- Ping operates by means of **Internet Control Message Protocol** (ICMP) packets. 
+- Pinging involves sending an `ICMP echo request` to the target host and waiting for an `ICMP echo reply`. 
+- The program reports errors, packet loss, and a statistical summary of the results, typically including the minimum, maximum, the mean round-trip times, and standard deviation of the mean.
 
-### Terminologies used (ttl, icmp_seq)
+![Workflow of `ping` execution](./img/ping.png)
+
+
+- The command-line options of the ping utility and its output vary between the numerous implementations. 
+- Options may include the size of the payload, count of tests, limits for the number of network hops (TTL) that probes traverse, interval between the requests and time to wait for a response.
+
+Below is the sample execution in `ubuntu` OS.
+
+![Sample `ping` execution](./img/sample_execution.png)
+
+
+### Terminologies 
+
+- `ICMP` - The [Internet Control Message Protocol](https://en.wikipedia.org/wiki/Internet_Control_Message_Protocol) (ICMP) is a supporting protocol in the Internet protocol suite. It is used by network devices, including routers, to send error messages and operational information indicating success or failure when communicating with another IP address.
+
+- `Checksum` - The [Internet checksum](https://en.wikipedia.org/wiki/Internet_checksum) is used to detect errors in ICMP packets (including data payload). 
+
+    >
+    > The checksum field is the __16 bit one's complement of the one's complement sum of all 16 bit words in the header__. For purposes of computing 
+    > the checksum, the value of the checksum field is zero.
+    > 
+
+- `Echo Request` - This is an ICMP packet sent by the source machine. In the example, **64 bytes** ICMP packet
+
+    ![Echo request packet](./img/echo_request.png)
+
+- `Echo Reply` - Once the packet reaches the destination machine, it sends back an **echo reply** ICMP packet.
+
+    ![Echo reply packet](./img/echo_reply.png)
+
+- `Round Trip Time` - The total time measuring from sending the echo request from the source machine until the echo reply packet is recieved by the source machine.
+
+- `Time To Live` - It is either a counter or a timestamp, which every device (such as an intermediate router) forwarding an IP datagram first decrements the time to live (TTL) field in the IP header by one. If the resulting TTL is 0, the packet is discarded and an ICMP time exceeded message is sent to the datagram's source address.
+
+    ![Time to live](./img/ttl.png)
+
+- `Sequence number` - It denotes the number of round-trips initiated by the source machine.
+
 
 ## Sample `ping` implementation
 
 The script requires `administrator` or `root` previliges, since it requires access to sockets.
-
 ```py title="ping.py" 
 
 import os
@@ -117,7 +167,7 @@ if __name__ == "__main__":
 
 Output
 ```sh frame="none"
-sudo python3 ping.py
+sudo python ping.py
 ```
 ```sh frame="none"
 
