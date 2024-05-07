@@ -1,0 +1,96 @@
+---
+slug: ping-in-other-languages
+title: Ping funcitons in other languages
+authors: sramesh
+tags: [nodejs, php]
+sidebar:
+  badge: new
+  order: 1
+---
+import { Icon, Tabs, TabItem, Steps } from '@astrojs/starlight/components';
+
+Here are `ping` functions in other languages. For **Excel** based, follow the tutorial from [here](/youtube/tutorial/building-a-ping-tester-tool-in-excel/01-basics/). 
+
+### PHP
+
+```php
+<?php
+
+//Define the variables
+$host = '127.0.0.1';    // update ip-address here
+$port = 80;             // update port number here
+$waitTimeoutInSeconds = 1;
+$output = '';
+$status = 'IDLE';
+
+//Setup timezone and date
+//https://www.php.net/manual/en/timezones
+date_default_timezone_set("Europe/Berlin");
+$date = date('Y-m-d H:i:s');
+
+//Ping test using fsockopen
+//fsockopen(): Initiates a socket connection to the resource specified by hostname.
+//@: disables the Warning
+$fp = @fsockopen($host, $port, $errCode, $errStr, $waitTimeoutInSeconds);
+if ($fp) {
+    $status = 'ONLINE';
+} else {
+    $status = 'OFFLINE';
+}
+
+//Write the output to a file
+if (!file_exists("output.md")) {
+    $output = "| Host           | Port | Status | Performed at        |\r\n";
+    $output .= "| -------------- | ---- | ------ | ------------------- |\r\n";
+}
+$output .= sprintf("| %s | %s   | %s     | %s |\r\n", $host, $port, $status, $date   );
+
+file_put_contents("output.md", $output, FILE_APPEND);
+
+//save the file and execute in terminal
+```
+
+
+### NodeJS
+
+<Steps>
+1. Copy the contents to a file `index.js`
+
+    ```js title="index.js"
+    const exec = require("child_process").exec;
+    const fs = require("fs");
+
+    const hosts = ["192.168.91.175", "www.google.de", "127.0.0.1"];
+    const replyFromLocale = "Reply from";
+
+    const promises = [];
+
+    hosts.forEach(host => {
+        promises.push(new Promise((resolve, reject) => {
+            exec(`ping -n 1 -w 1000 ${host}`, (err, stdout, stderr) => {
+                // successfull response: Reply from 142.250.186.78: bytes=32 time=10ms TTL=128
+                // unsuccessfull:        Reply from 192.168.1.3: Destination host unreachable
+                // host unreachable:     Ping request could not find host
+                let status = "offline";
+                let output = stdout.toString();
+                let replyFromIndex = output.indexOf(replyFromLocale);
+                if (replyFromIndex > 0 && output.substring(replyFromIndex).toUpperCase().indexOf("BYTES") > 0) {
+                    status = "online"
+                }
+                resolve(new Date().toISOString() + " " + host + " " + status)
+            })
+        }))
+    })
+
+    Promise.all(promises).then((results) => {
+        fs.writeFile("ping-results.txt", results.join("\n"), (err) => {
+            if (err) { console.log(err); }
+        })
+    })
+    ```
+
+2. Execute the script using the command 
+    ```sh frame="none"
+    node index.js
+    ```
+</Steps>
