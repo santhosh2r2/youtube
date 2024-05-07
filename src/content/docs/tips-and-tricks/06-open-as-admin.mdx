@@ -1,0 +1,59 @@
+---
+slug: open-batch-file-as-admin
+title: Open batch file as admin
+authors: sramesh
+tags: [bat, windows]
+sidebar:
+  badge: new
+  order: 2
+---
+
+This example tries to open the `hosts` file. If unsuccessfull, then prompts for Administrator password. Checkout the video [here](https://www.youtube.com/watch?v=xEprb2aRXYo)
+
+### Source codes
+
+#### Using temporary VBS script
+
+```batch frame="none"
+REM Test if Admin
+
+CALL NET SESSION >nul 2>&1
+IF NOT %ERRORLEVEL% == 0 (
+
+	    rem Start batch again with UAC
+        echo Set UAC = CreateObject^("Shell.Application"^) > "%temp%\getadmin.vbs"
+        echo UAC.ShellExecute "%~s0", "", "", "runas", 1 >> "%temp%\getadmin.vbs"
+        "%temp%\getadmin.vbs"
+        del "%temp%\getadmin.vbs"
+        exit /B
+
+    rem Program will now start again automatically with admin rights! 
+    rem pause
+    goto :eof
+)
+
+echo Started with Admin privilliges...
+
+CD C:\Windows\System32\drivers\etc
+
+notepad hosts
+```
+#### Using powershell
+
+Thanks to [@temisociali](http://www.youtube.com/@temisociali)
+
+```batch frame="none" {3-6}
+REM Test if Admin
+
+if not "%1"=="am_admin" (
+    powershell -Command "Start-Process -Verb RunAs -FilePath '%0' -ArgumentList 'am_admin'"
+    exit /b 
+)
+
+echo Started with Admin privilliges...
+
+CD C:\Windows\System32\drivers\etc
+
+notepad hosts
+
+```
