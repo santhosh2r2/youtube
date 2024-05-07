@@ -5,8 +5,9 @@ authors: sramesh
 tags: [excel, vba, macos]
 sidebar:
   label: Macos Hostname and IP-Address
-  order: 1
 ---
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
 
 ## Sample files to download
 <ul>
@@ -20,3 +21,299 @@ sidebar:
 }
 </ul>
 <iframe src="https://www.youtube.com/embed/PAVKb0gCaTY?si=tlbhhFIpC_2J13LE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+
+### VBA code in MacOS
+
+<Tabs>
+  <TabItem label="Ping - vba">
+    ```vb
+Sub Ping()
+
+    'clear the status column
+    Range("B2:B1000").Clear
+    
+    Dim hostIp As String
+    
+    For i = 2 To Cells(Rows.Count, 1).End(xlUp).Row
+    
+        hostIp = ActiveSheet.Cells(i, 1).Value
+        
+        If Not hostIp = "" Then
+        
+            Dim objShell, returnCode
+            
+            'VBA Code for Excel in Windows OS
+            '   Set objShell = CreateObject("wscript.shell")
+            '   returnCode = objShell.Run("ping -n 1 -w 1000 " & hostIp, 0, True)
+            
+            'VBA Code for Excel in Mac OS - tested in MacOS Version 10.15
+            '   Run an AppleScript with VB
+            '   https://docs.microsoft.com/en-us/office/vba/office-mac/applescripttask
+            returnCode = AppleScriptTask("ping.applescript", "ping", hostIp)
+            
+            If returnCode = "OK" Then
+                ActiveSheet.Cells(i, 2).Value = "Online"
+                ActiveSheet.Cells(i, 2).Font.Color = vbGreen
+                ActiveSheet.Cells(i, 3).Value = Now
+            Else
+                ActiveSheet.Cells(i, 2).Value = "Offline"
+                ActiveSheet.Cells(i, 2).Font.Color = vbRed
+            End If
+        End If
+        
+    Next
+
+
+End Sub
+
+```
+</TabItem>
+<TabItem label="Hostname NSLookup - vba">
+```vb
+Sub HostNameNSLookup()
+
+    'clear the status column
+    Range("D2:D1000").Clear
+   
+    Dim ipAddress As String
+   
+    For i = 2 To Cells(Rows.Count, 1).End(xlUp).Row
+   
+        ipAddress = ActiveSheet.Cells(i, 1).Value
+       
+        If Not ipAddress = "" Then
+       
+            Dim returnCode
+           
+            'VBA Code for Excel in Mac OS - tested in MacOS Version 10.15
+            '   Run an AppleScript with VB
+            '   https://docs.microsoft.com/en-us/office/vba/office-mac/applescripttask
+            returnCode = AppleScriptTask("host.applescript", "getHostNameUsingNsLookup", ipAddress)
+           
+            If InStr(returnCode, "Error:") > 0 Then
+                ActiveSheet.Cells(i, 4).Value = returnCode
+                ActiveSheet.Cells(i, 4).Interior.Color = vbRed
+            Else
+           
+                If returnCode = "NOT OK" Then
+                    ActiveSheet.Cells(i, 4).Value = "Not found"
+                    ActiveSheet.Cells(i, 4).Font.Color = vbRed
+                Else
+                    ActiveSheet.Cells(i, 4).Value = returnCode
+                End If
+            End If
+        End If
+       
+    Next
+
+
+End Sub
+```
+</TabItem>
+<TabItem label="Hostname DIG - vba">
+```vb
+Sub HostNameDig()
+
+    'clear the status column
+    Range("E2:E1000").Clear
+   
+    Dim ipAddress As String
+   
+    For i = 2 To Cells(Rows.Count, 1).End(xlUp).Row
+   
+        ipAddress = ActiveSheet.Cells(i, 1).Value
+       
+        If Not ipAddress = "" Then
+       
+            Dim returnCode
+           
+            'VBA Code for Excel in Mac OS - tested in MacOS Version 10.15
+            '   Run an AppleScript with VB
+            '   https://docs.microsoft.com/en-us/office/vba/office-mac/applescripttask
+            returnCode = AppleScriptTask("host.applescript", "getHostNameUsingDig", ipAddress)
+           
+            If InStr(returnCode, "Error:") > 0 Then
+                ActiveSheet.Cells(i, 5).Value = returnCode
+                ActiveSheet.Cells(i, 5).Interior.Color = vbRed
+            Else
+           
+                If returnCode = "NOT OK" Then
+                    ActiveSheet.Cells(i, 5).Value = "Not found"
+                    ActiveSheet.Cells(i, 5).Font.Color = vbRed
+                Else
+                    ActiveSheet.Cells(i, 5).Value = returnCode
+                End If
+            End If
+        End If
+       
+    Next
+
+
+End Sub
+```
+</TabItem>
+<TabItem label="Open ports - vba">
+```vb
+
+Sub FindOpenPorts()
+
+    'clear the status column
+    Range("F2:G1000").Clear
+    
+    Dim hostIp As String
+    
+    For i = 2 To Cells(Rows.Count, 1).End(xlUp).Row
+    
+        hostIp = ActiveSheet.Cells(i, 1).Value
+        
+        If Not hostIp = "" Then
+        
+            Dim objShell, returnCode
+            
+            'VBA Code for Excel in Mac OS - tested in MacOS Version 10.15
+            '   Run an AppleScript with VB
+            '   https://docs.microsoft.com/en-us/office/vba/office-mac/applescripttask
+            returnCode = AppleScriptTask("port.applescript", "findOpenPorts", hostIp)
+            
+            If InStr(returnCode, "Error: ") > 0 Then
+                ActiveSheet.Cells(i, 6).Value = returnCode
+                ActiveSheet.Cells(i, 6).Interior.Color = vbRed
+                
+            Else
+                ActiveSheet.Cells(i, 6).Value = returnCode
+            End If
+                ActiveSheet.Cells(i, 7).Value = Now
+        End If
+        
+    Next
+
+
+End Sub
+```
+</TabItem>
+</Tabs>
+
+### Supporting applescript
+
+<Tabs>
+
+<TabItem label="host.applescript">
+
+```applescript
+-- Function to get hostname from IP address using nslookup
+on getHostNameUsingNsLookup(ipAddress)
+    try
+        -- Use the "do shell script" command to run a shell command
+        set command to "nslookup " & ipAddress
+        set nslookupOutput to do shell script command
+        
+        -- Use regex to extract the hostname
+        set regexPattern to "name\\s*=\\s*(\\S+)"
+        set hostName to do shell script "echo " & quoted form of nslookupOutput & " | grep -o -E \"" & regexPattern & "\" | awk '{print $NF}'"
+        
+        if hostName is not equal to "" then
+            return hostName
+        else
+            return "NOT OK"
+        end if
+        
+    on error errMsg
+        return "Error: " & errMsg
+    end try
+end getHostNameUsingNsLookup
+
+-- Example usage
+-- set ipAddress to "192.168.0.144" -- Replace with the IP address you want to look up
+-- set resultMessage to getHostNameUsingNsLookup(ipAddress)
+-- display dialog resultMessage
+
+
+-- Function to get hostname from IP address using dig
+on getHostNameUsingDig(ipAddress)
+    try
+        -- Use the "do shell script" command to run a shell command
+        set command to "dig +short -x " & ipAddress
+        set digOutput to do shell script command
+        
+        -- Trim leading and trailing whitespace
+        set hostName to do shell script "echo " & quoted form of digOutput & " | xargs"
+        
+        if hostName is not equal to "" then
+            return hostName
+        else
+            return "NOT OK"
+        end if
+        
+    on error errMsg
+        return "Error: " & errMsg
+    end try
+end getHostNameUsingDig
+
+-- Example usage
+-- set ipAddress to "192.168.0.144" -- Replace with the IP address you want to look up
+-- set resultMessage to getHostNameUsingDig(ipAddress)
+-- display dialog resultMessage
+
+```
+</TabItem>
+<TabItem label="port.applescript">
+
+```applescript title="port.applescript"
+-- Define the function with IP address parameter
+on findOpenPorts(ipAddress)
+	try
+		-- Define the output file path in the user's Documents folder
+		set outputFilePath to "/tmp/output.txt"
+		
+		-- Define the shell command with the provided IP address
+		set shellCommand to "nc -vz " & ipAddress & " 1-65534 > " & outputFilePath & " 2>&1"
+		
+		-- display dialog shellCommand
+		
+		try
+			-- Execute the shell command
+			set shellOutput to do shell script shellCommand
+		on error
+			-- this case happens, if there are no open ports on the machine
+			return "No open ports"
+		end try
+		
+		-- display dialog "shell: " & shellOutput
+		
+		set grepOutput to do shell script "grep succeeded " & outputFilePath
+		
+		-- display dialog "grep: " & grepOutput
+		
+		-- Check if grep output is not empty
+		if grepOutput is equal to "" then
+			
+			-- if grep retuns emtpy string
+			return "No open ports"
+		else
+			-- display dialog grepOutput
+			
+			-- Execute the awk command
+			set awkCommand to "grep \"succeeded\" " & outputFilePath & " | awk '{print $5 \"  \"  $6}'"
+			set awkOutput to do shell script awkCommand
+			
+			-- Return the output
+			return awkOutput
+			
+		end if
+		
+	on error errMsg
+		-- Handle errors
+		return "Error: " & errMsg
+	end try
+end findOpenPorts
+
+-- Example: Call the function with an IP address
+-- set ipAddressToCheck to "0.0.0.0"
+-- set resultText to findOpenPorts(ipAddressToCheck)
+
+-- Display the result or handle it as needed
+-- display dialog resultText
+```
+</TabItem>
+</Tabs>
