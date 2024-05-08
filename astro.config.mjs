@@ -12,11 +12,8 @@ export default defineConfig({
       title: 'Home',
       logo: {
         src: "./src/assets/pic.jpg",
-        // replacesTitle: true,
       },
       components: {
-        // Override the default `SocialIcons` component.
-        // SocialIcons: './src/components/EmailLink.astro',
         SiteTitle: './src/components/overrides/SiteTitle.astro'
       },
       social: {
@@ -63,11 +60,12 @@ export default defineConfig({
           authors: {
             sramesh: {
               name: "Santhosh Balaji Ramesh",
-              title: "Software Engineer",
+              title: "Tech aficiando",
               url: "https://www.youtube.com/channel/UCR_Fuegjqal0Fvy6En2Bs3Q?sub_confirmation=1",
               picture: "https://github.com/santhosh2r2.png"
             }
-          }
+          },
+
         }),
       ]
     }),

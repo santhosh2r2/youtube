@@ -24,7 +24,11 @@ await getCollection("docs", (collectionEntry) => {
         let { slug } = collectionEntry;
         let { title } = data;
 
-        collection.push({ subFolderName, slug, title });
+        collection.push({
+            subFolderName,
+            slug: slug.replace(`${folder}/`, ""),
+            title,
+        });
     }
 });
 
@@ -35,6 +39,8 @@ const groupedCollection: any[] = Object.entries(groupedData).map(
         value,
     }),
 );
+
+// console.log(groupedCollection);
 
 import { Card, CardGrid, LinkCard } from "@astrojs/starlight/components";
 ---
@@ -56,10 +62,7 @@ import { Card, CardGrid, LinkCard } from "@astrojs/starlight/components";
                                 subFolderName: string;
                             }) => {
                                 return (
-                                    <LinkCard
-                                        title={p.title}
-                                        href={p.slug.replace(`${folder}/`, "")}
-                                    />
+                                    <LinkCard title={p.title} href={p.slug} />
                                 );
                             },
                         )}
