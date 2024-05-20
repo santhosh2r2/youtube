@@ -60,7 +60,7 @@ export default defineConfig({
           authors: {
             sramesh: {
               name: "Santhosh Balaji Ramesh",
-              title: "Tech aficiando",
+              title: "Tech aficionado",
               url: "https://www.youtube.com/channel/UCR_Fuegjqal0Fvy6En2Bs3Q?sub_confirmation=1",
               picture: "https://github.com/santhosh2r2.png"
             }
