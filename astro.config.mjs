@@ -50,6 +50,13 @@ export default defineConfig({
             directory: 'install', collapsed: true,
           }
         },
+        {
+          label: 'Projects',
+          collapsed: false,
+          autogenerate: {
+            directory: 'projects', collapsed: true,
+          }
+        },
       ],
       editLink: {
         baseUrl: "https://github.com/santhosh2r2/youtube/tree/main",

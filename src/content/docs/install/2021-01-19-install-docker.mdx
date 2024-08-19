@@ -44,13 +44,13 @@ Below you will find the instructions for Ubuntu
     ```bash
     sudo groupadd docker
 
-    sudo usermod aG docker USER
+    sudo usermod -aG docker $USER
     ```
 
 5. **Logout** session or use command 
 
     ```bash
-    su s ${USER}
+    su s $USER
     ```
 
 6. **Installation verification**
