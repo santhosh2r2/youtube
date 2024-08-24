@@ -1,0 +1,70 @@
+---
+import siteConfig from "../../../astro.config.mjs";
+
+// Get the current URL path
+const currentPath = Astro.url.pathname;
+
+// Function to determine the active section
+function getSidebarConfig(pathname) {
+    for (const section in siteConfig.sidebar) {
+        if (pathname.startsWith(section)) {
+            return siteConfig.sidebar[section];
+        }
+    }
+    return [];
+}
+
+const sidebarItems = getSidebarConfig(currentPath);
+console.log( {sidebarItems});
+
+---
+
+<aside class="sidebar">
+    <ul>
+        {
+            sidebarItems.map((item) => (
+                <li>
+                    {item.children ? (
+                        <>
+                            <span>{item.title}</span>
+                            <ul>
+                                {item.children.map((child) => (
+                                    <li>
+                                        <a href={child.path}>{child.title}</a>
+                                    </li>
+                                ))}
+                            </ul>
+                        </>
+                    ) : (
+                        <a href={item.path}>{item.title}</a>
+                    )}
+                </li>
+            ))
+        }
+    </ul>
+</aside>
+
+<style>
+    .sidebar {
+        padding: 1rem;
+        background-color: #f9f9f9;
+    }
+
+    .sidebar ul {
+        list-style: none;
+        padding-left: 0;
+    }
+
+    .sidebar li {
+        margin-bottom: 0.5rem;
+    }
+
+    .sidebar a {
+        text-decoration: none;
+        color: #333;
+    }
+
+    .sidebar .active {
+        font-weight: bold;
+    }
+</style>

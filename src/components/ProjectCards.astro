@@ -1,0 +1,28 @@
+---
+import { Card, CardGrid, LinkCard } from "@astrojs/starlight/components";
+import ProjectCard from "./helper/ProjectCard.astro";
+
+const projects = [
+    {
+        title: "Batch File Executor",
+        description: "Executes selected batch file",
+        imageUrl: "/youtube/resource/projects/batch-executor.png",
+        link: "/youtube/projects/batch-executor/",
+        tags: [".NET 8", "SQLite", "XUnit", "WinForms"],
+    },
+];
+---
+
+<CardGrid>
+    {
+        projects.map((project) => (
+            <ProjectCard
+                title={project.title}
+                description={project.description}
+                imageUrl={project.imageUrl}
+                link={project.link}
+                tags={project.tags}
+            />
+        ))
+    }
+</CardGrid>

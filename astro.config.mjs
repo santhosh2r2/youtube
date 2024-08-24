@@ -2,6 +2,8 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import starlightBlog from 'starlight-blog';
 import starlightImageZoom from 'starlight-image-zoom';
+import starlightLinksValidator from 'starlight-links-validator';
+import starlightUtils from "@lorenzo_lewis/starlight-utils";
 
 // https://astro.build/config
 export default defineConfig({
@@ -14,7 +16,8 @@ export default defineConfig({
         src: "./src/assets/pic.jpg",
       },
       components: {
-        SiteTitle: './src/components/overrides/SiteTitle.astro'
+        SiteTitle: './src/components/overrides/SiteTitle.astro',
+        // Sidebar: './src/components/overrides/Sidebar.astro',
       },
       social: {
         youtube: "https://www.youtube.com/channel/UCR_Fuegjqal0Fvy6En2Bs3Q?sub_confirmation=1",
@@ -24,12 +27,7 @@ export default defineConfig({
       },
       favicon: "/image/pic.jpg",
       sidebar: [
-        {
-          label: 'Tutorials',
-          autogenerate: {
-            directory: 'tutorial', collapsed: true,
-          }
-        },
+
         {
           label: 'Tips & Tricks',
           collapsed: false,
@@ -51,11 +49,18 @@ export default defineConfig({
           }
         },
         {
+          label: 'Tutorials',
+          autogenerate: {
+            directory: 'tutorial', collapsed: true,
+          }
+        },
+        {
           label: 'Projects',
           collapsed: false,
           autogenerate: {
             directory: 'projects', collapsed: true,
-          }
+          },
+          hidden: true
         },
       ],
       editLink: {
@@ -73,6 +78,12 @@ export default defineConfig({
             }
           },
 
+        }),
+        starlightLinksValidator(),
+        starlightUtils({
+          multiSidebar: {
+            switcherStyle: "horizontalList",
+          },
         }),
       ]
     }),
