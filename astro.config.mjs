@@ -26,48 +26,18 @@ export default defineConfig({
         email: "mailto:santhosh.mwpa@gmail.com"
       },
       favicon: "/image/pic.jpg",
-      sidebar: [
 
-        {
-          label: 'Tips & Tricks',
-          collapsed: false,
-          autogenerate: {
-            directory: 'tips-and-tricks', collapsed: true,
-          }
-        },
-        {
-          label: 'Boilerplates',
-          autogenerate: {
-            directory: 'boilerplate', collapsed: true,
-          }
-        },
-        {
-          label: 'Installation',
-
-          autogenerate: {
-            directory: 'install', collapsed: true,
-          }
-        },
-        {
-          label: 'Tutorials',
-          autogenerate: {
-            directory: 'tutorial', collapsed: true,
-          }
-        },
-        {
-          label: 'Projects',
-          collapsed: false,
-          autogenerate: {
-            directory: 'projects', collapsed: true,
-          },
-          hidden: true
-        },
-      ],
       editLink: {
         baseUrl: "https://github.com/santhosh2r2/youtube/tree/main",
       },
       plugins: [
         starlightImageZoom(),
+        // starlightUtils({
+        //   multiSidebar: {
+        //     switcherStyle: "dropdown",
+        //   },
+        // }),
+        starlightLinksValidator(),
         starlightBlog({
           authors: {
             sramesh: {
@@ -79,13 +49,13 @@ export default defineConfig({
           },
 
         }),
-        starlightLinksValidator(),
-        starlightUtils({
-          multiSidebar: {
-            switcherStyle: "horizontalList",
-          },
-        }),
-      ]
+      ],
+
+      sidebar: [
+        { collapsed: false, label: 'General', autogenerate: { directory: 'general', collapsed: true } },
+        { collapsed: true, label: 'Tutorials', autogenerate: { directory: 'tutorial', } },
+        { collapsed: true, label: 'Projects', autogenerate: { directory: 'projects', } },
+      ],
     }),
   ]
 });

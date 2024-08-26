@@ -10,5 +10,6 @@ sidebar:
     - UI development
     - Entity framework 
     - Testing project
-5. Deployment
+5. Publish as executable
+6. CI/CD using GITLAB
 6. Conclusion 

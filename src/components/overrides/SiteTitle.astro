@@ -3,9 +3,9 @@
 // https://github.com/withastro/starlight/blob/main/packages/starlight/components/Select.astro
 // https://github.com/withastro/starlight/blob/main/packages/starlight/components/LanguageSelect.astro
 
-import type { Props } from '@astrojs/starlight/props';
-import Default from '@astrojs/starlight/components/SiteTitle.astro';
-import { Icon } from '@astrojs/starlight/components';
+import type { Props } from "@astrojs/starlight/props";
+import Default from "@astrojs/starlight/components/SiteTitle.astro";
+import { Icon } from "@astrojs/starlight/components";
 
 const curLocale = Astro.props.locale;
 
@@ -16,16 +16,16 @@ type Link = {
 };
 
 const links: Link[] = [
+	// {
+	// 	title: "Everything else",
+	// 	value: "/youtube/tutorial",
+	// 	transfer: true,
+	// },
 	{
-		title: 'Everything else',
-		value: '/youtube/tutorial',
-		transfer: true,
-	},
-	{
-		title: 'Projects',
-		value: '/youtube/projects',
+		title: "Projects",
+		value: "/youtube/projects",
 		transfer: false,
-	}
+	},
 ];
 ---
 
@@ -39,7 +39,11 @@ const links: Link[] = [
 				{
 					links.map((link) => (
 						<option
-							value={link.transfer && curLocale ? `/${curLocale}${link.value}` : link.value}
+							value={
+								link.transfer && curLocale
+									? `/${curLocale}${link.value}`
+									: link.value
+							}
 							set:html={link.title}
 						/>
 					))
@@ -52,7 +56,13 @@ const links: Link[] = [
 	<div class="desktop">
 		{
 			links.map((link) => (
-				<a href={link.transfer && curLocale ? `/${curLocale}${link.value}` : link.value}>
+				<a
+					href={
+						link.transfer && curLocale
+							? `/${curLocale}${link.value}`
+							: link.value
+					}
+				>
 					{link.title}
 				</a>
 			))
@@ -64,9 +74,9 @@ const links: Link[] = [
 	class StarlightLanguageSelect extends HTMLElement {
 		constructor() {
 			super();
-			const select = this.querySelector('select');
+			const select = this.querySelector("select");
 			if (select) {
-				select.addEventListener('change', (e) => {
+				select.addEventListener("change", (e) => {
 					if (e.currentTarget instanceof HTMLSelectElement) {
 						window.location.pathname = e.currentTarget.value;
 					}
@@ -74,7 +84,7 @@ const links: Link[] = [
 			}
 		}
 	}
-	customElements.define('starlight-select', StarlightLanguageSelect);
+	customElements.define("starlight-select", StarlightLanguageSelect);
 </script>
 
 <style>
@@ -134,7 +144,8 @@ const links: Link[] = [
 	select {
 		border: 0;
 		padding-block: 0.625rem;
-		padding-inline: calc(var(--sl-label-icon-size) + 0.25rem) calc(var(--sl-caret-size) + 0.25rem);
+		padding-inline: calc(var(--sl-label-icon-size) + 0.25rem)
+			calc(var(--sl-caret-size) + 0.25rem);
 		width: var(--sl-select-width);
 		background-color: transparent;
 		text-overflow: ellipsis;
