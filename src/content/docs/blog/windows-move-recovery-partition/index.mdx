@@ -1,0 +1,79 @@
+---
+title: Windows - Move the recovery partition to right
+excerpt: Adding additional storage after the windows machine created but cannot extend the partition, then follow this guide.
+authors: [sramesh]
+tags: [windows]
+date: 2024-09-02
+---
+
+import { Steps, Aside } from '@astrojs/starlight/components';
+
+## Introduction
+
+While adding additional storage after the machine is created, can sometimes be challenging. Especially when the `Extend volume` is greyed out.
+
+Checkout the source [link](https://thedxt.ca/2023/06/moving-windows-recovery-partition-correctly/)
+
+## Commands to move the recovery partition
+
+<Aside type="danger" title ="Attention">
+All the commands are executed with elevate privileges.
+</Aside>
+
+
+<Steps>
+
+1. Disable the `Windows Recovery Partition`.
+
+    ```sh frame="none"
+    reagentc /disable
+    ```
+
+2. Use diskpart to remove the recovery partition
+
+    ```sh frame="none"
+    list disk
+
+    select disk <disk_nr> # where <disk_nr> is the disk needing the recovery partition removed
+
+    list partition
+
+    select partition <partition_nr>  # where <partition_nr> is the recovery partition
+
+    delete partition override # to force deletion of the recovery partition
+    ``` 
+
+3. Expand the disk using Disk Management, leaving ~1024 MB at the end of the drive for recreating the recovery partition
+
+    - Create New Simple Volume for Recovery, 
+    - NTFS, 
+    - no drive letter
+
+4. Use diskpart to set the recovery partition attributes
+
+    ```sh frame="none"
+    list partition
+
+    select partition <partition_nr>  # where <partition_nr> is the new recovery partition
+    ```
+
+    :::tip
+
+    1. For GPT disks run 
+    ```sh frame="none"
+    set id=de94bba4-06d1-4d40-a16a-bfd50179d6ac 
+    gpt attributes=0x8000000000000001
+    ```
+    
+
+    2. For MBR disks, run 
+    ```sh frame="none"
+    set id=27
+    ```
+    :::
+
+5. Re-enable the `recovery partition` by running 
+    ```sh frame="none"
+    reagentc /enable
+    ```
+</Steps>
