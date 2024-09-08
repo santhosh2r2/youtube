@@ -1,0 +1,115 @@
+---
+title: Create GITLAB merge request programmatically
+excerpt: Using python, create merge request which adds files and update readme
+authors: [sramesh]
+tags: [python, gitlab]
+date: 2024-09-08
+---
+
+## Introduction
+
+Here is an easy way to programmatically create a merge-request in GITLAB. 
+
+This comes in handy, when you have to update multiple projects simulatenously.
+
+## Sample code
+
+```py
+from dotenv import load_dotenv
+import os
+import gitlab
+import base64
+
+load_dotenv()
+
+# constants
+GITLAB_TOKEN = os.environ["GITLAB_TOKEN"]
+GITLAB_URL = 'https://gitlab.url.here' # Update the gitlab link here
+NAMESPACE = "basdemo"
+PROJECT_NAME = "automatic-mr"
+ASSIGNEE_USERNAME = "basdemo"
+
+# 1. Authenticate with GitLab
+gl = gitlab.Gitlab(GITLAB_URL, private_token=GITLAB_TOKEN)
+
+# 2. Get the project
+PROJECT_ID = f"{NAMESPACE}/{PROJECT_NAME}" # here the project id or namespace/project-slug
+project = gl.projects.get(PROJECT_ID)
+
+# 3. Create new branch from the default branch
+MAIN_BRANCH = project.default_branch # default branch - can be "main" or "master" (depending on the project base)
+NEW_BRANCH = 'add_new_langauge'
+
+# Check if the branch already exists, if not create it
+if not any(branch.name == NEW_BRANCH for branch in project.branches.list()):
+    project.branches.create({'branch': NEW_BRANCH, 'ref': MAIN_BRANCH})
+    print(f"Branch '{NEW_BRANCH}' created.")
+
+
+# 4. Adding files
+
+# 4.a.) Add a translation file from local folder to the new branch
+LOCAL_FILE_PATH = 'source/en.json' 
+REMOTE_FILE_PATH = 'src/translations/en.json'
+COMMIT_MESSAGE = 'Add english language file'
+
+# Read the file content from local file
+with open(LOCAL_FILE_PATH, 'r') as file:
+    file_content = file.read()
+
+# Check if the file exists, if not, create it
+try:
+    file = project.files.get(file_path=REMOTE_FILE_PATH, ref=NEW_BRANCH)
+    print(f"File '{REMOTE_FILE_PATH}' already exists in '{NEW_BRANCH}'.")
+except gitlab.exceptions.GitlabGetError:
+    # Create the file in the new branch
+    project.files.create({
+        'file_path': REMOTE_FILE_PATH,
+        'branch': NEW_BRANCH,
+        'content': file_content,
+        'commit_message': COMMIT_MESSAGE,
+    })
+    print(f"File '{REMOTE_FILE_PATH}' added to branch '{NEW_BRANCH}'.")
+
+# 4.b.) Update readme
+
+file_path = 'README.md'
+file = project.files.get(file_path=file_path, ref=NEW_BRANCH) 
+
+# Decode the README content
+readme_content = base64.b64decode(file.content).decode('utf-8')
+
+print(f"{readme_content}")
+
+# Define the text to replace
+old_text = "# Release Notes :newspaper:"
+new_text = "# Release Notes :newspaper:\n\n## Version x\n* [translation] adding new language"
+
+# Replace the content
+updated_content = readme_content.replace(old_text, new_text)
+
+# Encode the updated content to base64 format
+encoded_content = base64.b64encode(updated_content.encode('utf-8')).decode('utf-8')
+
+# Update the README file with the new content
+file.content = updated_content
+file.encoding = 'text' 
+file.save(branch=NEW_BRANCH, commit_message='Update Release Notes in README')
+print(f"File '{file_path}' updated to branch '{NEW_BRANCH}'.")
+
+# 5. Create a Merge Request
+
+# get user id
+user = gl.users.list(username=ASSIGNEE_USERNAME)[0]
+assignee_id = user.id
+
+merge_request = project.mergerequests.create({
+    'source_branch': NEW_BRANCH,
+    'target_branch': MAIN_BRANCH,
+    'title': 'feature/Add new language',  
+    'description': 'This merge request add a new language to the project. In this case, ENGLISH',
+    'assignee_id': assignee_id,
+})
+
+print(f"Merge Request created: {merge_request.web_url}")
+```
