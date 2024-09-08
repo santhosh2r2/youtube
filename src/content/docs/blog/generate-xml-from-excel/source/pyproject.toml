@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "xml-excel-generator"
+version = "0.1.0"
+description = ""
+authors = ["Santhosh Balaji Ramesh <santhoshbalaji.ramesh@dieffenbacher.de>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+lxml = "^5.3.0"
+pandas = "^2.2.2"
+openpyxl = "^3.1.5"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
