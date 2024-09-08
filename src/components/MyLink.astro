@@ -1,0 +1,114 @@
+---
+// Props for the Card component
+export interface Props {
+    header: string;
+    link: string;
+    iconName: string;
+    altText?: string;
+    description?: string;
+}
+
+import { Icon } from "@astrojs/starlight/components";
+
+const { header, link, iconName, altText = "Icon", description } = Astro.props;
+---
+
+<a href={link} class="card">
+    <div class="card-content">
+        <div class="card-text">
+            <header class="card-header">
+                <p>{header}</p>
+            </header>
+            {description && <span class="card-description">{description}</span>}
+        </div>
+        <div class="icon-wrapper">
+            <Icon name={iconName} alt={altText} class="card-icon" />
+        </div>
+    </div>
+</a>
+
+<style>
+    /* Basic Styles */
+    .card {
+        display: block;
+        text-decoration: none;
+        color: var(--color-text);
+        background-color: var(--color-background);
+        padding: 16px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px var(--color-card-shadow);
+        transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
+    }
+
+    .card:hover,
+    .card:focus {
+        background-color: var(--color-background);
+        box-shadow: 0 8px 16px var(--color-card-hover-shadow);
+        transform: translateY(-4px); /* Slight lift on hover */
+    }
+
+    .card-content {
+        display: grid;
+        grid-template-columns: 1fr auto; /* Grid with two columns */
+        align-items: center; /* Align items vertically */
+        gap: 16px; /* Spacing between text and icon */
+    }
+
+    .card-text {
+        display: flex;
+        flex-direction: column;
+        gap: 8px; /* Spacing between header and description */
+    }
+
+    .card-header {
+        margin: 0;
+    }
+
+    .card-description {
+        font-size: 1rem;
+        color: var(--color-secondary-text);
+    }
+
+    p {
+        margin: 0;
+        font-size: 1.2rem;
+        color: var(--color-text);
+    }
+
+    .icon-wrapper {
+        display: flex;
+        align-items: center; /* Center the icon vertically */
+        justify-content: center; /* Center the icon horizontally */
+    }
+
+    .card-icon {
+        width: 40px; /* Adjust icon size as needed */
+        height: 40px;
+    }
+</style>
+
+<style is:global>
+    :root {
+        --color-background: #ffffff;
+        --color-text: #333333;
+        --color-secondary-text: #666666;
+        --color-link: #3498db;
+        --color-link-hover: #2980b9;
+        --color-card-shadow: rgba(0, 0, 0, 0.1);
+        --color-card-hover-shadow: rgba(0, 0, 0, 0.2);
+        --color-tag-background: #e0e0e0;
+        --color-tag-text: #333333;
+    }
+
+    [data-theme="dark"] {
+        --color-background: #1e1e1e;
+        --color-text: #e0e0e0;
+        --color-secondary-text: #aaaaaa;
+        --color-link: #82cfff;
+        --color-link-hover: #66b3ff;
+        --color-card-shadow: rgba(0, 0, 0, 0.6);
+        --color-card-hover-shadow: rgba(0, 0, 0, 0.8);
+        --color-tag-background: #333333;
+        --color-tag-text: #e0e0e0;
+    }
+</style>

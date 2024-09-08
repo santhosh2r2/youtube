@@ -6,7 +6,8 @@ tags: [xml, excel, pandas, python]
 date: 2024-09-06
 ---
 
-import { Steps, Aside, TabItem, Tabs, FileTree } from '@astrojs/starlight/components';
+import { Steps, Aside, TabItem, Tabs, FileTree, Icon, LinkCard, Card } from '@astrojs/starlight/components';
+import MyLink from "../../../../components/MyLink.astro";
 
 ## Introduction
 
@@ -14,8 +15,13 @@ Today I am came across a task, which required me to generate few XML files. I as
 
 The charm about using excel is that it gives a better overview of the data. (atleast in my case). Now combined with this thought, need to come about a strategy on deciding the schema for the excel table. 
 
+This is what the whole blog is about, generation of xml files based on data from excel file.
+
 :::note
 For the purpose of the demonstration, I will be using sample data, which can be adapted accordingly.
+
+<MyLink iconName="github" header="GitHub" description="Link to repo" link={"https://github.com/santhosh2r2/xml-converter"}/>
+
 :::
 
 ## Prerequisite
@@ -163,8 +169,14 @@ For the purpose of the demonstration, I will be using sample data, which can be 
     </FileTree>
 </Steps>
 
-## Workflow
+## Dataflow diagram
 ![Converter dataflow](./img/excel-converter.png)
+
+## Workflow
+
+A `XSD` file defines the schema for a xml file. If it exists, then it makes the job of creating the excel file simpler. 
+
+Excel file preparation is the first step. Checkout [data prepration section](#data-prepration---excel-file)
 
 ## Implementation
 
@@ -187,11 +199,10 @@ In the excel file, I have created 3 columns.
 <Aside type="caution">
 The **key** column can be populated based on the Columns 1-3. A simple Excel formula to concatenate the string should suffice.
 
-```excel
+```vba
 =CONCATENATE(A3,IF(B3<>"","."&B3,""),IF(C3<>"","@"&C3,""))
 ```
 </Aside>
-
 
 #### Sample excel file data
 
@@ -214,32 +225,457 @@ The **key** column can be populated based on the Columns 1-3. A simple Excel for
 
 ### Scripts to Data Import and Processing
 
-#### `create_xml_from_excel.py` 
+#### Create `create_xml_from_excel.py` in `scripts` folder
 
-<Steps>
-
-1. `import` packages
-
-2. read excel file
-   ```py
-    from lxml import etree
-    import pandas as pd
-    import json
-    import os
-    from xml.dom.minidom import parseString
-    import xml.etree.ElementTree as ET
-    from validator import validate_xml
+```py title="create_xml_from_excel.py" "unflatten_json"
+from lxml import etree
+import pandas as pd
+import json
+import os
+from xml.dom.minidom import parseString
+import xml.etree.ElementTree as ET
+from validator import validate_xml
 
 
+def unflatten_json(flat_json):
+    unflattened = {}
+    for key, value in flat_json.items():
+        if key == "CREATED":
+            continue
+        parts = key.split(".")
+        data = unflattened
+        for part in parts[:-1]:
+            element, *attr = part.split("@")
+            if element not in data:
+                data[element] = {}
+            data = data[element]
+            if attr:
+                attr_name = attr[0]
+                if '@attributes' not in data:
+                    data['@attributes'] = {}
+                data['@attributes'][attr_name] = value
 
-   ```
+        last_element, *last_attr = parts[-1].split("@")
+        if last_attr:
+            if last_element not in data:
+                data[last_element] = {}
+            if '@attributes' not in data[last_element]:
+                data[last_element]['@attributes'] = {}
+            data[last_element]['@attributes'][last_attr[0]] = value
+        else:
+            data[last_element] = value
+
+    return unflattened
+
+def create_xml_from_series_dict(json_data, name, ns, schema_location):
+
+    # Function to convert dictionary to XML with custom rules
+    def custom_dict_to_xml(data, root_name, namespace):
+        def convert_dict_to_xml_recurse(parent, dict_item):
+            for key, value in dict_item.items():
+                if key == '@attributes':
+                    # If the dictionary contains attributes
+                    for attr_key, attr_value in value.items():
+                        parent.setAttribute(attr_key, str(attr_value))
+                    continue
+
+                child = doc.createElement(key)
+
+                # If the dictionary contains sub-elements
+                if isinstance(value, dict):
+                    # Check if the sub-dictionary has attributes
+                    if '@attributes' in value:
+                        convert_dict_to_xml_recurse(
+                            child, {'@attributes': value.pop('@attributes')})
+
+                    # Recursively convert the rest of the elements
+                    convert_dict_to_xml_recurse(child, value)
+                else:
+                    # Add text node for simple key-value pairs
+                    child.appendChild(doc.createTextNode(str(value)))
+
+                parent.appendChild(child)
+
+        # Create XML document
+        doc = parseString('<{}></{}>'.format(root_name, root_name))
+        root = doc.documentElement
+        root.setAttribute("xmlns", namespace)
+
+        convert_dict_to_xml_recurse(root, data)
+        print("JSON dict converted to XML document")
+        return doc.toprettyxml()
+
+    # Convert JSON to dictionary
+    data_dict = json.loads(json.dumps(json_data))
+
+    # Convert dictionary to XML with custom rules
+    xml_data = custom_dict_to_xml(data_dict, 'person', ns)
+
+    # Sample function - convert text string with seperator to sequence elements
+    def process_children(xml_string, sep=","):
+        # Parse the XML string
+        root = etree.fromstring(xml_string)
+        namespace = {'ns': ns}
+
+        # Navigate to the Children node
+        children = root.find('.//ns:household/ns:children',
+                             namespaces=namespace)
+
+        # Split the text content into individual child names
+        names = children.text.split(sep)
+
+        # Clear the original text content
+        children.clear()
+
+        # Add new child elements
+        for name in names:
+            new_element = etree.SubElement(children, 'child')
+            new_element.set('name', name.strip())
+
+        # Add xmlns:xsi and xsi:schemaLocation attributes to the root element
+        root.set("{http://www.w3.org/2001/XMLSchema-instance}schemaLocation",
+                 f"{ns} ../{schema_location}")
+
+        # Convert the modified XML back to a string
+        modified_xml = etree.tostring(
+            root, pretty_print=True, xml_declaration=True, encoding='UTF-8').decode('UTF-8')
+        return modified_xml
+
+    xml_data = process_children(xml_data)
+    print("Process 'children' element completed")
+
+    if not os.path.exists("converted"):
+        os.makedirs("converted")
+        print("Created the folder 'converted'")
+
+    # Save XML data to a file
+    with open(f"converted/{name}.xml", "w") as f:
+        f.write(xml_data)
+        print(f"XML file for person: {name} created!")
+
+df = pd.read_excel("docs/Persons.xlsx", index_col=3)
+df_modified = df.drop(columns=['Unnamed: 0', 'Unnamed: 1', 'Attributes'])
+
+for col in df_modified.columns:
+    if not df_modified[col]["CREATED"] == True:
+        flat_dict = df_modified[col].dropna()
+        json_data = unflatten_json(flat_dict)
+        name = flat_dict["personalInfo.name"]
+        create_xml_from_series_dict(json_data, name, "http://www.example.com/person", "../source/person.xsd")
+        validate_xml(f"converted/{name}.xml", "source/person.xsd")
+```
+
+#### Create `validate.py` in `scripts` folder
+
+```py title="validator.py"
+from lxml import etree
 
 
-2. Drop columns and create `xml files`
+def validate_xml(filepath, schema_location):
+    # Load the XML and XSD files
+    xml_file = filepath
+    xsd_file = schema_location
 
-</Steps>
+    with open(xml_file, 'rb') as xml:
+        xml_content = xml.read()
 
-### Execution
+    with open(xsd_file, 'rb') as xsd:
+        xsd_content = xsd.read()
+
+    # Parse the XML and XSD
+    xml_doc = etree.XML(xml_content)
+    xsd_doc = etree.XMLSchema(etree.XML(xsd_content))
+
+    # Validate the XML against the XSD
+    is_valid = xsd_doc.validate(xml_doc)
+
+    if is_valid:
+        print(f"The XML document {filepath} is valid.")
+    else:
+        print(f"The XML document {filepath} is invalid.")
+        for error in xsd_doc.error_log:
+            print(error.message)
+```
+
+### Executing the script
+
+```bash
+# activate the poetry environment
+poetry shell
+
+python scripts/create_xml_from_excel.py
+```
+
+## (optional) Extending the scripts as a module including a logger
+
+To make the script more organised and a introducing a better logger, update the files like below.
+
+<Tabs>
+<TabItem label='create_xml_from_excel.py'>
+```diff lang="py"
++ import logging
+import json
+import os
+import re
+from lxml import etree
+from xml.dom.minidom import parseString, Document
+import xml.etree.ElementTree as ET
++ from logger import log_message, setup_logger
+
++ LOGGER = setup_logger("create-xml", logging.DEBUG)
+
+def unflatten_json(flat_json):
+    unflattened = {}
+    for key, value in flat_json.items():
+        if key == "CREATED":
+            continue
+        parts = key.split(".")
+        data = unflattened
+        for part in parts[:-1]:
+            element, *attr = part.split("@")
+            if element not in data:
+                data[element] = {}
+            data = data[element]
+            if attr:
+                attr_name = attr[0]
+                if '@attributes' not in data:
+                    data['@attributes'] = {}
+                data['@attributes'][attr_name] = value
+
+        last_element, *last_attr = parts[-1].split("@")
+        if last_attr:
+            if last_element not in data:
+                data[last_element] = {}
+            if '@attributes' not in data[last_element]:
+                data[last_element]['@attributes'] = {}
+            data[last_element]['@attributes'][last_attr[0]] = value
+        else:
+            data[last_element] = value
+
+    return unflattened
 
 
-> Activate the python virtual environment using the command `poetry shell`
+def create_xml_from_series_dict(json_data, name, ns, schema_location):
+
+    # Function to convert dictionary to XML with custom rules
+    def custom_dict_to_xml(data, root_name, namespace):
+        def convert_dict_to_xml_recurse(parent, dict_item):
+            for key, value in dict_item.items():
+                if key == '@attributes':
+                    # If the dictionary contains attributes
+                    for attr_key, attr_value in value.items():
+                        parent.setAttribute(attr_key, str(attr_value))
+                    continue
+
+                child = doc.createElement(key)
+
+                # If the dictionary contains sub-elements
+                if isinstance(value, dict):
+                    # Check if the sub-dictionary has attributes
+                    if '@attributes' in value:
+                        convert_dict_to_xml_recurse(
+                            child, {'@attributes': value.pop('@attributes')})
+
+                    # Recursively convert the rest of the elements
+                    convert_dict_to_xml_recurse(child, value)
+                else:
+                    # Add text node for simple key-value pairs
+                    child.appendChild(doc.createTextNode(str(value)))
+
+                parent.appendChild(child)
+
+        # Create XML document
+        doc = parseString('<{}></{}>'.format(root_name, root_name))
+        root = doc.documentElement
+        root.setAttribute("xmlns", namespace)
+
+        convert_dict_to_xml_recurse(root, data)
++        log_message(LOGGER,logging.DEBUG, "JSON dict converted to XML document")
+        return doc.toprettyxml()
+
+    # Convert JSON to dictionary
+    data_dict = json.loads(json.dumps(json_data))
+
+    # Convert dictionary to XML with custom rules
+    xml_data = custom_dict_to_xml(data_dict, 'person', ns)
+
+    # Sample function - convert text string with seperator to sequence elements
+    def process_children(xml_string, sep=","):
+        # Parse the XML string
+        root = etree.fromstring(xml_string)
+        namespace = {'ns': ns}
+
+        # Navigate to the Children node
+        children = root.find('.//ns:household/ns:children',
+                             namespaces=namespace)
+
+        # Split the text content into individual child names
+        names = children.text.split(sep)
+
+        # Clear the original text content
+        children.clear()
+
+        # Add new child elements
+        for name in names:
+            new_element = etree.SubElement(children, 'child')
+            new_element.set('name', name.strip())
+
+        # Add xmlns:xsi and xsi:schemaLocation attributes to the root element
+        root.set("{http://www.w3.org/2001/XMLSchema-instance}schemaLocation",
+                 f"{ns} ../{schema_location}")
+
+        # Convert the modified XML back to a string
+        modified_xml = etree.tostring(
+            root, pretty_print=True, xml_declaration=True, encoding='UTF-8').decode('UTF-8')
+        return modified_xml
+
+    xml_data = process_children(xml_data)
++    log_message(LOGGER,logging.DEBUG, "Process 'children' element completed")
+
+    if not os.path.exists("converted"):
+        os.makedirs("converted")
++        log_message(LOGGER,logging.DEBUG, "Created the folder 'converted'")
+
+    # Save XML data to a file
+    with open(f"converted/{name}.xml", "w") as f:
+        f.write(xml_data)
++        log_message(LOGGER,logging.INFO, f"XML file for person: {name} created!")
+
+
+```
+
+</TabItem>
+
+<TabItem label="validator.py">
+```diff lang="py"
++ import logging
++ from logger import log_message, setup_logger
+from lxml import etree
+
++ LOGGER = setup_logger("validate-xml", logging.DEBUG)
+
+
+def validate_xml(filepath, schema_location):
+    # Load the XML and XSD files
+    xml_file = filepath
+    xsd_file = schema_location
+
+    with open(xml_file, 'rb') as xml:
+        xml_content = xml.read()
+
+    with open(xsd_file, 'rb') as xsd:
+        xsd_content = xsd.read()
+
+    # Parse the XML and XSD
+    xml_doc = etree.XML(xml_content)
+    xsd_doc = etree.XMLSchema(etree.XML(xsd_content))
+
+    # Validate the XML against the XSD
+    is_valid = xsd_doc.validate(xml_doc)
+
+    if is_valid:
++        log_message(LOGGER, logging.INFO,
+                    f"The XML document {filepath} is valid.")
+    else:
++        log_message(LOGGER, logging.INFO,
+                    f"The XML document {filepath} is invalid.")
+        for error in xsd_doc.error_log:
++            log_message(LOGGER, logging.ERROR, error.message)
+
+```
+</TabItem>
+
+<TabItem label='logger.py'>
+```diff lang="py"
++ import logging
++
++def setup_logger(name, level=logging.DEBUG, format='%(asctime)s - %(name)-14s - %(levelname)-8s - %(message)s'):
++    """
++    Setup a logger with the given name, level, and format.
++    
++    :param name: Name of the logger.
++    :param level: Logging level (e.g., logging.DEBUG, logging.INFO).
++    :param format: Log message format string.
++    :return: Configured logger.
++    """
++    logger = logging.getLogger(name)
++    logger.setLevel(level)
++    
++    # Create a console handler with the specified log level and format
++    ch = logging.StreamHandler()
++    ch.setLevel(level)
++    formatter = logging.Formatter(format)
++    ch.setFormatter(formatter)
++    
++    # Add the handler to the logger
++    if not logger.hasHandlers():
++        logger.addHandler(ch)
++    
++    return logger
++
++def log_message(logger, level, message):
++    """
++    Log a message with the specified logging level.
++    
++    :param level: Logging level (e.g., 'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL').
++    :param message: Message to log.
++    """
++    
++    if isinstance(level, int):
++        # Convert integer level to corresponding string level
++        level = logging.getLevelName(level)
++    elif isinstance(level, str):
++        # Ensure level is in uppercase
++        level = level.upper()
++        
++    log_func = getattr(logger, level.lower(), None)
++    if log_func:
++        log_func(message)
++    else:
++        raise ValueError(f"Invalid log level: {level}")
+```
+</TabItem>
+
+<TabItem label="__main__.py">
+```diff lang="py"
++import pandas as pd
++from create_xml_from_excel import create_xml_from_series_dict, unflatten_json
++from validator import validate_xml
++
++NAMESPACE = "http://www.example.com/person"
++SCHEMA_LOCATION = "source/person.xsd"
++
++if __name__ == "__main__":
++    df = pd.read_excel("docs/Persons.xlsx", index_col=3)
++    df_modified = df.drop(columns=['Unnamed: 0', 'Unnamed: 1', 'Attributes'])
++
++    for col in df_modified.columns:
++        if not df_modified[col]["CREATED"] == True:
++            flat_dict = df_modified[col].dropna()
++            json_data = unflatten_json(flat_dict)
++            name= flat_dict["personalInfo.name"]
++            create_xml_from_series_dict(json_data,name, NAMESPACE, SCHEMA_LOCATION)
++            validate_xml(f"converted/{name}.xml", SCHEMA_LOCATION)
+```
+</TabItem>
+</Tabs>
+
+The folder structure after the update should look below.
+
+<FileTree>
+
+- docs
+  - Persons.xlsx
+- source
+  - person.xml
+  - person.xsd
+- xml_generator
+  - **\_\_main\_\_.py**
+  - create_xml_from_excel.py
+  - _logger.py_
+  - validator.py
+- .gitignore
+- pyproject.toml
+
+</FileTree>
+
