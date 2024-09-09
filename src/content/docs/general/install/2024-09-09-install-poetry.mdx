@@ -1,0 +1,77 @@
+---
+title: Install `Poetry` in Ubuntu
+type: content
+authors: sramesh
+tags: [install, poetry, python]
+sidebar:
+    badge: new
+---
+import { Steps, Aside } from '@astrojs/starlight/components';
+
+## Introduction
+
+Poetry is a tool for dependency management and packaging in Python. 
+It offers a lockfile to ensure repeatable installs, and can build your project for distribution.
+
+<Aside type="note" title="Info">
+`Poetry` is comparable to `npm`, `yarn` or `pnpm` in the **NodeJS** world.
+</Aside>
+
+<Aside type="danger" title="Attention">
+`Poetry` should always be installed in a dedicated virtual environment to isolate it from the rest of the system. It should in no case be installed in the environment of the project that is to be managed by Poetry. This ensures that Poetry's own dependencies will not be accidentally upgraded or uninstalled. 
+</Aside>
+
+Below are the instructions for Ubuntu. 
+
+<Steps>
+1. Download the **Poetry** install script and execute
+
+    ```bash frame="none"
+    curl -sSL https://install.python-poetry.org | python3 -
+    ```
+
+2. Add **Poetry** to `Path`
+    
+    The installer creates a poetry wrapper in a well-known, platform-specific directory:
+
+    - `$HOME/.local/bin`          on Unix.
+    - `%APPDATA%\Python\Scripts`  on Windows.
+    - `$POETRY_HOME/bin`          if $POETRY_HOME is set.
+
+    ```bash frame="none"
+    # TODO: check if the `poetry` is actually installed in the path
+    echo 'export PATH="$PATH:$HOME/.local/bin"' >> ~/.bashrc
+
+    # To apply the changes
+    source ~/.bashrc
+    ```
+
+3. Use `Poetry`
+
+    ```bash frame="none"
+    poetry --version
+    ```
+
+4. Autocompletion
+    
+    ```bash frame="none"
+    poetry completions bash >> ~/.bash_completion
+    ```
+
+    :::note
+    You may need to restart your shell in order for these changes to take effect.
+    :::
+
+5. Update `Poetry` (optional)
+
+    ```bash frame="none"
+    poetry self update
+    ```
+
+6. Uninstall `Poetry` (optional)
+
+    ```bash frame="none"
+    curl -sSL https://install.python-poetry.org | python3 - --uninstall
+    curl -sSL https://install.python-poetry.org | POETRY_UNINSTALL=1 python3 -
+    ```
+</Steps>
