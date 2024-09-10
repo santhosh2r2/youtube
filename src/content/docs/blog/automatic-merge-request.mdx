@@ -5,7 +5,7 @@ authors: [sramesh]
 tags: [python, gitlab]
 date: 2024-09-08
 ---
-import { Steps, Aside } from '@astrojs/starlight/components';
+import { Steps, Aside , FileTree, Tabs, TabItem} from '@astrojs/starlight/components';
 
 ## Introduction
 
@@ -36,10 +36,6 @@ poetry add python-gitlab python-dotenv
     :::
 
     For this create a file called `.env` in the project root
-
-    ```vb title=".env"
-    GITLAB_TOKEN=<your-token-here>
-    ```
 
     ```py
     from dotenv import load_dotenv
@@ -106,6 +102,7 @@ poetry add python-gitlab python-dotenv
 <Aside type="note" title="Optional">
 
 <Steps>
+
 1. Add new file(s) to the merge-request
 
     ```py
@@ -169,8 +166,22 @@ poetry add python-gitlab python-dotenv
 </Steps>
 </Aside>
 
-## Complete code
+### Complete code
 
+#### Folder structure
+
+<FileTree>
+- src
+    - info.json
+- .env
+- **automatic-merge-request.py**
+- pyproject.toml
+
+</FileTree>
+
+<Tabs>
+
+<TabItem label="automatic-merge-request.py">
 ```py
 ## Load Gitlab Token from User > Prefrence > Tokens
 from dotenv import load_dotenv
@@ -184,7 +195,6 @@ GITLAB_TOKEN = os.environ["GITLAB_TOKEN"]
 import gitlab
 import base64
 
-GITLAB_TOKEN = os.environ["GITLAB_TOKEN"]
 GITLAB_URL = 'http://gitlab.example.com:8929' # Update the gitlab link here
 
 NAMESPACE = "basdemo"
@@ -277,3 +287,20 @@ merge_request = project.mergerequests.create({
 
 print(f"Merge Request created: {merge_request.web_url}")
 ```
+</TabItem>
+
+<TabItem label='.env'>
+```vb
+GITLAB_TOKEN=<your-token-here>
+```
+</TabItem>
+<TabItem label='src/info.json'>
+```json
+{
+    "string": "Text",
+    "number": 1,
+    "boolean": true
+}
+```
+</TabItem>
+</Tabs>
