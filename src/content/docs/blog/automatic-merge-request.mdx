@@ -5,6 +5,7 @@ authors: [sramesh]
 tags: [python, gitlab]
 date: 2024-09-08
 ---
+import { Steps, Aside } from '@astrojs/starlight/components';
 
 ## Introduction
 
@@ -12,103 +13,266 @@ Here is an easy way to programmatically create a merge-request in GITLAB.
 
 This comes in handy, when you have to update multiple projects simulatenously.
 
-## Sample code
+> Jump to complete code [here](#complete-code)
+
+## Prepare script environment
+I will be using `poetry`. check out installation details [here](../general/install/2024-09-09-install-poetry)
+
+Setup a poetry project using the command `poetry init`
+
+Add the required packages
+
+```sh frame="none"
+poetry add python-gitlab python-dotenv
+```
+
+## Script
+<Steps>
+1. Load `GITLAB_TOKEN` (highly recommended)
+
+    :::note
+    It is always a best practice that the API keys, Paswords or other secrets not to be stored along side Code-repo. 
+    It should be loaded from `environment variables`.
+    :::
+
+    For this create a file called `.env` in the project root
+
+    ```vb title=".env"
+    GITLAB_TOKEN=<your-token-here>
+    ```
+
+    ```py
+    from dotenv import load_dotenv
+    load_dotenv()
+
+    GITLAB_TOKEN = os.environ["GITLAB_TOKEN"]
+    ```
+2. Setup variables
+
+    Setting up necessary constants for the script.
+
+    ```py
+    GITLAB_URL = 'http://gitlab.example.com:8929' # update the gitlab link here
+
+    NAMESPACE = "basdemo" # update namespace here it could also be <group_name>/<sub_group_name>
+    PROJECT_NAME = "batch-file-executor"
+    ASSIGNEE_USERNAME = "basdemo"
+    ```
+
+3. Authenticate with Gitlab
+
+    ```py
+    gl = gitlab.Gitlab(GITLAB_URL, private_token=GITLAB_TOKEN)
+    ```
+
+4. Get the project
+
+    ```py
+    PROJECT_ID = f"{NAMESPACE}/{PROJECT_NAME}" 
+    project = gl.projects.get(PROJECT_ID)
+    ```
+
+5. Create a new branch from default branch
+    ```py
+    MAIN_BRANCH = project.default_branch
+    NEW_BRANCH = "add_new_branch" # update branch name here
+
+    #check if the branch exists, if not create it
+    if not any(branch.name == NEW_BRANCH for branch in project.branches.list()):
+        project.branches.create({"branch": NEW_BRANCH, "ref": MAIN_BRANCH})
+        print(f"Branch '{NEW_BRANCH}' created.")
+    ```
+
+6. Get User ID
+    ```py
+    user = gl.users.list(username=ASSIGNEE_USERNAME)[0]
+    assignee_id = user.id
+    ```
+
+7. Create merge-request
+    ```py
+    merge_request = project.mergerequests.create({
+        "source_branch":NEW_BRANCH,
+        "target_branch":MAIN_BRANCH,
+        "title":"feat/adding automatic merge request",
+        "description":"This merge request is created programmatically",
+        "assignee_id": assignee_id
+    })
+
+    print(f"Merge Request created: {merge_request.web_url}")
+    ```
+</Steps>
+
+<Aside type="note" title="Optional">
+
+<Steps>
+1. Add new file(s) to the merge-request
+
+    ```py
+
+    files = []
+    local_file = "src/info.json"
+    remote_file_path = "demo/info.json"
+
+    # Read the file content from local file
+    with open(local_file, 'r') as file:
+        file_content = file.read()
+
+    # Check if the file exists, if not, create it
+    try:
+        file = project.files.get(file_path=remote_file_path, ref=NEW_BRANCH)
+        print(f"File '{remote_file_path}' already exists in '{NEW_BRANCH}'.")
+    except gitlab.exceptions.GitlabGetError:
+        # Create the file in the new branch
+        files.append({
+            'action': 'create',
+            'file_path': remote_file_path,
+            'content': file_content
+        })
+    ```
+2. Update `Readme` file
+
+    ```py
+    file_path = 'README.md'
+    file = project.files.get(file_path=file_path, ref=NEW_BRANCH)
+
+    # Read the content
+    readme_content = base64.b64decode(file.content).decode('utf-8')
+    old_text = "# automatic-mr"
+    new_text = f"# # automatic-mr\n - Adding `info.json` using automatic merge request"
+    
+    # Update the content
+    updated_content = readme_content.replace(old_text, new_text)
+    file.content = updated_content
+    file.encoding = 'text'
+   
+    # Append to the files
+    files.append({
+        'action': 'update',
+        'file_path': file_path,
+        'content': updated_content
+    })
+
+    ```
+3. Create a commit
+    ```py
+    if len(files) > 0:
+        commit_message = 'Update multiple files - info.json and README.md'
+        commit_data = {
+            'branch': NEW_BRANCH,
+            'commit_message': commit_message,
+            'actions': files,
+        }
+        commit = project.commits.create(commit_data)
+        print(f"Commit created: {commit.id} - {commit_message}")
+    ```
+</Steps>
+</Aside>
+
+## Complete code
 
 ```py
+## Load Gitlab Token from User > Prefrence > Tokens
 from dotenv import load_dotenv
 import os
-import gitlab
-import base64
 
 load_dotenv()
 
-# constants
 GITLAB_TOKEN = os.environ["GITLAB_TOKEN"]
-GITLAB_URL = 'https://gitlab.url.here' # Update the gitlab link here
+
+## Setup variables
+import gitlab
+import base64
+
+GITLAB_TOKEN = os.environ["GITLAB_TOKEN"]
+GITLAB_URL = 'http://gitlab.example.com:8929' # Update the gitlab link here
+
 NAMESPACE = "basdemo"
 PROJECT_NAME = "automatic-mr"
 ASSIGNEE_USERNAME = "basdemo"
 
-# 1. Authenticate with GitLab
+## Authenticate with Gitlab
 gl = gitlab.Gitlab(GITLAB_URL, private_token=GITLAB_TOKEN)
 
-# 2. Get the project
-PROJECT_ID = f"{NAMESPACE}/{PROJECT_NAME}" # here the project id or namespace/project-slug
+## Get the project
+PROJECT_ID = f"{NAMESPACE}/{PROJECT_NAME}" 
 project = gl.projects.get(PROJECT_ID)
 
-# 3. Create new branch from the default branch
-MAIN_BRANCH = project.default_branch # default branch - can be "main" or "master" (depending on the project base)
-NEW_BRANCH = 'add_new_langauge'
+## Create a new branch from default branch
+MAIN_BRANCH = project.default_branch
+NEW_BRANCH = "add_new_branch" # update branch name here
 
-# Check if the branch already exists, if not create it
+#check if the branch exists, if not create it
 if not any(branch.name == NEW_BRANCH for branch in project.branches.list()):
-    project.branches.create({'branch': NEW_BRANCH, 'ref': MAIN_BRANCH})
+    project.branches.create({"branch": NEW_BRANCH, "ref": MAIN_BRANCH})
     print(f"Branch '{NEW_BRANCH}' created.")
 
+## Get User ID
+user = gl.users.list(username=ASSIGNEE_USERNAME)[0]
+assignee_id = user.id
 
-# 4. Adding files
-
-# 4.a.) Add a translation file from local folder to the new branch
-LOCAL_FILE_PATH = 'source/en.json' 
-REMOTE_FILE_PATH = 'src/translations/en.json'
-COMMIT_MESSAGE = 'Add english language file'
+## Add files (optional)
+files = []
+local_file = "src/info.json"
+remote_file_path = "demo/info.json"
 
 # Read the file content from local file
-with open(LOCAL_FILE_PATH, 'r') as file:
+with open(local_file, 'r') as file:
     file_content = file.read()
 
 # Check if the file exists, if not, create it
 try:
-    file = project.files.get(file_path=REMOTE_FILE_PATH, ref=NEW_BRANCH)
-    print(f"File '{REMOTE_FILE_PATH}' already exists in '{NEW_BRANCH}'.")
+    file = project.files.get(file_path=remote_file_path, ref=NEW_BRANCH)
+    print(f"File '{remote_file_path}' already exists in '{NEW_BRANCH}'.")
 except gitlab.exceptions.GitlabGetError:
     # Create the file in the new branch
-    project.files.create({
-        'file_path': REMOTE_FILE_PATH,
-        'branch': NEW_BRANCH,
-        'content': file_content,
-        'commit_message': COMMIT_MESSAGE,
+    files.append({
+        'action': 'create',
+        'file_path': remote_file_path,
+        'content': file_content
     })
-    print(f"File '{REMOTE_FILE_PATH}' added to branch '{NEW_BRANCH}'.")
 
-# 4.b.) Update readme
-
+## Update Readme (optional)
 file_path = 'README.md'
-file = project.files.get(file_path=file_path, ref=NEW_BRANCH) 
+file = project.files.get(file_path=file_path, ref=NEW_BRANCH)
 
-# Decode the README content
+# Read the content
 readme_content = base64.b64decode(file.content).decode('utf-8')
+old_text = "# automatic-mr"
+new_text = f"# automatic-mr\n - Adding `info.json` using automatic merge request"
 
-print(f"{readme_content}")
-
-# Define the text to replace
-old_text = "# Release Notes :newspaper:"
-new_text = "# Release Notes :newspaper:\n\n## Version x\n* [translation] adding new language"
-
-# Replace the content
+# Update the content
 updated_content = readme_content.replace(old_text, new_text)
-
-# Encode the updated content to base64 format
-encoded_content = base64.b64encode(updated_content.encode('utf-8')).decode('utf-8')
-
-# Update the README file with the new content
 file.content = updated_content
-file.encoding = 'text' 
-file.save(branch=NEW_BRANCH, commit_message='Update Release Notes in README')
-print(f"File '{file_path}' updated to branch '{NEW_BRANCH}'.")
+file.encoding = 'text'
 
-# 5. Create a Merge Request
+# Append to the files
+files.append({
+    'action': 'update',
+    'file_path': file_path,
+    'content': updated_content
+})
 
-# get user id
-user = gl.users.list(username=ASSIGNEE_USERNAME)[0]
-assignee_id = user.id
+## Create commit (optional)
+if len(files) > 0:
+    commit_message = 'Update multiple files - info.json and README.md'
+    commit_data = {
+        'branch': NEW_BRANCH,
+        'commit_message': commit_message,
+        'actions': files,
+    }
+    commit = project.commits.create(commit_data)
 
+    print(f"Commit created: {commit.id} - {commit_message}")
+
+
+## Create merge-request
 merge_request = project.mergerequests.create({
-    'source_branch': NEW_BRANCH,
-    'target_branch': MAIN_BRANCH,
-    'title': 'feature/Add new language',  
-    'description': 'This merge request add a new language to the project. In this case, ENGLISH',
-    'assignee_id': assignee_id,
+    "source_branch":NEW_BRANCH,
+    "target_branch":MAIN_BRANCH,
+    "title":"feat/adding automatic merge request",
+    "description":"This merge request is created programmatically",
+    "assignee_id": assignee_id
 })
 
 print(f"Merge Request created: {merge_request.web_url}")
