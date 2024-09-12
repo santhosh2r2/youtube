@@ -1,0 +1,77 @@
+---
+// Props for the Card component
+export interface Props {
+  header: string;
+  link: string;
+  iconName: string;
+  altText?: string;
+}
+
+const { header, link, iconName, altText = "Icon" } = Astro.props;
+---
+
+<a href={link} class="card">
+  <header class="card-header">
+    <p>{header}</p>
+  </header>
+</a>
+
+<style>
+  /* Basic Styles */
+  .card {
+    display: block;
+    text-decoration: none;
+    color: var(--color-text);
+    background-color: var(--color-background);
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px var(--color-card-shadow);
+    transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
+    position: relative; /* Needed for the absolute positioning of the icon */
+  }
+
+  .card:hover, .card:focus {
+    background-color: var(--color-background);
+    box-shadow: 0 8px 16px var(--color-card-hover-shadow);
+    transform: translateY(-4px); /* Slight lift on hover */
+  }
+
+  .card-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  
+  p {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--color-text);
+  }
+</style>
+
+<style is:global>
+    :root {
+      --color-background: #ffffff;
+      --color-text: #333333;
+      --color-secondary-text: #666666;
+      --color-link: #3498db;
+      --color-link-hover: #2980b9;
+      --color-card-shadow: rgba(0, 0, 0, 0.1);
+      --color-card-hover-shadow: rgba(0, 0, 0, 0.2);
+      --color-tag-background: #e0e0e0;
+      --color-tag-text: #333333;
+    }
+  
+    [data-theme='dark'] {
+      --color-background: #1e1e1e;
+      --color-text: #e0e0e0;
+      --color-secondary-text: #aaaaaa;
+      --color-link: #82cfff;
+      --color-link-hover: #66b3ff;
+      --color-card-shadow: rgba(0, 0, 0, 0.6);
+      --color-card-hover-shadow: rgba(0, 0, 0, 0.8);
+      --color-tag-background: #333333;
+      --color-tag-text: #e0e0e0;
+    }
+  </style>

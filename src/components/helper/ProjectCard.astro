@@ -1,0 +1,110 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  imageUrl: string;
+  link: string;
+  tags?: string[]; // Array of tags (optional)
+}
+
+const { title, description, imageUrl, link, tags = [] } = Astro.props;
+---
+
+<a href={link} class="card">
+  <img src={imageUrl} alt={title} class="card-img" />
+  <div class="card-content">
+    <h3 class="card-title">{title}</h3>
+    <p class="card-description">{description}</p>
+    {tags.length > 0 && (
+      <div class="card-tags">
+        {tags.map(tag => (
+          <span class="card-tag">{tag}</span>
+        ))}
+      </div>
+    )}
+  </div>
+</a>
+
+<style is:global>
+  :root {
+    --color-background: #ffffff;
+    --color-text: #333333;
+    --color-secondary-text: #666666;
+    --color-link: #3498db;
+    --color-link-hover: #2980b9;
+    --color-card-shadow: rgba(0, 0, 0, 0.1);
+    --color-card-hover-shadow: rgba(0, 0, 0, 0.2);
+    --color-tag-background: #e0e0e0;
+    --color-tag-text: #333333;
+  }
+
+  [data-theme='dark'] {
+    --color-background: #1e1e1e;
+    --color-text: #e0e0e0;
+    --color-secondary-text: #aaaaaa;
+    --color-link: #82cfff;
+    --color-link-hover: #66b3ff;
+    --color-card-shadow: rgba(0, 0, 0, 0.6);
+    --color-card-hover-shadow: rgba(0, 0, 0, 0.8);
+    --color-tag-background: #333333;
+    --color-tag-text: #e0e0e0;
+  }
+</style>
+
+<style>
+  .card {
+    width: 300px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px var(--color-card-shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: var(--color-background);
+    margin: 20px auto;
+    text-decoration: none;
+    color: var(--color-text);
+    display: block;
+  }
+
+  .card-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+  }
+
+  .card-content {
+    padding: 15px;
+  }
+
+  .card-title {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: var(--color-text);
+  }
+
+  .card-description {
+    font-size: 1em;
+    margin-bottom: 15px;
+    color: var(--color-secondary-text);
+    line-height: 1.5;
+  }
+
+  .card-tags {
+    margin-bottom: 15px;
+  }
+
+  .card-tag {
+    background-color: var(--color-tag-background);
+    color: var(--color-tag-text);
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.8em;
+    margin-right: 5px;
+    display: inline-block;
+    margin-bottom: 5px;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px var(--color-card-hover-shadow);
+  }
+</style>

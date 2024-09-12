@@ -1,0 +1,188 @@
+---
+title: Convert python script to exe files in Ubuntu
+excerpt: This article will show how to use pyinstaller in ubuntu
+authors: [sramesh]
+tags: [python, ubuntu, wine, pyinstaller, excel, venv, windows]
+date: 2024-09-04
+---
+
+import { Steps, Aside } from '@astrojs/starlight/components';
+
+## Introduction
+
+Converting a python script to an executable has meaningful benefits. 
+- Python does not need to installed in the client machine
+- Easy distribution
+- Useful in automation tasks
+
+<Aside type="tip" title="Sample script">
+    <details>
+        <summary>Below is a sample script for converting Excel 97-2003 (XLS) files to Excel files (XLSX) files</summary>
+
+        This script requires the packages `openpyxl` and `xlrd`
+
+```python title="excel_converter.py"
+import os
+import sys
+from openpyxl import Workbook
+from xlrd import open_workbook
+
+def convert_xls_to_xlsx(xls_file, output_folder):nmpm 
+    wb = open_workbook(xls_file)
+    new_wb = Workbook()
+
+    # Convert each sheet
+    for sheet_index in range(wb.nsheets):
+        sheet = wb.sheet_by_index(sheet_index)
+        new_sheet = new_wb.create_sheet(title=sheet.name if sheet_index else None)
+
+        for row in range(sheet.nrows):
+            for col in range(sheet.ncols):
+                new_sheet.cell(row=row + 1, column=col + 1).value = sheet.cell_value(row, col)
+
+    # Remove the default sheet created by openpyxl
+    if 'Sheet' in new_wb.sheetnames:
+        std = new_wb['Sheet']
+        new_wb.remove(std)
+
+    # Save as .xlsx
+    output_file = os.path.join(output_folder, os.path.splitext(os.path.basename(xls_file))[0] + '.xlsx')
+    new_wb.save(output_file)
+    print(f"Converted: {xls_file} to {output_file}")
+
+
+def process_input(input_path):
+    if os.path.isdir(input_path):
+        # Process all .xls files in the folder
+        for root, _, files in os.walk(input_path):
+            for file in files:
+                if file.endswith(".xls"):
+                    convert_xls_to_xlsx(os.path.join(root, file), root)
+    elif os.path.isfile(input_path) and input_path.endswith(".xls"):
+        # Convert a single file
+        convert_xls_to_xlsx(input_path, os.path.dirname(input_path))
+    else:
+        print(f"Invalid input: {input_path}. Please provide a valid .xls file or folder.")
+
+
+def main():
+    if len(sys.argv) != 2:
+        print("Usage: python excel_converter.py <file_or_folder>")
+        sys.exit(1)
+
+    input_path = sys.argv[1]
+    process_input(input_path)
+
+
+if __name__ == "__main__":
+    main()
+```
+        
+    </details>
+</Aside>
+
+> The rest of the article is based on the sample script.
+
+## Environment tested on
+
+- 🐧 [Ubuntu 22.04](https://releases.ubuntu.com/jammy/)
+- 🐍 [Python 3.8](https://www.python.org/downloads/release/python-3810/)
+- 🍷 [wine 6.0.3 (Ubuntu 6.0.3~repack-1)](https://wiki.winehq.org/Download)
+
+## Instructions
+
+Perform the following commands in a terminal opened in Ubuntu.
+
+<Steps>
+
+1. Download python (version 3.8) from **[here](https://www.python.org/downloads/release/python-3810/)**. Make sure it should be the windows version.
+
+2. Install `wine`. **Wine** is a compatibility layer capable of running Windows applications on several POSIX-compliant operating systems, such as Linux, macOS, & BSD.
+    
+    ```sh frame="none"
+    sudo apt install wine winetricks
+    ``` 
+
+3. Install python
+    ```sh frame="none"
+    # Download path maybe different
+    wine /home/dev/Downloads/python-3.8.10-amd64.exe>
+    ``` 
+
+    <Aside type="note">
+    My setup in Ubuntu:
+    - Username:             **dev**
+    - Working directory:    **/app**
+    - Sample file path:     **/app/excel_converter.py**
+    </Aside>
+
+4. Find out where `pip` or `python` is installed. We will create an virutal environment. For this we require, where `python` is created.
+
+    ```sh frame="none"
+    find ~/.wine -name python.exe
+
+    # /home/dev/.wine/drive_c/users/dev/Local Settings/Application Data/Programs/Python/Python38/python.exe
+    ```
+5. Setup an virtual environment
+
+    ```sh frame="none"
+    # create an venv
+    python -m venv ./dist/converter
+    ```
+
+    ```sh frame="none"
+    wine "/home/dev/.wine/drive_c/users/dev/Local Settings/Application Data/Programs/Python/Python38/python.exe" -m venv /app/dist/converter
+    ```
+    <Aside type="caution">
+    If there is any file that contains spaces. Just enclose them with quotes.
+    </Aside>
+
+6. The `pip.exe` is located under __/app/dist/converter/Scripts/__ and install the packages
+
+    ```sh frame="none"
+    wine "/home/dev/app/dist/converter/Scripts/pip.exe" install openpyxl xlrd pyinstaller
+    ```
+
+7. Convert the script into **EXE** file
+
+    ```sh frame="none"
+    wine "/home/dev/app/dist/converter/Scripts/pyinstaller.exe" --onefile /app/excel_converter.py
+    ```
+
+    The output is generated in the `dist` folder.
+
+    <Aside type="danger">
+    It might be possilbe (in my case, it had happened), that an error `unimplemented function api-ms-win-crt-runtime-l1-1-0.dll.fetestexcept` appears, while executing `pyinstaller`.
+
+    Then exeucte the following command and retry the `Step 7`
+    ```sh frame="none"
+    winetricks vcrun2015
+    ```
+    </Aside>
+
+
+8. Copy and Test the **EXE** file in a windows machine. Open __Command prompt__ or __Powershell__
+
+    ##### Single excel file execution
+    ```sh frame="none"
+    excel_converter.exe test.xls
+    
+    # C:\Users\basdemo\Desktop\trash\dist>excel_converter.exe test-file.xls
+    # Converted: test-file.xls to test-file.xlsx
+    ```
+
+
+    ##### Folder execution
+    ```sh frame="none"
+    excel_converter.exe Folder
+    
+    # C:\Users\basdemo\Desktop\trash\dist>excel_converter.exe Folder
+    # Converted: Folder\test-file - Kopie (2).xls to Folder\test-file - Kopie (2).xlsx
+    # Converted: Folder\test-file - Kopie (3).xls to Folder\test-file - Kopie (3).xlsx
+    # Converted: Folder\test-file - Kopie (4).xls to Folder\test-file - Kopie (4).xlsx
+    # Converted: Folder\test-file - Kopie (5).xls to Folder\test-file - Kopie (5).xlsx
+    # Converted: Folder\test-file - Kopie.xls to Folder\test-file - Kopie.xlsx
+    # Converted: Folder\test-file.xls to Folder\test-file.xlsx
+    ```
+
+</Steps>

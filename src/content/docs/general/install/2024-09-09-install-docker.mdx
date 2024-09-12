@@ -1,0 +1,72 @@
+---
+title: Docker Engine installation
+type: content
+authors: sramesh
+tags: [install, docker]
+sidebar:
+    badge:
+        text: updated
+        variant: caution
+---
+import { Steps } from '@astrojs/starlight/components';
+
+## How to download in Ubuntu (updated on Sep.2024)
+
+> For detailed instructions follow the documentation: https://docs.docker.com/engine/install/ubuntu/
+
+Below are the instructions for Ubuntu. 
+
+<Steps>
+1. **Preparation**
+
+    ```bash frame="none"
+    #remove any previous installation
+    for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
+    ``` 
+
+    ```bash frame="none"
+    sudo apt-get update
+    sudo apt-get install ca-certificates curl
+    sudo install -m 0755 -d /etc/apt/keyrings
+    sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+    sudo chmod a+r /etc/apt/keyrings/docker.asc
+    ```
+
+2. **Setup Repository** [recommended]
+
+    ```bash frame="none"
+    echo \
+    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+    $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+    sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+        
+    sudo apt-get update
+    ```
+
+3. **Install Docker Engine**
+
+    ```bash frame="none"
+    sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    ```
+
+4. Add docker to give **non root user access**
+
+    ```bash frame="none"
+    sudo groupadd docker
+
+    sudo usermod -aG docker $USER
+    ```
+
+5. **Logout** session or use command below to activate the new changes
+
+    ```bash frame="none"
+    newgrp docker
+    ```
+
+6. **Installation verification**
+
+    ```bash frame="none"
+    docker run hello-world
+    ```
+
+</Steps>
