@@ -4,11 +4,12 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "astro dev",
+    "dev": "astro dev --host 0.0.0.0 --port 60001",
     "start": "astro dev",
     "build": "astro check && astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "generate-pwa-assets": "pwa-assets-generator --preset minimal public/image/pic.jpg"
   },
   "dependencies": {
     "@astrojs/check": "^0.5.10",
@@ -19,7 +20,14 @@
     "starlight-blog": "^0.5.1",
     "starlight-image-zoom": "^0.2.0",
     "starlight-links-validator": "^0.10.1",
+    "starlight-theme-rapide": "^0.1.1",
     "typescript": "^5.4.5"
   },
-  "packageManager": "pnpm@^8.6.9"
+  "packageManager": "pnpm@^8.6.9",
+  "devDependencies": {
+    "@vite-pwa/assets-generator": "^0.2.6",
+    "@vite-pwa/astro": "^0.4.3",
+    "vite-plugin-mkcert": "^1.17.6",
+    "workbox-window": "^7.1.0"
+  }
 }

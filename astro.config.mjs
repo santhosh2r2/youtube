@@ -2,11 +2,27 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import starlightBlog from 'starlight-blog';
 import starlightImageZoom from 'starlight-image-zoom';
-import starlightLinksValidator from 'starlight-links-validator';
-import starlightUtils from "@lorenzo_lewis/starlight-utils";
+// import starlightLinksValidator from 'starlight-links-validator';
+// import starlightUtils from "@lorenzo_lewis/starlight-utils";
+// import starlightThemeRapide from 'starlight-theme-rapide'
+// import mkcert from 'vite-plugin-mkcert'
+
+import AstroPWA from "@vite-pwa/astro";
+import manifest from "./webmanifest.json";
 
 // https://astro.build/config
 export default defineConfig({
+  vite: {
+    logLevel: 'info',
+    define: {
+      __DATE__: `'${new Date().toISOString()}'`,
+    },
+    // plugins: [mkcert()]
+  },
+  build: {
+    outDir: "../dist/youtube",
+    chunkSizeWarningLimit: 5000,
+  },
   site: 'https://santhosh2r2.github.io',
   base: 'youtube',
   integrations: [
@@ -37,7 +53,7 @@ export default defineConfig({
         //     switcherStyle: "dropdown",
         //   },
         // }),
-        starlightLinksValidator(),
+        // starlightLinksValidator(),
         starlightBlog({
           authors: {
             sramesh: {
@@ -49,6 +65,7 @@ export default defineConfig({
           },
 
         }),
+        //starlightThemeRapide(),
       ],
 
       sidebar: [
@@ -56,6 +73,21 @@ export default defineConfig({
         { collapsed: true, label: 'Tutorials', autogenerate: { directory: 'tutorial', } },
         { collapsed: true, label: 'Projects', autogenerate: { directory: 'projects', } },
       ],
+    }),
+    AstroPWA({
+      mode: "production",
+      registerType: "autoUpdate",
+      workbox: {
+        navigateFallback: "/",
+        globPatterns: ["**/*.{css,js,html,svg,png,ico,txt}"],
+      },
+      experimental: {
+        directoryAndTrailingSlashHandler: true,
+      },
+      manifest: manifest,
+      devOptions: {
+        enabled: true,
+      },
     }),
   ]
 });
