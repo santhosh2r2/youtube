@@ -3,10 +3,6 @@ import svelte from '@astrojs/svelte';
 import starlight from '@astrojs/starlight';
 import starlightBlog from 'starlight-blog';
 import starlightImageZoom from 'starlight-image-zoom';
-// import starlightLinksValidator from 'starlight-links-validator';
-// import starlightUtils from "@lorenzo_lewis/starlight-utils";
-// import starlightThemeRapide from 'starlight-theme-rapide'
-import mkcert from 'vite-plugin-mkcert'
 
 import AstroPWA from "@vite-pwa/astro";
 import manifest from "./webmanifest.json";
@@ -18,7 +14,6 @@ export default defineConfig({
     define: {
       __DATE__: `'${new Date().toISOString()}'`,
     },
-    // plugins: [mkcert()]
   },
   build: {
     outDir: "../dist/youtube",
@@ -37,12 +32,19 @@ export default defineConfig({
             rel: "manifest"
           }
         },
-        {
-          tag: "script",
-          attrs: {
-            src: "/youtube/pwa.js"
-          }
-        }
+        // {
+        //   tag: "script",
+        //   attrs: {
+        //     src: "/youtube/pwa.js"
+        //   }
+        // },
+        // {
+        //   tag: "script",
+        //   attrs: {
+        //     defer: true,
+        //     content: `document.addEventListener('DOMContentLoaded',function(){if(document.fullscreenEnabled){const e=document.documentElement;setTimeout(()=>{document.fullscreenElement||e.requestFullscreen().catch(e=>{console.error(` + '`Error trying to enable fullscreen mode: ${e.message} (${e.name})`' + `)})},100)}else{console.log("Fullscreen mode is not supported by this browser.")}});`
+        //   }
+        // }
       ],
       title: 'Home',
       logo: {
@@ -65,12 +67,6 @@ export default defineConfig({
       },
       plugins: [
         starlightImageZoom(),
-        // starlightUtils({
-        //   multiSidebar: {
-        //     switcherStyle: "dropdown",
-        //   },
-        // }),
-        // starlightLinksValidator(),
         starlightBlog({
           authors: {
             sramesh: {
@@ -82,7 +78,6 @@ export default defineConfig({
           },
 
         }),
-        //starlightThemeRapide(),
       ],
       sidebar: [
         { collapsed: false, label: 'General', autogenerate: { directory: 'general', collapsed: true } },

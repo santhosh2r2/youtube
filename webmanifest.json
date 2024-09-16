@@ -1,36 +1,39 @@
 {
-    "$schema": "https://json.schemastore.org/web-manifest-combined.json",
-    "id": "santhosh-blog",
-    "name": "Santhosh Balaji Ramesh | Blog",
-    "short_name": "santhosh_blog",
-    "description": "This is my blog, journal, notes-to-self",
-    "start_url": "/youtube/",
-    "orientation": "landscape",
-    "display": "standalone",
-    "theme_color": "#ff5d01",
-    "background_color": "#11191f",
-    "icons": [
-      {
-        "src": "/youtube/image/pwa-64x64.png",
-        "sizes": "64x64",
-        "type": "image/png"
-      },
-      {
-        "src": "/youtube/image/pwa-192x192.png",
-        "sizes": "192x192",
-        "type": "image/png"
-      },
-      {
-        "src": "/youtube/image/pwa-512x512.png",
-        "sizes": "512x512",
-        "type": "image/png",
-        "purpose": "any"
-      },
-      {
-        "src": "/youtube/image/maskable-icon-512x512.png",
-        "sizes": "512x512",
-        "type": "image/png",
-        "purpose": "maskable"
-      }
-    ]
-  }
+  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+  "id": "santhosh-blog",
+  "name": "Santhosh Balaji Ramesh | Blog",
+  "short_name": "santhosh_blog",
+  "description": "This is my blog, journal, notes-to-self",
+  "start_url": "/youtube/",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "display": "fullscreen",
+  "theme_color": "#977DFF",
+  "background_color": "#EEEBFC",
+  "icons": [
+    {
+      "src": "/youtube/image/pwa-64x64.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    },
+    {
+      "src": "/youtube/image/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/youtube/image/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/youtube/image/maskable-icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
