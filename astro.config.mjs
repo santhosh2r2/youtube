@@ -29,6 +29,21 @@ export default defineConfig({
   integrations: [
     svelte(),
     starlight({
+      head: [
+        {
+          tag: "link",
+          attrs: {
+            href: "/youtube/manifest.webmanifest",
+            rel: "manifest"
+          }
+        },
+        {
+          tag: "script",
+          attrs: {
+            src: "/youtube/pwa.js"
+          }
+        }
+      ],
       title: 'Home',
       logo: {
         src: "./src/assets/pic.jpg",
@@ -44,7 +59,7 @@ export default defineConfig({
         email: "mailto:santhosh.mwpa@gmail.com"
       },
       favicon: "/image/pic.jpg",
-
+      lastUpdated: true,
       editLink: {
         baseUrl: "https://github.com/santhosh2r2/youtube/tree/main",
       },
