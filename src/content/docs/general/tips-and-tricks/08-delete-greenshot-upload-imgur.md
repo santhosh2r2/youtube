@@ -5,7 +5,7 @@ tags: [greenshot]
 sidebar:
     badge: new
 date: 2024-09-16
-lastUpdate: 2024-09-16
+lastUpdated: 2024-09-16
 ---
 
 ## Introduction

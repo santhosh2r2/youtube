@@ -4,7 +4,7 @@ excerpt: Using any unauthorized request like https://wa.me/send... or https://we
 authors: [sramesh]
 tags: [excel, vba, whatsapp]
 date: 2024-03-04
-lastUpdate: 2024-04-14
+lastUpdated: 2024-04-14
 ---
 
 ## Research about WhatsApp automated messages
