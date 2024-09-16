@@ -32,19 +32,6 @@ export default defineConfig({
             rel: "manifest"
           }
         },
-        // {
-        //   tag: "script",
-        //   attrs: {
-        //     src: "/youtube/pwa.js"
-        //   }
-        // },
-        // {
-        //   tag: "script",
-        //   attrs: {
-        //     defer: true,
-        //     content: `document.addEventListener('DOMContentLoaded',function(){if(document.fullscreenEnabled){const e=document.documentElement;setTimeout(()=>{document.fullscreenElement||e.requestFullscreen().catch(e=>{console.error(` + '`Error trying to enable fullscreen mode: ${e.message} (${e.name})`' + `)})},100)}else{console.log("Fullscreen mode is not supported by this browser.")}});`
-        //   }
-        // }
       ],
       title: 'Home',
       logo: {
@@ -90,7 +77,7 @@ export default defineConfig({
       registerType: "autoUpdate",
       workbox: {
         navigateFallback: "/youtube",
-        globPatterns: ["**/*.{css,js,html,svg,png,ico,txt}"],
+        globPatterns: ["**/*.{css,js,html,svg,png,ico,txt,jpg}"],
       },
       experimental: {
         directoryAndTrailingSlashHandler: true,
