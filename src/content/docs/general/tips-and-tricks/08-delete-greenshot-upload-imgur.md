@@ -34,6 +34,7 @@ Somehow, before retrieving the `deleteHash`, if the **Clear history** action is 
 - Open the file **Greenshot.log**
 - Search for `hashes`
 - and you can find `JzMS6J4` and its delete hash in the same log line 
-    ```log
-    2024-09-16 13:00:12,384 [Imgur plug-in] INFO  - [GreenshotImgurPlugin.ImgurPlugin] Storing imgur upload for hash JzMS6J4 and delete hash mLkC71Ou9jHmsBj
+  
+    ```log "JzMS6J4" "mLkC71Ou9jHmsBj"
+    --- [GreenshotImgurPlugin.ImgurPlugin] Storing imgur upload for hash JzMS6J4 and delete hash mLkC71Ou9jHmsBj
     ```
