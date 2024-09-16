@@ -1,9 +1,9 @@
 ---
 //@ts-nocheck
-import { pwaInfo } from 'virtual:pwa-info';
+import { pwaInfo } from "virtual:pwa-info";
 
 export interface Props {
-	title: string;
+  title: string;
 }
 
 // replaced dynamically
@@ -12,31 +12,34 @@ const buildDate = __DATE__;
 const { title } = Astro.props as Props;
 ---
 
-<html lang="en">
+<html>
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="apple-touch-icon" href="/pwa-192x192.png">
-    <meta name="msapplication-TileColor" content="#FFFFFF">
-    <meta name="theme-color" content="#ffffff">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="apple-touch-icon" href="/pwa-192x192.png" />
+    <meta name="msapplication-TileColor" content="#FFFFFF" />
+    <meta name="theme-color" content="#ffffff" />
     <title>{title}</title>
-    <meta name="description" content={title}>
+    <meta name="description" content={title} />
     <style>
-    main, footer {
+      main,
+      footer {
         text-align: center;
-    }
+      }
     </style>
-    { pwaInfo && <Fragment set:html={pwaInfo.webManifest.linkTag} /> }
-    <script src="/src/pwa.ts"></script>
+    <base href="/youtube/" />
+    <!-- {pwaInfo && <Fragment set:html={pwaInfo.webManifest.linkTag} />} -->
+    <link rel="manifest" href="/youtube/manifest.webmanifest" />
+    <script src="/src/pwa.js"></script>
   </head>
   <body>
     <main>
-        <article>
-            <slot />
-        </article>
+      <article>
+        <slot />
+      </article>
     </main>
     <footer>
-        Built at: { buildDate }
+      <!-- Built at: {buildDate} -->
     </footer>
   </body>
 </html>

@@ -1,11 +1,12 @@
 import { defineConfig } from 'astro/config';
+import svelte from '@astrojs/svelte';
 import starlight from '@astrojs/starlight';
 import starlightBlog from 'starlight-blog';
 import starlightImageZoom from 'starlight-image-zoom';
 // import starlightLinksValidator from 'starlight-links-validator';
 // import starlightUtils from "@lorenzo_lewis/starlight-utils";
 // import starlightThemeRapide from 'starlight-theme-rapide'
-// import mkcert from 'vite-plugin-mkcert'
+import mkcert from 'vite-plugin-mkcert'
 
 import AstroPWA from "@vite-pwa/astro";
 import manifest from "./webmanifest.json";
@@ -26,6 +27,7 @@ export default defineConfig({
   site: 'https://santhosh2r2.github.io',
   base: 'youtube',
   integrations: [
+    svelte(),
     starlight({
       title: 'Home',
       logo: {
@@ -67,7 +69,6 @@ export default defineConfig({
         }),
         //starlightThemeRapide(),
       ],
-
       sidebar: [
         { collapsed: false, label: 'General', autogenerate: { directory: 'general', collapsed: true } },
         { collapsed: true, label: 'Tutorials', autogenerate: { directory: 'tutorial', } },
@@ -78,7 +79,7 @@ export default defineConfig({
       mode: "production",
       registerType: "autoUpdate",
       workbox: {
-        navigateFallback: "/",
+        navigateFallback: "/youtube",
         globPatterns: ["**/*.{css,js,html,svg,png,ico,txt}"],
       },
       experimental: {

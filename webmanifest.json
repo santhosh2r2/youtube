@@ -4,6 +4,7 @@
     "name": "Santhosh Balaji Ramesh | Blog",
     "short_name": "santhosh_blog",
     "description": "This is my blog, journal, notes-to-self",
+    "start_url": "/youtube/",
     "orientation": "landscape",
     "display": "standalone",
     "theme_color": "#ff5d01",

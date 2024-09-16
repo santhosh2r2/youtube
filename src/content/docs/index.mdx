@@ -3,6 +3,9 @@ title: My Blog site
 description: The aim of this website is to share to the community what I have learned during the past years
 template: splash
 editUrl: false
+layout: ../../layouts/BaseLayout.astro
+extraHead: |
+  <link rel="manifest" href="/youtube/manifest.webmanifest">
 hero:
   tagline: Welcome, here I blog about tech stuff pertaining to Automation and IT fields. This site serves as a companion website of my youtube channel
   image:
@@ -24,6 +27,13 @@ hero:
     #   icon: email
 ---
 import { Card, CardGrid, LinkCard, Icon } from '@astrojs/starlight/components';
+
+{/* <html>
+<head>
+<script is:inline="./pwa.js" />
+<link rel="manifest" href="/youtube/manifest.webmanifest" />
+</head>
+</html> */}
 
 ## Explore
 
