@@ -6,10 +6,10 @@
   "description": "This is my blog, journal, notes-to-self",
   "start_url": "/youtube/",
   "display_override": [
-    "standalone",
+    "fullscreen",
     "minimal-ui"
   ],
-  "display": "fullscreen",
+  "display": "standalone",
   "theme_color": "#977DFF",
   "background_color": "#EEEBFC",
   "icons": [
