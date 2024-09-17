@@ -72,9 +72,12 @@ export default defineConfig({
         { collapsed: true, label: 'Projects', autogenerate: { directory: 'projects', } },
       ],
     }),
+    // registerType: "prompt",
+    // mainfest.json > id -- this field needs to be changed (or versioned)
+    //                       in order to generate the prompt
     AstroPWA({
       mode: "production",
-      registerType: "autoUpdate",
+      registerType: "prompt",
       workbox: {
         navigateFallback: "/youtube",
         globPatterns: ["**/*.{css,js,html,svg,png,ico,txt,jpg}"],
@@ -84,7 +87,7 @@ export default defineConfig({
       },
       manifest: manifest,
       devOptions: {
-        enabled: true,
+        enabled: false,
       },
     }),
   ]

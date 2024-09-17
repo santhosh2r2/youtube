@@ -1,3 +1,6 @@
+---
+import { Icon } from "@astrojs/starlight/components";
+--- 
 <script src="./pwa.ts"></script>
 <div
     id="pwa-toast"
@@ -7,32 +10,69 @@
     <div class="message">
       <span id="toast-message"></span>
     </div>
-    <button id="pwa-refresh">
-      Reload
-    </button>
-    <button id="pwa-close">
-      Close
-    </button>
+    <div class="button-wrapper">
+      <button id="pwa-refresh">
+        <Icon name="rocket" label="Reload"></Icon>
+        Reload
+      </button>
+      <button id="pwa-close">
+        <Icon name="close"></Icon>
+        Close
+      </button>
+    </div>
 </div>
+<style is:global>
+  :root {
+    --color-background: #ffffff; 
+    --color-text: #333333;
+    --color-secondary-text: #666666;
+    --color-link: #3498db;
+    --color-link-hover: #2980b9;
+    --color-card-shadow: rgba(0, 0, 0, 0.1);
+    --color-card-hover-shadow: rgba(0, 0, 0, 0.2);
+    --color-tag-background: #e0e0e0; 
+    --color-tag-text: #333333;
+  }
 
+  [data-theme='dark'] {
+    --color-background: #1e1e1e;
+    --color-text: #e0e0e0;
+    --color-secondary-text: #aaaaaa;
+    --color-link: #82cfff;
+    --color-link-hover: #66b3ff;
+    --color-card-shadow: rgba(0, 0, 0, 0.6);
+    --color-card-hover-shadow: rgba(0, 0, 0, 0.8);
+    --color-tag-background: #333333;
+    --color-tag-text: #e0e0e0;
+  }
+</style>
 <style>
 #pwa-toast {
+  background-color: var(--sl-color-orange-low);
   visibility: hidden;
   position: fixed;
   right: 0;
   bottom: 0;
   margin: 16px;
   padding: 12px;
-  border: 1px solid #8885;
+  border: 1px solid var(--sl-color-orange);
   border-radius: 4px;
   z-index: 1;
   text-align: left;
-  box-shadow: 3px 4px 5px 0 #8885;
+  /* box-shadow: 3px 4px 5px 0 var(--sl-color-orange); */
 }
 #pwa-toast .message {
   margin-bottom: 8px;
 }
+
+.button-wrapper{
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
 #pwa-toast button {
+  cursor: pointer;
   border: 1px solid #8885;
   outline: none;
   margin-right: 5px;
@@ -45,7 +85,17 @@
 button#pwa-refresh {
   display: none;
 }
-#pwa-toast.show.refresh button#pwa-refresh {
-  display: inline-block;
+#pwa-toast.show.refresh button#pwa-refresh{
+  display: flex; 
+  background-color: var(--sl-color-green-low);
+  border: 1px solid var(--sl-color-green);
+}
+
+#pwa-refresh, #pwa-close{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 5px;
+    margin: 0;
 }
 </style>
