@@ -52,3 +52,29 @@ Bookmark this page for quick-reference
 
 [![Built with Starlight](https://astro.badg.es/v2/built-with-starlight/tiny.svg)](https://starlight.astro.build)
 
+```mermaid
+gitGraph
+    commit
+    commit
+    commit
+    commit
+    branch develop
+    checkout develop
+    commit
+    commit
+    checkout main
+    merge develop
+    commit
+    branch test
+    checkout test
+    commit
+```
+
+```mermaid
+flowchart TD
+    A[Install SQL Server with `sa` user] --> B[Create a user `DSEEvoris` with sysadmin role]
+    B --> C[Disable `sa` user]
+    C --> D[Delete Windows user used during installation]
+    B --> E[Create `operator` user]
+    E --> F[Assign operator user with `db_roles`]
+```

@@ -7,6 +7,9 @@ import starlightImageZoom from 'starlight-image-zoom';
 import AstroPWA from "@vite-pwa/astro";
 import manifest from "./webmanifest.json";
 
+import rehypeMermaid from "rehype-mermaid";
+import rehypeRaw from 'rehype-raw';
+
 // https://astro.build/config
 export default defineConfig({
   vite: {
@@ -21,6 +24,7 @@ export default defineConfig({
   },
   site: 'https://santhosh2r2.github.io',
   base: 'youtube',
+
   integrations: [
     svelte(),
     starlight({
@@ -39,6 +43,7 @@ export default defineConfig({
       },
       components: {
         SiteTitle: './src/components/overrides/SiteTitle.astro',
+        TableOfContents: './src/components/overrides/TableOfContents.astro',
         // Sidebar: './src/components/overrides/Sidebar.astro',
       },
       social: {
@@ -87,8 +92,14 @@ export default defineConfig({
       },
       manifest: manifest,
       devOptions: {
-        enabled: false,
+        enabled: true,
       },
     }),
-  ]
+  ],
+  // markdown: {
+  //   rehypePlugins: [
+	// 		rehypeRaw,
+	// 		rehypeMermaid,
+	// 	],
+  // },
 });
