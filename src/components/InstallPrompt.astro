@@ -1,0 +1,120 @@
+---
+import { Icon } from "@astrojs/starlight/components";
+
+let installable = false;
+---
+
+
+<button id="install-btn" disabled>
+  <Icon name="setting" ></Icon>
+  Install my blog
+</button>
+
+<!-- Client-side script: runs only in the browser -->
+<script client:load>
+  let deferredPrompt = null;
+  let installable = false;
+
+  // Function to update the state of the install button
+  function updateInstallButton() {
+    const installBtn = document.getElementById('install-btn');
+    if (installBtn) {
+      installBtn.disabled = !installable;
+    }
+  }
+
+  // Listen for the beforeinstallprompt event
+  function handleBeforeInstallPrompt(event) {
+    event.preventDefault();
+    deferredPrompt = event;
+    installable = true;
+    updateInstallButton(); // Enable the install button
+  }
+
+  // Handle install button click
+  function handleInstallClick() {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+          console.log('User accepted the install prompt');
+        } else {
+          console.log('User dismissed the install prompt');
+        }
+        deferredPrompt = null;
+        installable = false;
+        updateInstallButton(); // Disable the button after user choice
+      });
+    }
+  }
+
+  // Listen for appinstalled event
+  function handleAppInstalled() {
+    console.log('App installed successfully');
+    installable = false;
+    updateInstallButton(); // Disable the install button after install
+  }
+
+  // Add event listeners when the script is loaded in the browser
+  window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+  window.addEventListener('appinstalled', handleAppInstalled);
+
+  // Attach the click event to the button
+  const installBtn = document.getElementById('install-btn');
+  installBtn.addEventListener('click', handleInstallClick);
+
+  // Initialize button state
+  updateInstallButton();
+</script>
+
+<style is:global>
+  :root {
+    --color-background: #ffffff; 
+    --color-text: #333333;
+    --color-secondary-text: #666666;
+    --color-link: #3498db;
+    --color-link-hover: #2980b9;
+    --color-card-shadow: rgba(0, 0, 0, 0.1);
+    --color-card-hover-shadow: rgba(0, 0, 0, 0.2);
+    --color-tag-background: #e0e0e0; 
+    --color-tag-text: #333333;
+  }
+
+  [data-theme='dark'] {
+    --color-background: #1e1e1e;
+    --color-text: #e0e0e0;
+    --color-secondary-text: #aaaaaa;
+    --color-link: #82cfff;
+    --color-link-hover: #66b3ff;
+    --color-card-shadow: rgba(0, 0, 0, 0.6);
+    --color-card-hover-shadow: rgba(0, 0, 0, 0.8);
+    --color-tag-background: #333333;
+    --color-tag-text: #e0e0e0;
+  }
+</style>
+
+<style>
+#install-btn {
+  background-color: var(--sl-color-orange-low);
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  margin: 16px;
+  padding: 12px;
+  border: 1px solid var(--sl-color-orange);
+  border-radius: 4px;
+  z-index: 1;
+  text-align: left;
+  /* box-shadow: 3px 4px 5px 0 var(--sl-color-orange); */
+}
+
+button{
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--sl-color-red);
+
+}
+
+</style>

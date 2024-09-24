@@ -1,14 +1,10 @@
 import { defineConfig } from 'astro/config';
-import svelte from '@astrojs/svelte';
 import starlight from '@astrojs/starlight';
 import starlightBlog from 'starlight-blog';
 import starlightImageZoom from 'starlight-image-zoom';
 
 import AstroPWA from "@vite-pwa/astro";
 import manifest from "./webmanifest.json";
-
-import rehypeMermaid from "rehype-mermaid";
-import rehypeRaw from 'rehype-raw';
 
 // https://astro.build/config
 export default defineConfig({
@@ -26,7 +22,6 @@ export default defineConfig({
   base: 'youtube',
 
   integrations: [
-    svelte(),
     starlight({
       head: [
         {
@@ -96,10 +91,5 @@ export default defineConfig({
       },
     }),
   ],
-  // markdown: {
-  //   rehypePlugins: [
-	// 		rehypeRaw,
-	// 		rehypeMermaid,
-	// 	],
-  // },
+
 });

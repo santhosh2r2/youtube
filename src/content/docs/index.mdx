@@ -12,11 +12,11 @@ hero:
   actions:
     - text: Blog
       link: /youtube/blog/
-      icon: right-arrow
-      variant: primary
+      icon: open-book
     - text: Youtube
       link: https://www.youtube.com/channel/UCR_Fuegjqal0Fvy6En2Bs3Q?sub_confirmation=1
       icon: youtube
+      variant: secondary
     # - text: LinkedIn
     #   link: https://www.linkedin.com/in/santhosh-balaji-ramesh/
     #   icon: linkedin
@@ -38,8 +38,8 @@ import { Card, CardGrid, LinkCard, Icon , Aside} from '@astrojs/starlight/compon
   <Card title="Tips and Tricks" icon="list-format" >
 		Checkout all tips and tricks [here](/youtube/general/tips-and-tricks/).
 	</Card>
-  <Card title="Boilerplates" icon="document" >
-		Explore boilerplates, starter-kits and much more, [here](/youtube/general/boilerplate/).
+  <Card title="Cookbooks" icon="document" >
+		Explore cookbooks, recipes, boilerplates, starter-kits and much more, [here](/youtube/general/boilerplate/).
 	</Card>
   <Card title="Installations" icon="setting" >
 		To view installation guides, click [here](/youtube/general/install/).
@@ -51,30 +51,3 @@ Bookmark this page for quick-reference
 </Aside>
 
 [![Built with Starlight](https://astro.badg.es/v2/built-with-starlight/tiny.svg)](https://starlight.astro.build)
-
-```mermaid
-gitGraph
-    commit
-    commit
-    commit
-    commit
-    branch develop
-    checkout develop
-    commit
-    commit
-    checkout main
-    merge develop
-    commit
-    branch test
-    checkout test
-    commit
-```
-
-```mermaid
-flowchart TD
-    A[Install SQL Server with `sa` user] --> B[Create a user `DSEEvoris` with sysadmin role]
-    B --> C[Disable `sa` user]
-    C --> D[Delete Windows user used during installation]
-    B --> E[Create `operator` user]
-    E --> F[Assign operator user with `db_roles`]
-```
