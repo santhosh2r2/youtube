@@ -1,3 +1,4 @@
+//#ts-nocheck
 import type { Props } from "@astrojs/starlight/props";
 
 type MarkdownHeading = Props["headings"][-1];
@@ -8,6 +9,7 @@ export type TOCItem = MarkdownHeading & {
 export function buildToc(headings: MarkdownHeading[]) {
   const toc: TOCItem[] = [];
   const parentHeadings = new Map();
+  
   headings.forEach((h) => {
     const heading = { ...h, subheadings: [] };
     parentHeadings.set(heading.depth, heading);
@@ -15,8 +17,9 @@ export function buildToc(headings: MarkdownHeading[]) {
     if (heading.depth === 2) {
       toc.push(heading);
     } else {
-      parentHeadings.get(heading.depth - 1).subheadings.push(heading);
+      parentHeadings.get(heading.depth - 1)?.subheadings.push(heading);
     }
   });
+  //console.log( {headings, parentHeadings});
   return toc;
 }
