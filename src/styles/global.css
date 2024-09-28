@@ -1,0 +1,11 @@
+.grid-two-columns {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  @media (min-width: 768px) {
+    .grid-two-columns {
+      grid-template-columns: 60% 40%;
+    }
+  }

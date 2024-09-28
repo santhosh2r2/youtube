@@ -22,29 +22,27 @@ hero:
     #   icon: linkedin
     # - text: Contact me
     #   link: mailto:santhosh.mwpa@gmail.com
+    #   variant: secondary
     #   icon: email
+
 ---
-import { Card, CardGrid, LinkCard, Icon , Aside} from '@astrojs/starlight/components';
+import { Card, CardGrid, LinkCard, Icon, Aside } from '@astrojs/starlight/components';
+import LatestArticles from "../../components/LatestArticles.astro";
+import Splash from "../../components/Splash.astro";
 
-## Explore
+<div class="grid-two-columns">
 
-<CardGrid stagger>
-  {/* <Card title="Projects" icon="seti:favicon" >
-    To view projects, click [here](/youtube/projects/).
-  </Card> */}
-  <Card title="Tutorials" icon="rocket" >
-		Checkout tutorials [here](/youtube/tutorial/).
-	</Card>
-  <Card title="Tips and Tricks" icon="list-format" >
-		Checkout all tips and tricks [here](/youtube/general/tips-and-tricks/).
-	</Card>
-  <Card title="Cookbooks" icon="document" >
-		Explore cookbooks, recipes, boilerplates, starter-kits and much more, [here](/youtube/general/boilerplate/).
-	</Card>
-  <Card title="Installations" icon="setting" >
-		To view installation guides, click [here](/youtube/general/install/).
-	</Card>
-</CardGrid>
+  <div>
+    ## Explore
+    <Splash />
+  </div>
+
+  <div style="margin-top: 0;">
+    ## Latest Articles
+    <LatestArticles />
+  </div>
+
+</div>
 
 <Aside type="tip" title="Note">
 Bookmark this page for quick-reference
