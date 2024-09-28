@@ -73,7 +73,6 @@ import { Icon } from "@astrojs/starlight/components";
 
 #pwa-toast button {
   cursor: pointer;
-  border: 1px solid #8885;
   outline: none;
   margin-right: 5px;
   border-radius: 2px;
@@ -85,11 +84,17 @@ import { Icon } from "@astrojs/starlight/components";
 button#pwa-refresh {
   display: none;
 }
+
 #pwa-toast.show.refresh button#pwa-refresh{
-  display: flex; 
   background-color: var(--sl-color-green-low);
   border: 1px solid var(--sl-color-green);
 }
+
+#pwa-close{
+  background-color: var(--sl-color-blue-low);
+  border: 1px solid var(--sl-color-blue);
+}
+
 
 #pwa-refresh, #pwa-close{
     display: flex;

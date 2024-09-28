@@ -1,37 +1,51 @@
 ---
 import { Icon } from "@astrojs/starlight/components";
-
-let installable = false;
 ---
 
-
-<button id="install-btn" disabled>
-  <Icon name="setting" ></Icon>
-  Install my blog
-</button>
+<div
+    id="install-toast"
+    role="alert"
+    aria-labelledby="toast-message"
+    class="hide"
+>
+    <div class="message">
+      App can be installed
+    </div>
+    <div class="button-wrapper">
+      <button id="install-btn" disabled>
+        <Icon name="setting" label="install"></Icon>
+        Install
+      </button>
+      <button id="close-btn">
+        <Icon name="close"></Icon>
+        Close
+      </button>
+    </div>
+</div>
 
 <!-- Client-side script: runs only in the browser -->
 <script is:inline>
   let deferredPrompt = null;
   let installable = false;
 
-  // Function to update the state of the install button
   function updateInstallButton() {
     const installBtn = document.getElementById('install-btn');
-    if (installBtn) {
-      installBtn.disabled = !installable;
+    const installToast = document.getElementById('install-toast');
+    installBtn.disabled = !installable;
+    if (!installable) {
+      installToast.classList.add("hide");
+    } else {
+      installToast.classList.remove("hide");
     }
   }
 
-  // Listen for the beforeinstallprompt event
   function handleBeforeInstallPrompt(event) {
     event.preventDefault();
     deferredPrompt = event;
     installable = true;
-    updateInstallButton(); // Enable the install button
+    updateInstallButton();
   }
 
-  // Handle install button click
   function handleInstallClick() {
     if (deferredPrompt) {
       deferredPrompt.prompt();
@@ -43,27 +57,32 @@ let installable = false;
         }
         deferredPrompt = null;
         installable = false;
-        updateInstallButton(); // Disable the button after user choice
+        updateInstallButton();
       });
     }
   }
 
-  // Listen for appinstalled event
+  function handleCloseClick() {
+    console.log('Close button clicked');
+    const installToast = document.getElementById('install-toast');
+    installToast.classList.add("hide");
+  }
+
   function handleAppInstalled() {
     console.log('App installed successfully');
     installable = false;
-    updateInstallButton(); // Disable the install button after install
+    updateInstallButton();
   }
 
-  // Add event listeners when the script is loaded in the browser
   window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
   window.addEventListener('appinstalled', handleAppInstalled);
 
-  // Attach the click event to the button
   const installBtn = document.getElementById('install-btn');
   installBtn.addEventListener('click', handleInstallClick);
+  
+  const closeBtn = document.getElementById('close-btn');
+  closeBtn.addEventListener('click', handleCloseClick); // Attach close button event
 
-  // Initialize button state
   updateInstallButton();
 </script>
 
@@ -94,7 +113,7 @@ let installable = false;
 </style>
 
 <style>
-#install-btn {
+#install-toast {
   background-color: var(--sl-color-orange-low);
   position: fixed;
   right: 0;
@@ -105,16 +124,45 @@ let installable = false;
   border-radius: 4px;
   z-index: 1;
   text-align: left;
-  /* box-shadow: 3px 4px 5px 0 var(--sl-color-orange); */
+}
+#install-toast.hide {
+  display: none;
+}
+#install-toast .message {
+  margin-bottom: 8px;
 }
 
-button{
+.button-wrapper{
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  gap: 10px;
-  border: 1px solid var(--sl-color-red);
-
 }
 
+#install-toast button{
+  cursor: pointer;
+  outline: none;
+  margin-right: 5px;
+  border-radius: 2px;
+  padding: 3px 10px;
+  
+}
+#install-btn{
+  background-color: var(--sl-color-green-low);
+  border: 1px solid var(--sl-color-green);
+}
+
+#close-btn{
+  background-color: var(--sl-color-blue-low);
+  border: 1px solid var(--sl-color-blue);
+}
+
+
+
+#install-btn, #close-btn{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 5px;
+    margin: 0;
+}
 </style>
