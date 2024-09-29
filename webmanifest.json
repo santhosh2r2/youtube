@@ -1,17 +1,22 @@
 {
-  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
-  "id": "0.0.37",
   "name": "Santhosh Balaji Ramesh | Blog",
   "short_name": "santhosh_blog",
-  "description": "This is my blog, journal, notes-to-self",
   "start_url": "/youtube/",
+  "display": "standalone",
+  "background_color": "#EEEBFC",
+  "lang": "en",
+  "scope": "/youtube/",
+  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+  "id": "0.0.38",
+  "description": "This is my blog, journal, notes-to-self",
   "display_override": [
     "fullscreen",
-    "minimal-ui"
+    "minimal-ui",
+    "window-controls-overlay",
+    "browser",
+    "standalone"
   ],
-  "display": "standalone",
   "theme_color": "#977DFF",
-  "background_color": "#EEEBFC",
   "icons": [
     {
       "src": "/youtube/image/pwa-64x64.png",
@@ -35,5 +40,8 @@
       "type": "image/png",
       "purpose": "maskable"
     }
+  ],
+  "categories": [
+    "education"
   ]
 }
