@@ -7,7 +7,6 @@ const { folder } = Astro.props;
 const collection: any[] = [];
 
 await getCollection("docs", (collectionEntry) => {
-    // console.log({ collection });
     let data = collectionEntry.data;
     if (
         !data.sidebar.hidden &&
@@ -20,15 +19,15 @@ await getCollection("docs", (collectionEntry) => {
             let temp = collectionEntry.id.match(/(?<=\/)(.*?)(?=\/)/gi);
             subFolderName = temp != null ? temp[0] : "";
         }
-
+        
         let { slug } = collectionEntry;
-        let { title, head } = data;
-
+        let { title } = data;
+        
+        //console.log({ slug: slug.replace(folder+"/", ""), subFolderName });
         collection.push({
             subFolderName,
-            slug: slug.replace(`${folder}/`, ""),
+            slug: slug.replace(folder, "/youtube/"+folder),
             title,
-            icon: head[0]?.content || "",
         });
     }
 });
@@ -42,8 +41,9 @@ const groupedCollection: any[] = Object.entries(groupedData).map(
 );
 
 // console.log(groupedCollection);
+// console.log(groupedCollection[1]);
 
-import { Card, CardGrid, LinkCard } from "@astrojs/starlight/components";
+import {  CardGrid } from "@astrojs/starlight/components";
 import TocCard from "../components/helper/TocCard.astro";
 ---
 
@@ -61,14 +61,12 @@ import TocCard from "../components/helper/TocCard.astro";
                             (p: {
                                 slug: string;
                                 title: string;
-                                icon: string;
                                 subFolderName: string;
                             }) => {
                                 return (
                                     //<LinkCard title={p.title} href={p.slug} />
                                     <TocCard
                                         header={p.title}
-                                        iconName={p.icon}
                                         link={p.slug}
                                     />
                                 );
