@@ -1,33 +1,52 @@
 ---
-// CardItem.astro
-
-import { Icon } from '@astrojs/starlight/components';
-
 interface Props {
   title: string;
   icon: string;
-  iconColor: string;
-  description: string;
   url: string;
 }
 
-const { title, icon, iconColor, description, url } = Astro.props;
+const { title, icon, url } = Astro.props;
 ---
 
-  <a href={url} class="card-item" style=`color: var(--sl-color-${iconColor}); background-color: var(--sl-color-${iconColor}-low);`>
+  <a href={url} class="card-item" >
       <div class="card-header">
-        <Icon name={icon} color={iconColor} />
+        <img src={icon} alt={icon} >
         <span>{title}</span>
       </div>
   </a>
 
-
+<style is:global>
+    :root {
+      --color-background: #ffffff;
+      --color-text: #333333;
+      --color-secondary-text: #666666;
+      --color-link: #3498db;
+      --color-link-hover: #2980b9;
+      --color-card-shadow: rgba(0, 0, 0, 0.1);
+      --color-card-hover-shadow: rgba(0, 0, 0, 0.2);
+      --color-tag-background: #e0e0e0;
+      --color-tag-text: #333333;
+    }
+  
+    [data-theme='dark'] {
+      --color-background: #1e1e1e;
+      --color-text: #e0e0e0;
+      --color-secondary-text: #aaaaaa;
+      --color-link: #82cfff;
+      --color-link-hover: #66b3ff;
+      --color-card-shadow: rgba(0, 0, 0, 0.6);
+      --color-card-hover-shadow: rgba(0, 0, 0, 0.8);
+      --color-tag-background: #333333;
+      --color-tag-text: #e0e0e0;
+    }
+</style>
 
 <style>
   .card-item:hover{
     transform: translateY(-8px);
   }
   .card-item {
+    appearance: none;
     margin: 10px auto;
     display: block;
     background: var(--color-background);
@@ -65,5 +84,9 @@ const { title, icon, iconColor, description, url } = Astro.props;
 
   a:hover {
     color: var(--color-link-hover);
+  }
+  img{
+    width: 2rem;
+    height: 2rem;
   }
 </style>
