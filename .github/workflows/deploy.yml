@@ -21,8 +21,7 @@ jobs:
       - name: Checkout your repository using git
         uses: actions/checkout@v4
       - name: Install, build, and upload your site
-        run: pnpm install
-        run: pnpm exec playwright install        
+        run: pnpm install && pnmp exec playwright install        
         uses: withastro/action@v2
         # with:
           # path: . # The root location of your Astro project inside the repository. (optional)
