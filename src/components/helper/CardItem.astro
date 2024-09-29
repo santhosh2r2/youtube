@@ -1,0 +1,79 @@
+---
+// CardItem.astro
+
+import { Icon } from '@astrojs/starlight/components';
+
+interface Props {
+  title: string;
+  icon: string;
+  iconColor: string;
+  description: string;
+  url: string;
+}
+
+const { title, icon, iconColor, description, url } = Astro.props;
+---
+
+<!-- <div class="card-item" style=`color: var(--sl-color-${iconColor}); background-color: var(--sl-color-${iconColor}-low);`>
+  <div class="card-header">
+    <Icon name={icon} color={iconColor} />
+    <span>{title}</span>
+  </div>
+</div> -->
+
+  <a href={url} class="card-item" style=`color: var(--sl-color-${iconColor}); background-color: var(--sl-color-${iconColor}-low);`>
+      <div class="card-header">
+        <Icon name={icon} color={iconColor} />
+        <span>{title}</span>
+      </div>
+      {/* <div class="card-details">
+        {card.description && <p>{card.description}</p>}
+      </div> */}
+  </a>
+
+
+
+<style>
+  .card-item:hover{
+    transform: translateY(-8px);
+  }
+  .card-item {
+    margin: 10px auto;
+    display: block;
+    background: var(--color-background);
+    color: var(--color-text);
+    border: 1px solid var(--color-tag-background);
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px var(--color-card-shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .card-item:hover {
+    box-shadow: 0 4px 10px var(--color-card-hover-shadow);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  h4 {
+    margin: 0;
+    color: var(--color-text);
+  }
+
+  p {
+    color: var(--color-secondary-text);
+  }
+
+  a {
+    color: var(--color-link);
+    text-decoration: none;
+  }
+
+  a:hover {
+    color: var(--color-link-hover);
+  }
+</style>
