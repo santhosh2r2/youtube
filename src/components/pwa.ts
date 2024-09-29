@@ -21,6 +21,7 @@ window.addEventListener('load', () => {
 
     pwaToast.classList.remove('show', 'refresh')
   }
+  
   const showPwaToast = (offline: boolean) => {
     if (!offline)
       pwaRefreshBtn.addEventListener('click', refreshCallback)
