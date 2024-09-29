@@ -9,12 +9,14 @@
     "build": "astro check && astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "generate-pwa-assets": "pwa-assets-generator --preset minimal public/image/pic.jpg"
+    "generate-pwa-assets": "pwa-assets-generator --preset minimal public/image/pic.jpg",
+    "prepare": "husky"
   },
   "dependencies": {
     "@astrojs/check": "^0.5.10",
     "@astrojs/starlight": "^0.27.1",
     "astro": "^4.15.6",
+    "rehype-mermaid": "^2.1.0",
     "sharp": "^0.32.6",
     "starlight-blog": "^0.5.1",
     "starlight-image-zoom": "^0.2.0",
@@ -26,6 +28,8 @@
   "devDependencies": {
     "@vite-pwa/assets-generator": "^0.2.6",
     "@vite-pwa/astro": "^0.4.3",
+    "husky": "^9.1.6",
+    "playwright": "^1.47.2",
     "workbox-window": "^7.1.0"
   }
 }
