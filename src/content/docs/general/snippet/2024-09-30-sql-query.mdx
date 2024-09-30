@@ -1,0 +1,63 @@
+---
+title: Convert `Pydantic` model to `SQL` query
+type: content
+authors: sramesh
+tags: [pydantic, sql]
+date: 2024-09-30
+lastUpdated: 2024-09-30
+---
+import { Steps, Aside } from '@astrojs/starlight/components';
+
+
+```py title="sample model"
+from pydantic import BaseModel
+
+# Sample Model
+class User(BaseModel):
+    id: int
+    name: str
+    age: str = 1
+    address: str
+    
+
+    def to_sql(self, table_name) -> str:
+        columns = ", ".join([f"[{col}]" for col in self.model_fields.keys()])
+        values = ", ".join(
+            [
+                (
+                    f"N'{getattr(self, field)}'"
+                    if isinstance(getattr(self, field), str)
+                    else str(getattr(self, field))
+                )
+                for field in self.model_fields.keys()
+            ]
+        )
+        return f"INSERT INTO {table_name} ({columns}) VALUES ({values});"
+```
+
+```py title="usage"
+# Sample data
+users = [
+    User(id=1, name="Alice", age="30", address="123 Maple Street"),
+    User(id=2, name="Bob", age="25", address="456 Oak Avenue"),
+    User(id=3, name="Charlie", age="35", address="789 Pine Road"),
+    User(id=4, name="Diana", age="28", address="101 Birch Boulevard"),
+    User(id=5, name="Eve", age="22", address="202 Cedar Lane")
+]
+
+# Concatenating SQL statements
+sql_statements = " ".join([user.to_sql("users") for user in users])
+print(sql_statements)
+
+```
+
+```sql
+-- Output
+
+INSERT INTO users ([id], [name], [age], [address]) VALUES (1, N'Alice', N'30', N'123 Maple Street'); 
+INSERT INTO users ([id], [name], [age], [address]) VALUES (2, N'Bob', N'25', N'456 Oak Avenue'); 
+INSERT INTO users ([id], [name], [age], [address]) VALUES (3, N'Charlie', N'35', N'789 Pine Road'); 
+INSERT INTO users ([id], [name], [age], [address]) VALUES (4, N'Diana', N'28', N'101 Birch Boulevard'); 
+INSERT INTO users ([id], [name], [age], [address]) VALUES (5, N'Eve', N'22', N'202 Cedar Lane');
+
+```

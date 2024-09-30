@@ -8,11 +8,10 @@ interface Props {
   title: string;
   icon: string;
   iconColor: string;
-  description: string;
   url: string;
 }
 
-const { title, icon, iconColor, description, url } = Astro.props;
+const { title, icon, iconColor, url } = Astro.props;
 ---
 
   <a href={url} class="card-item" style=`color: var(--sl-color-${iconColor}); background-color: var(--sl-color-${iconColor}-low);`>

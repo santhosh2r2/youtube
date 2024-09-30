@@ -5,21 +5,18 @@ const cards = [
   {
     title: "Tutorials",
     icon: "rocket",
-    description: 'Checkout tutorials <a href="/youtube/tutorial/">here</a>.',
     iconColor:"orange",
     url:"/youtube/tutorial"
   },
   {
     title: "Tips and Tricks",
     icon: "list-format",
-    description: 'Checkout all tips and tricks <a href="/youtube/general/tips-and-tricks/">here</a>.',
     iconColor:"green",
     url:"/youtube/general/tips-and-tricks"
   },
   {
     title: "Cookbooks",
     icon: "document",
-    description: 'Explore cookbooks, recipes, boilerplates, starter-kits and much more, <a href="/youtube/boilerplate/">here</a>.',
     iconColor:"purple",
     url:"/youtube/general/cookbook"
 
@@ -27,15 +24,19 @@ const cards = [
   {
     title: "Installations",
     icon: "setting",
-    description: 'To view installation guides, click <a href="/youtube/tutorial/">here</a>.',
     iconColor:"accent",
     url:"/youtube/general/install"
-
+  },
+  {
+    title: "Snippets",
+    icon: "document",
+    iconColor:"orange",
+    url:"/youtube/general/snippet"
   },
 ];
 
 ---
 
-  {cards.map(({ title, icon, description, iconColor ,url}) => (
-    <CardItem title={title} icon={icon} description={description} iconColor={iconColor} url={url}/>
+  {cards.map(({ title, icon, iconColor ,url}) => (
+    <CardItem title={title} icon={icon} iconColor={iconColor} url={url}/>
   ))}
