@@ -30,34 +30,40 @@ Jump to complete [here](#complete-code)
 ```mermaid
 sequenceDiagram
     participant Excel as Excel Sheet
-    participant VBA as VBA Code
-    participant Shell as Command Prompt
-    participant FileSystem as Temp file for storing result
+    participant Script as VBA Script
+    participant Shell as Shell Command
+    participant Plink as Plink Command
+    participant TempFile as Temp file for storing results
 
-    Excel->>VBA: Start SshLoginTest()
-    VBA->>VBA: Set plinkPath, tempFile, userName, password, hostIp
-    VBA->>Excel: Clear range B2:B20
-
-    loop For each IP address in range A2:A20
-        VBA->>Excel: Get hostIp, userName, password
-        alt Values are available
-            VBA->>VBA: Set tempFile path
-            VBA->>Shell: Run command (plink) to check SSH login
-            VBA->>Shell: Wait for 2 seconds
-            VBA->>FileSystem: Read result from tempFile
-            alt Login successful
-                VBA->>Excel: Set status to "Connection successful" (Green)
-                VBA->>Excel: Set timestamp in column C
-            else Login failed
-                VBA->>Excel: Set status to "Connection failed" (Red)
+    Excel->>Script: Start SshLoginTest()
+    Script->>Excel: Clear status column B2:B20
+    loop For each IP in Column A
+        Script->>Excel: Get hostIp, userName, password
+        alt hostIp, userName, password are not empty
+            Script->>TempFile: Create temp file for plink result
+            Script->>Shell: Run TrySshCommand() without -batch
+            Shell->>Plink: Execute plink command
+            Plink->>TempFile: Store result in temp file
+            TempFile->>Script: Read result
+            alt Result contains "successful"
+                Script->>Excel: Update status to "Connection successful" (Green)
+            else Result doesn't contain "successful"
+                Script->>Shell: Run TrySshCommand() with -batch
+                Shell->>Plink: Execute plink command with -batch
+                Plink->>TempFile: Store result in temp file
+                TempFile->>Script: Read result
+                alt Result contains "successful"
+                    Script->>Excel: Update status to "Connection successful" (Green)
+                else Result doesn't contain "successful"
+                    Script->>Excel: Update status to "Connection failed" (Red)
+                end
             end
-            VBA->>FileSystem: Delete tempFile
+            Script->>TempFile: Delete temp file
         else Missing values
-            VBA->>Excel: Set status to "Missing values" (Custom color)
+            Script->>Excel: Update status to "Missing either ip-address, username or password value" (Custom color)
         end
     end
-
-    Excel->>VBA: End SshLoginTest()
+    Script->>Excel: End SshLoginTest()
 ```
 
 ## Steps to build
