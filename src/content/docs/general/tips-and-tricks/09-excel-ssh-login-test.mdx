@@ -164,6 +164,22 @@ For the press `CTRL+1` or right-click and select `Format cells`.
             ActiveSheet.Cells(i, 2).Font.Color = vbRed
         End If
         ```
+    - It is possible that the host server is not known to the machine for the first time.
+
+        ![unknown_host](./img/09/2.png)
+
+        - Verify if the host exists in the `Registry editor` (**regedit**)
+            ![registered_hosts](./img/09/3.png)
+        
+        - To solve this issue, the host needs to be added to the `ssh cache`. Using the following command, without adding the `-batch` flag.
+            ```vb
+            'command to add host key to cache on first connection attempt
+            Command = "cmd /c echo y | " & plinkPath & " -ssh " & hostIp & " -l " & userName & " -pw " & password & " echo connection successful > " & tempFile
+
+            'run the command in shell, without window frame to add host key
+            Set objShell = CreateObject("wscript.shell")
+            returnCode = objShell.Run(Command, 0, True)
+            ```
 
 ### 3. Download the SAMPLE file
 
@@ -175,46 +191,37 @@ For the press `CTRL+1` or right-click and select `Format cells`.
 Sub SshLoginTest()
 
     Dim plinkPath As String, tempFile As String, userName As String, password As String, hostIp As String
-    
+    Dim objShell As Object, result As String
+
     'path to plink
     plinkPath = "C:\Temp\plink.exe"
-    
+
+    'initialize shell object
+    Set objShell = CreateObject("wscript.shell")
+
     'clear the status column
     Range("B2:B20").ClearContents
 
     'loop through the ip-address
     For i = 2 To Cells(Rows.Count, 1).End(xlUp).Row
-        
+
         'get the ip-address, username, password
         hostIp = Trim(ActiveSheet.Cells(i, 1).Value)
         userName = Trim(ActiveSheet.Cells(i, 4).Value)
         password = Trim(ActiveSheet.Cells(i, 5).Value)
 
         If hostIp <> "" And userName <> "" And password <> "" Then
-  
-            Dim objShell, returnCode, Command
-            
             'temporary file to store plink result
             tempFile = Environ$("TEMP") & "\plink_result_" & hostIp & ".txt"
             
-            'command to check for ssh login
-            Command = "cmd /c " & plinkPath & " -ssh " & hostIp & " -l " & userName & " -pw " & password & " -batch echo connection successfull exit > " & tempFile
-             
-            'run the command in shell, without window frame
-            Set objShell = CreateObject("wscript.shell")
-            returnCode = objShell.Run(Command, 0, True)
+            'try connecting and storing host key
+            If TrySshCommand(plinkPath, hostIp, userName, password, tempFile, False, objShell) Then
+                ActiveSheet.Cells(i, 2).Value = "Connection successful"
+                ActiveSheet.Cells(i, 2).Font.Color = vbGreen
+                ActiveSheet.Cells(i, 3).Value = Now
             
-            'wait a bit for the command to complete
-            Application.Wait (Now + TimeValue("00:00:02"))
-    
-            'read the result from the temporary file
-            result = ""
-            On Error Resume Next
-            result = CreateObject("Scripting.FileSystemObject").OpenTextFile(tempFile, 1).ReadAll
-            On Error GoTo 0
-          
-           'if login successfull, then the "connection successufull" test is checked
-            If InStr(result, "successfull") > 0 Then
+            'retry using -batch after host key caching
+            ElseIf TrySshCommand(plinkPath, hostIp, userName, password, tempFile, True, objShell) Then
                 ActiveSheet.Cells(i, 2).Value = "Connection successful"
                 ActiveSheet.Cells(i, 2).Font.Color = vbGreen
                 ActiveSheet.Cells(i, 3).Value = Now
@@ -227,8 +234,8 @@ Sub SshLoginTest()
             ActiveSheet.Cells(i, 2).Value = "Missing either ip-address, username or password value"
             ActiveSheet.Cells(i, 2).Font.Color = RGB(154, 88, 99)
         End If
-        
-         ' Clean up the temp file
+
+        ' Clean up the temp file
         On Error Resume Next
         Kill tempFile
         On Error GoTo 0
@@ -236,5 +243,33 @@ Sub SshLoginTest()
     Next
 
 End Sub
+
+Function TrySshCommand(plinkPath As String, hostIp As String, userName As String, password As String, tempFile As String, useBatch As Boolean, objShell As Object) As Boolean
+    Dim Command As String, result As String, returnCode As Long
+    
+    If useBatch Then
+        'Command to check for SSH login with -batch
+        Command = "cmd /c " & plinkPath & " -ssh " & hostIp & " -l " & userName & " -pw " & password & " -batch echo connection successful > " & tempFile
+    Else
+        'Command to add host key to cache on first connection attempt
+        Command = "cmd /c echo y | " & plinkPath & " -ssh " & hostIp & " -l " & userName & " -pw " & password & " echo connection successful > " & tempFile
+    End If
+
+    'run the command in shell, without window frame
+    returnCode = objShell.Run(Command, 0, True)
+    
+    'wait a bit for the command to complete
+    Application.Wait (Now + TimeValue("00:00:02"))
+
+    'read the result from the temporary file
+    On Error Resume Next
+    result = CreateObject("Scripting.FileSystemObject").OpenTextFile(tempFile, 1).ReadAll
+    On Error GoTo 0
+
+    'check if login was successful
+    TrySshCommand = (InStr(result, "successful") > 0)
+
+End Function
+
 
 ```
