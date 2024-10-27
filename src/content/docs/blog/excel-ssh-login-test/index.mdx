@@ -1,11 +1,12 @@
 ---
 title: Check if SSH login is possible using Excel
 authors: sramesh
+excerpt: Test if a machine is accessible via SSH
 tags: [excel, networking, ssh]
 sidebar:
   badge: new
 date: 2024-09-29
-lastUpdated: 2024-09-29
+lastUpdated: 2024-10-27
 ---
 
 import DownloadItem from "../../../../components/helper/DownloadItem.astro";
@@ -14,7 +15,7 @@ import DownloadItem from "../../../../components/helper/DownloadItem.astro";
 
 A shoutout to one my youtube subscriber which made this **article** possible
 
-![motivation](./img/09/1.png)
+![motivation](./img/1.png)
 
 :::tip
 Jump to complete [here](#complete-code)
@@ -172,10 +173,10 @@ For the press `CTRL+1` or right-click and select `Format cells`.
         ```
     - It is possible that the host server is not known to the machine for the first time.
 
-        ![unknown_host](./img/09/2.png)
+        ![unknown_host](./img/2.png)
 
         - Verify if the host exists in the `Registry editor` (**regedit**)
-            ![registered_hosts](./img/09/3.png)
+            ![registered_hosts](./img/3.png)
         
         - To solve this issue, the host needs to be added to the `ssh cache`. Using the following command, without adding the `-batch` flag.
             ```vb

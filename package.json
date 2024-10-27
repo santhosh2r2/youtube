@@ -13,9 +13,9 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@astrojs/check": "^0.5.10",
-    "@astrojs/starlight": "^0.27.1",
-    "astro": "^4.15.6",
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/starlight": "^0.28.3",
+    "astro": "^4.16.7",
     "rehype-mermaid": "^2.1.0",
     "sharp": "^0.32.6",
     "starlight-blog": "^0.5.1",
