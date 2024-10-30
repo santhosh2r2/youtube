@@ -1,0 +1,186 @@
+---
+title: A simple demo of OPC UA server and client 
+type: content
+authors: sramesh
+tags: [.net, python, IoT, OPC-UA]
+date: 2024-10-30
+lastUpdated: 2024-10-30
+---
+import { Steps, Aside } from '@astrojs/starlight/components';
+
+- overview diagram here
+- extend the variables to handle text and bool
+
+## Introduction
+
+`OPC-UA` has been established as one of the most common communication protocol in the Industrial Internet of Things (IIoT) spaning from field level to the enterprise level.
+
+This article will show how simple it is to build a server / client projects. The programming language is purely the author's choice. 
+
+What will be built at the end of this article
+
+- OPC-UA Server in `python` having **analog**, **digital** and **string** variables
+- OPC-UA Client using `.net winforms`
+- Containierize the server
+
+## Let`s build
+
+### The server
+
+The OPC-UA server is going to be developed in python. For the development, create a virtual environment. For this article, I will be using `poetry`. 
+
+<Aside type="note" title="Pro tip"> 
+
+Checkout the installation of Poetry [here](/youtube/general/install/2024-09-09-install-poetry)
+
+</Aside>
+
+<Steps> 
+1. Open up a terminal and initialize a virtual environment 
+    ```sh frame="none"
+    poetry init
+
+2. Install the dependencies
+    ```sh frame="none"
+    poetry add asyncua
+    ```
+    ```
+3. Create a file `server.py`
+
+4. Add the import
+    ```py
+    import asyncio
+    import logging
+
+    from asyncua import Server, ua
+    from asyncua.common.methods import uamethod
+    ```
+
+5. Create a `main` function and setup `server`
+    ```py
+    async def main():
+        _logger = logging.getLogger(__name__)
+
+        # setup our server
+        server = Server()
+        await server.init()
+        # endpoint is freely defined, provided the schema, ip-address and port number are present
+        server.set_endpoint("opc.tcp://0.0.0.0:4840/basdemo/")
+
+        # Add security policies to allow anonymous access
+        server.set_security_policy([
+            # Allow anonymous access (no security)
+            ua.SecurityPolicyType.NoSecurity,
+            # Add other policies if necessary, like Basic128Rsa15, etc.
+        ])
+
+        # set up own namespace, not really necessary but should as spec
+        uri = "https://basdemo.me"
+        idx = await server.register_namespace(uri)
+
+    ```
+
+    - Create an `object` and `numeric variable` within the object
+        ```py
+        # populating the address space
+        # server.nodes, contains links to very common nodes like objects and root
+        myobj = await server.nodes.objects.add_object(idx, "MyObject")
+        myvar = await myobj.add_variable(idx, "MyVariable", 6.7)
+
+        # Set MyVariable to be writable by clients
+        await myvar.set_writable()
+        ```
+
+    - Start the `server`
+
+        ```py
+        _logger.info("Starting server!")
+        async with server:
+            # update every second
+            while True:
+                await asyncio.sleep(1)
+                # read the value
+                new_val = await myvar.get_value() + 0.1
+                # write to the variable
+                await myvar.write_value(new_val)
+                # log
+                _logger.info("Set value of %s to %.1f", myvar, new_val)
+        ```
+
+    - Start the script
+
+        ```py
+        if __name__ == "__main__":
+            logging.basicConfig(level=logging.DEBUG)
+            # actual start of the ua-server
+            asyncio.run(main(), debug=True)
+        ```
+
+6. Start the `server`
+    - Switch to the virtual environment
+    ```sh frame="none"
+    poetry shell
+    ```
+
+    - Start the server
+    ```sh frame="none"
+    python server.py
+    ```
+
+    - Sample start output
+    ```sh frame="none"
+
+    ```
+</Steps>
+
+### The client
+
+Now let's create the client to interact with the server
+
+
+### Containierize the server
+
+- Create the `requirements.txt` file using `poetry`
+
+    ```sh frame="none"
+    poetry export --output requirements.txt --without-hashes --without-urls
+    ```
+
+    - _--without-hashes_ removes the package hashes
+    - _--without-urls_ removes the package urls
+
+- Create a `Dockerfile`
+
+    ```docker
+    # Use the official Python image from the Docker Hub
+    FROM python:3.11-slim
+
+    # Set the working directory in the container
+    WORKDIR /app
+
+    # Copy the Python script into the container
+    COPY server.py requirements.txt .
+
+    # Install required packages
+    RUN pip install --no-cache-dir -r requirements.txt
+
+    # port to be exposed
+    EXPOSE 4840
+
+    # Command to run the script
+    CMD ["python", "server.py"]
+    ```
+
+- Create a `docker-compose.yml` file
+
+    ```yml
+
+    ```
+- Now you can start the `server` in network and not worry about local environment
+
+## Future tasks
+
+- Make the communication secure
+- Setup functions
+- Setup alarms and conditions
+- Setup information model
