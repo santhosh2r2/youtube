@@ -40,6 +40,7 @@ export default defineConfig({
       components: {
         SiteTitle: './src/components/overrides/SiteTitle.astro',
         TableOfContents: './src/components/overrides/TableOfContents.astro',
+        MarkdownContent: "./src/components/overrides/MarkdownContent.astro",
         // Sidebar: './src/components/overrides/Sidebar.astro',
       },
       social: {
