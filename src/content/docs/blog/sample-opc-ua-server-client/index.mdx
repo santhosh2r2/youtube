@@ -2,14 +2,13 @@
 title: A simple demo of OPC UA server and client 
 type: content
 authors: sramesh
-tags: [.net, python, IoT, OPC-UA]
+tags: [.net, python, IoT, OPC-UA, visual studio, docker]
 date: 2024-10-30
-lastUpdated: 2024-10-30
+lastUpdated: 2024-11-12
 ---
 import { Steps, Aside } from '@astrojs/starlight/components';
 
-- overview diagram here
-- extend the variables to handle text and bool
+![Overview](./img/1.png)
 
 ## Introduction
 
@@ -44,7 +43,7 @@ Checkout the installation of Poetry [here](/youtube/general/install/2024-09-09-i
     ```sh frame="none"
     poetry add asyncua
     ```
-    ```
+
 3. Create a file `server.py`
 
 4. Add the import
@@ -71,7 +70,7 @@ Checkout the installation of Poetry [here](/youtube/general/install/2024-09-09-i
         server.set_security_policy([
             # Allow anonymous access (no security)
             ua.SecurityPolicyType.NoSecurity,
-            # Add other policies if necessary, like Basic128Rsa15, etc.
+            # TODO: Add other policies if necessary, like Basic128Rsa15, etc.
         ])
 
         # set up own namespace, not really necessary but should as spec
@@ -129,13 +128,173 @@ Checkout the installation of Poetry [here](/youtube/general/install/2024-09-09-i
 
     - Sample start output
     ```sh frame="none"
-
+    INFO:asyncio:<Server sockets=(<asyncio.TransportSocket fd=480, family=2, type=1, proto=6, laddr=('0.0.0.0', 4840)>,)> is serving
+    INFO:asyncua.server.binary_server_asyncio:Listening on 0.0.0.0:4840
+    DEBUG:asyncua.server.server:OPC UA Server(opc.tcp://0.0.0.0:4840/server/) server started
+    INFO:__main__:Set value of ns=2;i=2 to 6.8
+    INFO:__main__:Set value of ns=2;i=2 to 6.9
+    INFO:__main__:Set value of ns=2;i=2 to 7.0
     ```
 </Steps>
 
 ### The client
 
-Now let's create the client to interact with the server
+Now let's create the client to interact with the server in `Visual Studio 2022`
+
+<Steps>
+1. Create a `Windows Forms App` in **C#** language
+
+2. Give a project name: `OPC.Client.Demo` and select a folder to store the solution
+
+3. Select `.NET 8.0 (Long Term Support)` (at the time of writing, this is the latest LTS version)
+
+4. In the Form-Designer, make the following:
+
+    | Control | Name         | Text                            | Description                   |
+    | ------- | ------------ | ------------------------------- | ----------------------------- |
+    | Label   | lblStatus    |                                 | Display the connection status |
+    | Label   | lblNodeValue |                                 | Shows the current node-value  |
+    | Label   | label1       | OPC Server                      |                               |
+    | Label   | label2       | Node ID                         |                               |
+    | --      | --           | --                              |                               |
+    | Textbox | txtServerUrl | opc.tcp://localhost:4840/server | Set the server url            |
+    | Textbox | txtNodeId    |                                 | Set the Node-ID               |
+    | Textbox | txtNodeWrite |                                 | Write value to the node id    |
+    | --      | --           | --                              |                               |
+    | Button  | btnConnect   | Connect                         | Connect to the server         |
+    | Button  | btnNodeRead  | Read                            | Read value of the node-id     |
+    | Button  | btnNodeWrite | Write                           | Write to the node             |
+
+    ![Windows Form Designer](./img/2.png)
+
+5. Install the Nuget package `OPCFoundation.NetStandard.Opc.Ua`
+
+    ![Nuget package](./img/3.png)
+
+6. Use the following code
+
+    - In the `Form1.cs` add 2 private variables
+
+        ```cs
+        using Opc.Ua;
+        using Opc.Ua.Client;
+        using Opc.Ua.Configuration;
+        using System.Globalization;
+
+        namespace OPC.Client.Demo
+        {
+            public partial class Form1 : Form
+            {
+
+                private ApplicationInstance _application;
+                private Session _session;
+
+                public Form1()
+                {
+                    InitializeComponent();
+                }
+
+                //Rest of the code commes here
+            }
+        }
+
+        ```
+
+    - Function: Button - *Connect*
+
+        ```cs "async" "await"
+        private async void btnConnect_Click(object sender, EventArgs e)
+        {
+            lblStatus.Text = "...";
+            try
+            {
+                // Create and configure the OPC UA application
+                _application = new ApplicationInstance
+                {
+                    ApplicationName = "OpcClientDemo",
+                    ApplicationType = ApplicationType.Client,
+                    ApplicationConfiguration = new Opc.Ua.ApplicationConfiguration()
+                    {
+                        ApplicationName = "OpcClientDemo",
+                        ApplicationType = ApplicationType.Client,
+                        ClientConfiguration = new ClientConfiguration()
+                    }
+                };
+
+                // Connect to the server
+                var endpointUrl = CoreClientUtils.SelectEndpoint(txtSeverUrl.Text, false);
+                var endpointConfig = EndpointConfiguration.Create(_application.ApplicationConfiguration);
+                var endpoint = new ConfiguredEndpoint(null, endpointUrl, endpointConfig);
+                _session = await Session.Create(_application.ApplicationConfiguration, endpoint, false, "OpcUaClientGuiSession", 60000, new UserIdentity(new AnonymousIdentityToken()), null);
+
+                lblStatus.Text = $"{DateTime.Now.ToString(CultureInfo.InvariantCulture)} Connected to OPC UA server.";
+            }
+            catch (Exception ex)
+            {
+                lblStatus.Text = $"{DateTime.Now.ToString(CultureInfo.InvariantCulture)} Connection failed: " + ex.Message;
+            }
+
+        }
+        ```
+
+    - Function: Button - *Read*
+
+        ```cs "async" "await"
+        private async void bntNodeRead_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var nodeIdToRead = new NodeId(txtNodeId.Text); // Get Node ID from the TextBox
+                var readValue = await _session.ReadValueAsync(nodeIdToRead);
+                lblNodeValue.Text = "value: " + readValue.ToString();
+
+            }
+            catch (Exception ex)
+            {
+                //TODO: handle error
+            }
+        }
+
+        
+        ```
+
+    - Function: Button - *Write*
+        
+        ```cs "async" "await"
+        private void btnNodeWrite_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Retrieve the NodeId and the value from the text boxes
+                var nodeId = new NodeId(txtNodeId.Text);
+                var valueToWrite = new Variant(Convert.ToDouble(txtNodeWrite.Text)); // Use appropriate data type
+
+                // Create a WriteValue object for the specified variable
+                var writeValue = new WriteValue
+                {
+                    NodeId = nodeId,
+                    AttributeId = Attributes.Value,
+                    Value = new DataValue(valueToWrite)
+                };
+
+                // Write to the variable
+                WriteValueCollection writeCollection = [writeValue];
+                _session.Write(null, writeCollection, out var results, out _);
+
+            }
+            catch (Exception ex)
+            {
+                //TODO: handle error
+            }
+        }
+        
+        ```
+    
+    - Now start the `Windows Form` project.
+
+    ![After starting OPC-UA client](./img/4.png)
+    
+</Steps>
 
 
 ### Containierize the server
@@ -171,11 +330,25 @@ Now let's create the client to interact with the server
     CMD ["python", "server.py"]
     ```
 
+- Build the image
+
+    ```sh frame="none"
+    docker build -t opcua-demo-image .
+    ```
+
 - Create a `docker-compose.yml` file
 
     ```yml
-
+    name: opcua-demo
+    services:
+        opcua-demo:
+            image: opcua-demo-image
+            container_name: opcua-demo
+            restart: always
+            ports:
+            - 4840:4840
     ```
+
 - Now you can start the `server` in network and not worry about local environment
 
 ## Future tasks
