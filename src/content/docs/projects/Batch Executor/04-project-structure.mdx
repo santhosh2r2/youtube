@@ -3,7 +3,315 @@ title: Project structure
 type: content
 authors: sramesh
 ---
+import { FileTree, Tabs, TabItem, Steps } from '@astrojs/starlight/components';
 
-## Project structure
+Below is the project solution structure.
 
-coming soon...
+<FileTree  >
+- .gitattributes
+- .gitignore
+- .gitlab-ci.yml
+- Batch.File.Executor.sln
+- Batch.File.Executor.sln.DotSettings.user
+- LICENSE.txt
+- README.md
+- Batch.File.Executor               # WinForms project
+	-   Batch.File.Executor.csproj
+	-   Batch.File.Executor.csproj.user
+	-   editor.html
+	-   MainForm.cs
+        -   MainForm.Designer.cs
+        -   MainForm.resx
+	-   NLog.config
+	-   **Program.cs**
+	- Controllers
+		- AppControllerBase.cs
+		- BatchFileAppController.cs
+		- ExecuteFileController.cs
+		- LogController.cs
+    - Lib
+	- Monaco
+		- ...                       # library comes here
+    - Models
+        - Datamodel.cs
+    - Properties
+        - PublishProfiles
+            - FolderProfile.pubxml
+            - FolderProfile.pubxml.user
+    - Resources
+    - $this.Icon.ico
+    - Service
+        - AppLogger.cs
+    - UserControls
+        - MainView.cs
+            - MainView.Designer.cs
+            - MainView.resx
+    - Views
+        - DialogBase.cs
+            - DialogBase.Designer.cs
+            - DialogBase.resx
+        - DialogNewFile.cs
+            - DialogNewFile.Designer.cs
+            - DialogNewFile.resx
+        - DialogUpload.cs
+            - DialogUpload.Designer.cs
+            - DialogUpload.resx
+- Unit.Tests                        # Tests
+    - Database_Reset.cs
+    - NLog.config
+    - Test_EF_Database.cs
+    - Test_Execution.cs
+    - Test_NLog.cs
+    - Unit.Tests.csproj
+	- Models
+		- Datamodel.cs
+            
+</FileTree>
+
+
+## Application setup
+
+- Create a Windows Forms C# project in visual studio
+- Create also a Unit Test project
+
+### Nuget Packages
+
+- Packages for `Windows Forms C#` project
+
+    - FontAwesome.Sharp (6.6.0)
+    - Microsoft.EntityFrameworkCore (8.0.8) 
+    - Microsoft.EntityFrameworkCore.Sqlite (8.0.8) 
+    - Microsoft.EntityFrameworkCore.Tools (8.0.8) 
+    - Microsoft.Web.WebView2 (1.0.2739.15)
+    - NLog (5.3.3)
+    - NLog.Databases (5.3.3)
+    - NLog.Extensions.Logging (5.3.12)
+    - System.Data.SQLite (1.0.118)
+
+- Packages for `Unit Test` project
+
+    - coverlet.collector (6.0.2) 
+    - Microsoft.EntityFrameworkCore (8.0.8) 
+    - Microsoft.EntityFrameworkCore.InMemory (8.0.8) 
+    - Microsoft.EntityFrameworkCore.Tools (8.0.8) 
+    - Microsoft.Web.WebView2 (1.0.2739.15)
+    - NLog (5.3.3)
+    - NLog.Databases (5.3.3)
+    - NLog.Extensions.Logging (5.3.12)
+    - System.Data.SQLite (1.0.118)
+    - xunit (2.9.0)
+    - xunit.runner.visualstudio (2.8.2)
+
+### Log configuration
+
+In this project, the logging of system and user actions are saved to `SQLite` database and alternatively as files. To achieve this, we will be using `NLog` framework.
+
+- NLog internal configuration - for the logging framework itself
+    - `internalLogLevel` - level of logging required for viewing
+    - `internalLogFile` - location of the `NLog` Logging
+
+- `Targets` in NLog define where the logs are to be sent. This could be console, file or even database. For this project, we are going to save the logs in file (maximum 4 files) and to SQLite database itself
+
+    - For the file target, `layout` attribute defines how each line is formatted.
+    - For the database target, `commandText` element defines how each entry is saved to the database. `parameter` are defined in the command text, which then can have an element describing the `layout`
+
+- `Rules` define which logger is allowed to write to the target. Logging granularity can be set with the attribute `minlevel`
+
+Refer the entire configuration of the `NLog` below.
+
+```xml title="NLog.config"
+<?xml version="1.0" encoding="utf-8" ?>
+<nlog xmlns="http://www.nlog-project.org/schemas/NLog.xsd" 
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	internalLogLevel="Debug"
+	internalLogFile="c:\temp\nlog-internal.txt"
+	internalLogToConsole="true"
+	throwConfigExceptions="true"
+	>
+	<targets>
+		<target name="file" xsi:type="File"
+		        layout="${longdate} | ${logger} | ${level:uppercase=true} | ${event-properties:item=batchFileId} | ${message}${exception:format=ToString}"
+		        fileName="C:/Temp/logs/AppLog.${shortdate}.txt"
+		        maxArchiveFiles="4"
+		        archiveAboveSize="10240" />
+
+		<target xsi:type="Database" name="database">
+			<dbProvider>System.Data.SQLite.SQLiteConnection, System.Data.SQLite</dbProvider>
+			<connectionString>Data Source=batchfileexecutor.db;Version=3;</connectionString>
+			<commandType>Text</commandType>
+			<commandText>
+				INSERT INTO Log
+				(LogDate, Level, BatchFileId, Message)
+				VALUES
+				(@logdate, @level, @batchfileid, @message)
+			</commandText>
+
+			<parameter name="@logdate" layout="${longdate:universalTime=true}" />
+			<parameter name="@level" layout="${level:uppercase=true}" />
+			<parameter name="@batchfileid" layout="${event-properties:item=BatchFileId}" />
+			<parameter name="@message" layout="${message}" />
+
+		</target>
+
+	</targets>
+
+	<rules>
+		<logger name="*" minlevel="Trace" writeTo="database" />
+		<logger name="*" minlevel="Trace" writeTo="file" />
+	</rules>
+</nlog>
+```
+
+## UI development
+![app](./img/04/1.png)
+
+<Steps>
+1. `MainView` - consist of the batch file along with start and delete buttons
+2. `Sidebar` - actions for create and uploading files, lists available batch files for ExecuteFileController
+3. `Logger` - displays the user and system action
+</Steps>
+
+### Mainview
+
+
+The main view consists of filename, start button and delete button.
+
+![main-view](./img/04/2.png)
+
+<Tabs>
+<TabItem label="Part of the Editor" icon='seti:c-sharp'>
+
+```c#
+    #region Monaco Editor
+
+    // Method to set content dynamically in the Monaco Editor
+    private async void SetEditorContent(string content)
+    {
+        // Execute JavaScript in the WebView2 to update the editor content
+        var script = $"setEditorContent({EscapeJavaScriptString(content)});";
+        if (webView21.CoreWebView2 != null) await webView21.ExecuteScriptAsync(script);
+    }
+
+    // Utility method to escape JavaScript strings to prevent errors
+    private static string EscapeJavaScriptString(string s)
+    {
+        return "\"" + s.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("\n", "\\n").Replace("\r", "\\r") + "\"";
+    }
+
+
+    private async void InitializeWebView2Async()
+    {
+        // Ensure WebView2 is ready before loading the content
+        await webView21.EnsureCoreWebView2Async(null);
+
+        // Get the path of the HTML file containing the Monaco Editor
+        var currentDirectory = Directory.GetCurrentDirectory();
+        var editorHtmlPath = Path.Combine(currentDirectory, "editor.html");
+
+        // Load the editor.html file into the WebView2
+        webView21.Source = new Uri(editorHtmlPath);
+
+    }
+    #endregion
+```
+</TabItem>
+
+<TabItem label="editor.html" icon="seti:html">
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monaco Editor</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        #container {
+            width: 100%;
+            height: 100vh;
+        }
+    </style>
+    <script src="Lib/Monaco/min/vs/loader.js"></script>
+</head>
+<body>
+    <div id="container"></div>
+    <script>
+
+        let editor; // Declare the editor variable globally
+
+        // Configure the path to the local Monaco Editor files
+        require.config({
+            paths: {
+                'vs': 'Lib/Monaco/min/vs'
+            }
+        });
+        require(['vs/editor/editor.main'], function () {
+            editor = monaco.editor.create(document.getElementById('container'), {
+                value: [
+                    'loading...',
+                ].join('\n'),
+                language: 'bat', // Set language to Batch script
+                minimap: { enabled: false }, // Hide the mini-map
+                theme: 'vs-light', // vs-dark
+                automaticLayout: true,  
+                wordWrap: "on",
+            });
+        });
+
+        // Function to set content dynamically from C#
+        function setEditorContent(content) {
+            if (editor) {
+                editor.setValue(content);
+            } else {
+                console.error("Editor is not initialized.");
+            }
+        }
+        // Function to get the content of the Monaco Editor
+        function getEditorContent() {
+            return editor ? editor.getValue() : '';
+        }
+    </script>
+</body>
+</html>
+
+```
+</TabItem>
+
+</Tabs>
+
+### DialogNewFile
+
+![dialog-newfile](./img/04/4.png)
+
+### DialogUpload
+
+- Upload multiple files
+
+![dialog-uploadfile-multiple](./img/04/5.png)
+
+- Upload single file
+
+![dialog-uploadfile](./img/04/6.png)
+
+### LoggerView
+
+![app-logger](./img/04/7.png)
+
+### UI - titbits
+
+#### App titlebar
+
+#### Modern UI
+
+## Entity framework 
+
+## Testing project - `Unit.Tests`
+
+### Sample tests
