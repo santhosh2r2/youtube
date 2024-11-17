@@ -278,6 +278,8 @@ The main view consists of filename, start button and delete button.
 
 ![main-view](./img/04/2.png)
 
+Check the tabs for the integration of `Monaco` editor which powers the VSCode.
+
 <Tabs>
 <TabItem label="Part of the Editor" icon='seti:c-sharp'>
 
@@ -384,6 +386,41 @@ The main view consists of filename, start button and delete button.
 ```
 </TabItem>
 
+<TabItem label="Implementation in mainview.cs">
+```c#
+#region Monaco Editor
+
+// Method to set content dynamically in the Monaco Editor
+private async void SetEditorContent(string content)
+{
+    // Execute JavaScript in the WebView2 to update the editor content
+    var script = $"setEditorContent({EscapeJavaScriptString(content)});";
+    if (webView21.CoreWebView2 != null) await webView21.ExecuteScriptAsync(script);
+}
+
+// Utility method to escape JavaScript strings to prevent errors
+private static string EscapeJavaScriptString(string s)
+{
+    return "\"" + s.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("\n", "\\n").Replace("\r", "\\r") + "\"";
+}
+
+
+private async void InitializeWebView2Async()
+{
+    // Ensure WebView2 is ready before loading the content
+    await webView21.EnsureCoreWebView2Async(null);
+
+    // Get the path of the HTML file containing the Monaco Editor
+    var currentDirectory = Directory.GetCurrentDirectory();
+    var editorHtmlPath = Path.Combine(currentDirectory, "editor.html");
+
+    // Load the editor.html file into the WebView2
+    webView21.Source = new Uri(editorHtmlPath);
+
+}
+#endregion
+```
+</TabItem>
 </Tabs>
 
 ### DialogNewFile
@@ -666,6 +703,108 @@ As per the above figure, Entity Framework fits between the business entities (do
 ![ef-version-1](./img/04/13.png)
 
 </details>
+
+### Implementation in project
+
+For a basic implementation, we need a `class` for an entity and a `DbContext` to map the entity to the table
+
+```c#
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+namespace Batch.File.Executor.Models;
+
+// Entity class
+[Table("ExecutionLog")]
+public class ExecutionLog
+{
+    public int Id { get; set; }
+    public DateTime time_start { get; set; }
+    public DateTime time_end { get; set; }
+    public int BatchFileId { get; set; }
+    public BatchFile BatchFile { get; set; }
+
+    public override string ToString() => $"Execution ID ({Id}): {time_start} - {time_end}";
+}
+
+[Table("Log")]
+public class Log
+{
+    public int Id { get; set; }
+    public DateTime LogDate { get; set; }
+    public string Level { get; set; }
+    public string Message { get; set; }
+    public int BatchFileId { get; set; }
+    public BatchFile BatchFile { get; set; }
+}
+
+[Table("BatchFile")]
+public class BatchFile
+{
+    public int Id { get; set; }
+    public string display_name { get; set; }
+    public DateTime created_at { get; set; }
+    public DateTime? last_modified_at { get; set; }
+    public string text { get; set; }
+    public DateTime? last_executed_at { get; set; }
+    public string? comment { get; set; }
+
+    // maps the execution log entries to this particular batch file
+    public ICollection<ExecutionLog> ExecutionLogs { get; set; } = new List<ExecutionLog>();
+    
+    // maps the log entries to this particular batch file
+    public ICollection<Log> Logs { get; set; } = new List<Log>();
+}
+
+// DbContext implementation
+public class BatchFileExecutorContext : DbContext
+{
+    public BatchFileExecutorContext() { }
+    public BatchFileExecutorContext(DbContextOptions<BatchFileExecutorContext> options) : base(options) { }
+
+    // Entities
+    public DbSet<BatchFile> BatchFiles { get; set; }
+
+    // Connection Builder
+    protected override void OnConfiguring(DbContextOptionsBuilder? optionsBuilder)
+    {
+        if (optionsBuilder is { IsConfigured: false })
+        {
+            optionsBuilder.UseSqlite(@"Data Source=batchfileexecutor.db");
+        }
+    }
+}
+```
+
+<Steps>
+1. Create and dispose context
+    ```c#
+    // Create a context
+    var context = new BatchFileExecutorContext();
+
+    // Create database, if it does not exist.
+    // If database exists, then this function does have any influence.
+    context.Database.EnsureCreated();
+
+    // To delete database. WARNING: this will delete the data.
+    context.Database.EnsureDeleted();
+
+    // Remember to dispose the context after usage.
+    context.Dispose();
+    ```
+2. Add and update an Entity - BatchFile
+    ```c#
+    var batchFile = new BatchFile
+    {
+        display_name = $"Batch file {_context.BatchFiles.ToList().Count + 1}",
+        created_at = DateTime.UtcNow,
+        text = "@echo off \n 'Hello world'"
+    };
+
+    context.BatchFiles.Add(batchFile);
+    context.SaveChanges();
+    ```
+</Steps>
 
 ## Testing project - `Unit.Tests`
 
