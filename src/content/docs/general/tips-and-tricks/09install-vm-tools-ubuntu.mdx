@@ -1,0 +1,40 @@
+---
+title: Install VM Tools in Ubuntu 22.04 using terminal
+type: content
+authors: sramesh
+tags: [ubuntu, vm]
+sidebar:
+    badge: new
+date: 2024-11-19
+lastUpdated: 2024-11-19
+---
+import { Steps, Aside } from '@astrojs/starlight/components';
+
+Follow the below Steps
+
+<Steps>
+
+1. If running a GUI version of Ubuntu, use the sidebar or search bar to navigate to the Linux terminal.
+    
+    <Aside title="Tip" type="note">
+    You can use the keyboard shortcut `Ctrl+Alt+T` as another alternative.
+    </Aside>
+
+2. Update package information
+
+    ```sh frame="none"
+    sudo apt-get update
+    ```
+
+3. Install VMware tools
+
+    ```sh frame="none"
+    sudo apt-get install open-vm-tools-desktop
+    ```
+
+4. Reboot the machine
+
+    ```sh frame="none"
+    sudo reboot
+    ```
+</Steps>
