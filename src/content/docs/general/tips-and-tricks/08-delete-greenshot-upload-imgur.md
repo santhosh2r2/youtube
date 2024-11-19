@@ -2,8 +2,6 @@
 title: Delete `imgur` uploaded image from Greenshot
 authors: sramesh
 tags: [greenshot]
-sidebar:
-    badge: new
 date: 2024-09-16
 lastUpdated: 2024-09-16
 ---

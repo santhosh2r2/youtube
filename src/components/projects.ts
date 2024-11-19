@@ -13,5 +13,4 @@ export const projects = [
         link: "/youtube/projects/simple-opcua-server-and-client/",
         tags: [".net", "python", "IoT", "OPC-UA", "docker"],
     },
-
 ];
