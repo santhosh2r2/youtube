@@ -2,7 +2,7 @@
 title: Install `Poetry` in Ubuntu
 type: content
 authors: sramesh
-tags: [install, poetry, python]
+tags: [install, poetry, python, pyenv]
 sidebar:
     badge: new
 ---
@@ -23,6 +23,80 @@ It offers a lockfile to ensure repeatable installs, and can build your project f
 
 Below are the instructions for Ubuntu. Complete instructions list for other methods here: https://python-poetry.org/docs/#installing-with-the-official-installer
 
+<br />
+
+<details>
+<summary>
+Install `pyenv` to manage python versions. Here is the complete [source]()
+</summary>
+<Steps>
+1. Installing via the recommended way
+
+    ```sh frame="none"
+    curl https://pyenv.run | bash
+    ```
+
+2. Setup shell environment by adding the commands to the `.bashrc`
+
+    ```sh frame="none"
+    echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
+    echo 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
+    echo 'eval "$(pyenv init -)"' >> ~/.bashrc
+    ```
+
+3. Restart shell
+
+    ```sh frame="none"
+    exec "$SHELL"
+    ```
+
+4. (optional) Build environment for `Python`
+
+    ```sh frame="none"
+    sudo apt update;  sudo apt install build-essential libssl-dev zlib1g-dev \
+    libbz2-dev libreadline-dev libsqlite3-dev curl git \
+    libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
+    ```
+
+4. Install a python version
+
+    ```sh frame="none"
+    pyenv install -l  # gives the list of all available versions
+    ```
+
+    ```sh frame="none"
+    pyenv install 3.12 # install the selected version
+    ```
+
+5. Set the version
+
+    ```sh frame="none"
+    pyenv global 3.12 # setting the python environment
+    ```
+
+6. Uninstall python version
+
+    ```sh frame="none"
+    pyenv uninstall 3.12 # removes this version
+    ```
+
+7. (optional) Update `pyenv`
+    ```sh frame="none"
+    pyenv update
+    ```
+
+7. (optional) Uninstall `pyenv`: To completely uninstall Pyenv, **remove all Pyenv configuration lines from your shell startup configuration**, and then remove its root directory. This will delete all Python versions that were installed under the `$(pyenv root)/versions/ directory`:
+
+    ```sh frame="none"
+    rm -rf $(pyenv root)
+    ```
+
+</Steps>
+</details>
+
+<br />
+
+### Instructions for `poetry` installation
 <Steps>
 1. Download the **Poetry** install script and execute
 
