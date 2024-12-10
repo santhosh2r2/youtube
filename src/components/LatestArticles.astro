@@ -1,7 +1,6 @@
 ---
 import { getCollection } from "astro:content";
 
-import  {Icon} from "@astrojs/starlight/components";
 
 type Article  ={
   title: string,
@@ -19,7 +18,6 @@ async function getLatestArticles(showTopX: number){
   let articles: Article[]= [];
 
   await getCollection("docs", (collectionEntry) => {
-    // console.log({ collection });
     let { data, body , slug} = collectionEntry;
     
     if(slug.includes("blog/")){

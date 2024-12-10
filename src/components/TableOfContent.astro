@@ -50,12 +50,10 @@ import TocCard from "../components/helper/TocCard.astro";
 {
     groupedCollection.map(({ key, value }) => {
         return (
-            <>
-                <>
+
                     <h3>{key || "General"}</h3>
                     <br />
-                </>
-                <>
+
                     <CardGrid>
                         {value.map(
                             (p: {
@@ -73,8 +71,7 @@ import TocCard from "../components/helper/TocCard.astro";
                             },
                         )}
                     </CardGrid>
-                </>
-            </>
+
         );
     })
 }
