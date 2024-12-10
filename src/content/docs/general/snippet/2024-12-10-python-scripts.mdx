@@ -1,0 +1,119 @@
+---
+title: Collection of `python` script for automating tasks
+type: content
+authors: sramesh
+tags: [python, BeautifulSoup]
+date: 2024-12-10
+lastUpdated: 2024-12-10
+---
+import { Steps, Aside } from '@astrojs/starlight/components';
+
+# Get Youtube subscribers count
+
+```sh frame="none"
+pip install requests bs4
+```
+
+```python
+import re
+import requests
+from bs4 import BeautifulSoup
+
+url = "https://www.youtube.com/@SanthoshBalajiRamesh"
+
+# Headers with Accept-Language set to en-US
+headers = {
+    "Accept-Language": "en-US,en;q=0.9"
+}
+soup = BeautifulSoup(requests.get(url, headers=headers).content, "html.parser")
+
+# print(soup.prettify())
+
+# Use regex to find the number
+match = re.search(r'"content":\s*"\b([\d.]+[MK]?)\b\s*subscribers"', soup.prettify())
+
+if match:
+    subscriber_count = match.group(1)
+    print("Subscriber Count:", subscriber_count)
+else:
+    print("Subscriber count not found!")
+```
+
+# Extract all images from the website
+
+```sh frame="none"
+pip install requests bs4
+```
+
+```python
+import shutil
+import requests
+from pathlib import Path
+from bs4 import BeautifulSoup
+from urllib.parse import urljoin
+
+# Function to get the safe URL from an img tag's src
+def get_safe_url(src, base_url):
+    if src.startswith("/"):  
+        return urljoin(base_url, src)  
+    elif not src.startswith(("http://", "https://")):  
+        return f"https://{src}"  
+    return src  
+
+# Fetch the webpage content
+base_url = "https://santhosh2r2.github.io"
+url = base_url +"/youtube/blog/vagrant-migration"
+
+#base_url = "https://google.de"
+#url = base_url +"/"
+
+# Destination folder
+destination_folder = Path("img")
+if destination_folder.exists():
+    shutil.rmtree(destination_folder)
+destination_folder.mkdir(parents=True, exist_ok=True)
+
+response = requests.get(url)
+soup = BeautifulSoup(response.content, "html.parser")
+
+# Iterate over all img tags and download images
+for i, img in enumerate(soup.find_all("img")):
+    img_src = img.get("src")  
+    # Ignoring "src" which starts with "data", 
+    # incase of svg or base64 encoded string
+    if not img_src.startswith("data"):  
+        safe_url = get_safe_url(img_src, base_url)  
+        img_data = requests.get(safe_url).content 
+        filename = Path(img_src).name
+        with open(destination_folder / filename, 'wb') as file:  
+            file.write(img_data)
+            print(img_src)
+
+print("Images downloaded successfully.")
+```
+
+# Convert Images to PDF
+
+```sh frame="none"
+pip install Pillow
+```
+
+```python
+from PIL import Image
+import os
+
+def images_to_pdf(image_folder, output_pdf):
+    image_list = []
+    for file_name in os.listdir(image_folder):
+        if file_name.endswith((".png", ".jpg", ".jpeg", "gif", "webp")):
+            print(file_name)
+            image_path = os.path.join(image_folder, file_name)
+            image = Image.open(image_path).convert('RGB')
+            image_list.append(image)
+    if image_list:
+        image_list[0].save(output_pdf, save_all=True, append_images=image_list[1:])
+        print(f"PDF created: {output_pdf}")
+    else:
+        print("No images found.")
+images_to_pdf("img", "output.pdf")
+```
