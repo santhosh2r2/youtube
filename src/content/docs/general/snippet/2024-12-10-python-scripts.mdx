@@ -4,10 +4,12 @@ type: content
 authors: sramesh
 tags: [python, BeautifulSoup]
 date: 2024-12-10
-lastUpdated: 2024-12-10
+lastUpdated: 2024-12-13
 ---
 
-# Get Youtube subscribers count
+# Part 1 [video](https://youtu.be/RwjY_sC3HDY?si=PTt1jyMCVgOvKhse)
+
+## Get Youtube subscribers count
 
 ```sh frame="none"
 pip install requests bs4
@@ -38,7 +40,7 @@ else:
     print("Subscriber count not found!")
 ```
 
-# Extract all images from the website
+## Extract all images from the website
 
 ```sh frame="none"
 pip install requests bs4
@@ -91,7 +93,7 @@ for i, img in enumerate(soup.find_all("img")):
 print("Images downloaded successfully.")
 ```
 
-# Convert Images to PDF
+## Convert Images to PDF
 
 ```sh frame="none"
 pip install Pillow
