@@ -118,3 +118,99 @@ def images_to_pdf(image_folder, output_pdf):
         print("No images found.")
 images_to_pdf("img", "output.pdf")
 ```
+
+# Part 2 [video]()
+
+## Clipboard logger
+
+```py
+# pip install pyperclip
+
+import pyperclip  
+import time  
+
+def log_clipboard():
+    previous = ""
+    while True:
+        current = pyperclip.paste()
+        if current != previous:
+            with open("output\clipboard_log.txt", "a") as log:
+                log.write(f"{current}\n")
+            previous = current
+        time.sleep(1)
+
+log_clipboard()
+```
+## Break Reminder
+
+```py
+# pip install plyer
+
+import time
+from plyer import notification
+
+def break_notifier():
+    while True:
+        notification.notify(
+            title="Self-Reminder: BREAK TIME",
+            message="Stand up, strech and save your back.",
+            timeout=2
+        )
+        time.sleep(5)
+
+break_notifier()
+```
+## Unseen E-Mails
+
+```py
+import imaplib  
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+gmail_user = os.getenv("GMAIL_USER")
+gmail_password = os.getenv("GMAIL_PASSWORD")
+
+def unseen_emails():
+    mail = imaplib.IMAP4_SSL("imap.gmail.com")
+    mail.login(gmail_user, gmail_password)
+    mail.select("inbox")
+
+    result, data = mail.search(None, 'UNSEEN')
+    emails = data[0].split()
+
+    print(f"You have {len(emails)} unread emails.")
+
+unseen_emails()
+```
+
+## Find space
+
+```py
+import shutil  
+
+def check_disk_usage(folder):
+    total, used, free = shutil.disk_usage(folder)
+    print(f"Folder: {folder}, Free Space: {free // (2**30)} GB")
+
+check_disk_usage("C:")
+```
+
+## Screenshot generator
+
+```py
+# pip install pillow pyautogui
+
+import pyautogui  
+import time  
+
+def take_screenshots():
+    while True:
+        screenshot = pyautogui.screenshot()
+        screenshot.save(f'output\\screenshots\\primary_monitor_{time.time()}.png')
+        print("Screenshot saved.")
+        time.sleep(5)  # Every 5 seconds
+
+take_screenshots()
+```
