@@ -1,0 +1,32 @@
+---
+title: Setup `fish` shell and `oh my fish` 
+type: content
+authors: sramesh
+tags: [fish, terminal, oh-my-fish, zsh, bash, prompt]
+date: 2024-12-15
+lastUpdated: 2024-12-15
+---
+
+```sh frame="none"
+sudo apt install fish
+
+curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish
+
+omf install bobthefish
+
+# [Optional] Install NerdFont --> FiraCode
+wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.3.0/FiraCode.zip -O FiraCode.zip
+
+unzip FiraCode.zip -d FiraCode
+
+mkdir -p ~/.fonts
+
+cp FiraCode/*.ttf ~/.fonts/
+
+fc-cache -fv
+
+fc-list | grep "FiraCode"
+
+rm -rf FiraCode.zip FiraCode
+
+```
