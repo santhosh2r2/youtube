@@ -4,12 +4,40 @@ type: content
 authors: sramesh
 tags: [fish, terminal, oh-my-fish, zsh, bash, prompt]
 date: 2024-12-15
-lastUpdated: 2024-12-15
+lastUpdated: 2024-12-16
 ---
+
+## Install `fish` 
+> `f`riendly `i`nteractive `sh`ell
 
 ```sh frame="none"
 sudo apt install fish
 
+# setup `fish` as default shell
+chsh -s $(which fish)
+
+# alternative to set the default shell, if the above method does not work.
+# find where fish is installed 
+which fish
+# open the file
+sudo nano /etc/shells
+# add the path from above in the file.
+```
+> Restart the operating system for the changes to be updated
+
+:::note
+[List of all oh-my-fish themes](https://github.com/oh-my-fish/oh-my-fish/blob/master/docs/Themes.md)
+:::
+
+## Install `oh-my-fish`
+
+`Oh My Fish` provides core infrastructure to allow you to install packages which extend or modify the look of your shell. It's fast, extensible and easy to use.
+
+https://github.com/oh-my-fish/oh-my-fish
+
+
+```sh frame="none"
+# Install Oh-My-Fish, required for themes
 curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish
 
 omf install bobthefish
@@ -35,7 +63,81 @@ set -g theme_powerline_fonts no
 set -g theme_nerd_fonts yes
 
 ```
-## You can override some of the following default options in your `config.fish`:
+
+## Troubleshoot
+
+### For GNOME Terminal (default terminal on Ubuntu)
+
+1. Open GNOME Terminal Preferences:
+
+    - Open the terminal.
+    - Click the hamburger menu (☰) in the top-right corner.
+    - Select Preferences.
+
+2. Select Your Profile:
+
+    - In the left pane, choose the profile you want to edit (e.g., "Unnamed" or "Default").
+
+3. Change Font:
+
+    - Scroll down to the Text section.
+    - Toggle Custom Font on.
+    - Click the font selection box, and a font chooser dialog will appear.
+
+4. Select Font:
+
+    - Search for `FiraCode Nerd Font` in the font list.
+    - Choose the desired size and click Select.
+    
+5. Save and Close:
+
+    - The font will update immediately. Close the preferences window to apply the changes.
+
+### For VS Code
+#### In the `Editor`
+1. Open VS Code Settings:
+
+    - Click the gear icon in the bottom-left corner and select Settings.
+    - Alternatively, press `Ctrl + ,`.
+
+2. Search for Font Family:
+
+    - In the search bar at the top, type `editor.fontFamily`.
+
+3. Update the Font Family:
+
+    - Click the pencil icon next to Editor: Font Family and edit the field.
+    - Add `FiraCode Nerd Font` at the beginning of the list:
+        ```txt
+        "FiraCode Nerd Font", Consolas, "Courier New", monospace
+        ```
+
+4. Enable Font Ligatures (Optional):
+
+    - Search for editor.fontLigatures in the settings.
+    - Toggle the option **On**, or add this line in your `settings.json` file:
+        ```json
+        "editor.fontLigatures": true
+        ```
+#### In the `Integrated Terminal`
+1. Open Settings:
+
+    - Follow the steps above to access the Settings.
+
+2. Search for Terminal Font Family:
+
+    - In the search bar, type `terminal.integrated.fontFamily`.
+
+3. Update the Terminal Font:
+
+    - Click the pencil icon and edit the field.
+    - Add `FiraCode Nerd Font`:
+
+4. Adjust Font Size (Optional):
+
+    - Search for `terminal.integrated.fontSize` and increase or decrease the size as needed, e.g., `14`.
+
+### Options to override some of the following default options in `config.fish`:
 
 ```sh frame="none" title="config.fish"
 set -g theme_display_git no
