@@ -5,6 +5,8 @@ authors: sramesh
 tags: [install, poetry, python, pyenv]
 sidebar:
     badge: new
+date: 2024-09-09
+lastUpdated: 2024-12-16
 ---
 import { Steps, Aside } from '@astrojs/starlight/components';
 
@@ -149,3 +151,41 @@ Install `pyenv` to manage python versions. Here is the complete [source]()
     curl -sSL https://install.python-poetry.org | POETRY_UNINSTALL=1 python3 -
     ```
 </Steps>
+
+### Settings for `fish` shell configuration
+
+In the `config.fish` file, add the following code snippet to recognize `pyenv` and `poetry`
+
+```bash frame="none"
+# pyenv settings
+#------------------------
+# Set pyenv root directory
+set -x PYENV_ROOT $HOME/.pyenv
+
+# Add pyenv to PATH
+set -x PATH $PYENV_ROOT/bin $PATH
+
+# Initialize pyenv
+if test -d $PYENV_ROOT
+    status --is-interactive; and source (pyenv init --path | psub)
+    source (pyenv init - | psub)
+end
+```
+
+```bash frame="none"
+# poetry settings
+#------------------------
+# Add Poetry to PATH
+set -x PATH $HOME/.local/bin $PATH
+
+```
+
+### Bonus
+
+<Aside type="note" title="Tip"> 
+Add the following config, to set `Poetry` to use current python environment
+
+```sh frame="none"
+poetry config virtualenvs.in-project true
+```
+</Aside>
