@@ -6,7 +6,34 @@ Follow my channel for video tips, tricks and tutorials.
 
 [![youtube](./public/icon/youtube.svg)](https://www.youtube.com/channel/UCR_Fuegjqal0Fvy6En2Bs3Q?sub_confirmation=1)
 
+## How to recreate the project
 
+1. Clone the project 
+    ```sh
+    git clone https://github.com/santhosh2r2/youtube santhosh-blog
+    ```
+
+2. Setup `pnpm`
+   
+    ```sh
+    # install pnpm
+    curl -fsSL https://get.pnpm.io/install.sh | sh -
+
+    # download and use latest `LTS` version of node
+    pnpm env use --global lts
+    ```
+
+3. Install `playwright`
+
+    ```sh
+    pnpm exec playwright install
+    ```
+
+4. Set alias in the shell configuration file, for e.g. `bashrc` or `config.fish`
+
+    ```sh
+    alias pn=pnpm
+    ```
 ## How to a new project entry
 
 1. Create an entry in the file `src/components/projects.ts` having the following fields.
