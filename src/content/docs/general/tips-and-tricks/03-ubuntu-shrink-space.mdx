@@ -15,19 +15,19 @@ import { Steps } from '@astrojs/starlight/components';
 
 1. Defragment (no need to un/remount anything). Ignore any errors. Some files like symlinks and device files can't be defragmented.
 
-    ```bash
+    ```bash frame="none"
     sudo e4defrag /
     ```
 
 2. Zero-fill all unused space so VMware knows it's indeed unused:
 
-    ```bash
+    ```bash frame="none"
     dd if=/dev/zero of=wipefile bs=1M; sync; rm wipefile
     ```
 
 3. Run the shrink operation:
 
-    ```bash
+    ```bash frame="none"
     sudo vmware-toolbox-cmd disk shrinkonly
     ```
 
