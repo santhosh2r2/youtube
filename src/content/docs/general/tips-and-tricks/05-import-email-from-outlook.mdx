@@ -2,18 +2,21 @@
 title: Import Emails from Outlook
 authors: sramesh
 tags: [excel, vba]
+sidebar:
+    badge: updated
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
 
-### Source codes
-The highlighted code below is responsible for selecting the appropriate folder in the Outlook inbox. Checkout the video [here](https://www.youtube.com/watch?v=KDmYawgx20I)
-
+## Video
 <iframe src="https://www.youtube.com/embed/KDmYawgx20I?si=DDK8jwRxqyjipDYd" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+## Source codes
+The highlighted code below is responsible for selecting the appropriate folder in the Outlook inbox. Checkout the video [here](https://www.youtube.com/watch?v=KDmYawgx20I)
 
 <Tabs>
 
-<TabItem label="Import_Email.vba">
+<TabItem label="Import_Email.bas">
 ```vb {34-42}
 'Import E-Mails from Outlook subroutine
 Sub Import_Emails()
@@ -107,7 +110,7 @@ End Sub
 
 ```
 </TabItem>
-<TabItem label="clear_range.vba">
+<TabItem label="clear_range.bas">
 ```vb
 'Clear the range contents
 Sub Clear_Range()
@@ -121,7 +124,24 @@ Sub Clear_Range()
 End Sub
 ```
 </TabItem>
-
-
 </Tabs>
+
+## Automate the script (to be tested yet)
+
+The functions should be assigned to 2 buttons in the Excel-Sheet.
+
+```vb title="automate.bas"
+Dim NextCheck As Double
+
+Sub StartEmailCheck()
+    Import_Emails
+    NextCheck = Now + TimeValue("00:00:03") ' 3 seconds
+    Application.OnTime NextCheck, "StartEmailCheck"
+End Sub
+
+Sub StopEmailCheck()
+    On Error Resume Next
+    Application.OnTime NextCheck, "StartEmailCheck", , False
+End Sub
+```
 
