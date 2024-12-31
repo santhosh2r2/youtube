@@ -216,3 +216,182 @@ def take_screenshots():
 
 take_screenshots()
 ```
+
+# Part 3 [video](https://youtube.com)
+## Send WhatsApp message
+
+```py
+# Importing the Required Library
+import pywhatkit
+
+# Defining the Phone Number and Message
+phone_number = "" # Enter the phone number
+message = "Hi, this is a test message!"
+
+# Sending the message via whatsapp message
+pywhatkit.sendwhatmsg(phone_number, message, 
+                                wait_time=10, tab_close=True)
+
+# Sending the image via whatsapp message
+pywhatkit.sendwhats_image(phone_number,"image.png", message, 
+                                wait_time=10, tab_close=True)
+
+# Displaying a Success Message
+print("WhatsApp message sent!")
+```
+
+
+## DNS Lookup
+
+```py
+import dns.resolver  # pip install dnspython
+from termcolor import colored  # pip install termcolor
+
+def check_dns_records(domain):
+    record_types = ['A', 'AAAA', 'MX', 'CNAME', 'TXT', 'NS', 'SOA']
+    resolver = dns.resolver.Resolver()
+    results = {}
+    for record_type in record_types:
+        try:
+            answer = resolver.resolve(domain, record_type)
+            results[record_type] = [str(rdata) for rdata in answer]
+        except (dns.resolver.NoAnswer, dns.resolver.NXDOMAIN, dns.resolver.NoNameservers):
+            results[record_type] = []
+        except Exception as e:
+            results[record_type] = str(e)
+    return results
+
+def display_results(domain, results):
+    print("\n" + colored(f"DNS Records for {domain}", "cyan", attrs=["bold"]))
+    print("=" * (len(f"DNS Records for {domain}") + 2))
+    if 'error' in results:
+        print(colored(f"Error: {results['error']}", "red"))
+        return
+    record_titles = {
+        "A": "IPv4 Addresses",
+        "AAAA": "IPv6 Addresses",
+        "MX": "Mail Exchanger",
+        "CNAME": "Canonical Name",
+        "TXT": "Text Records",
+        "NS": "Name Servers",
+        "SOA": "Start of Authority"
+    }
+    for record_type, record_data in results.items():
+        print(f"\n{colored(record_titles.get(record_type, record_type), 'yellow', attrs=['bold'])}:")
+        if record_data:
+            for record in record_data:
+                print(f"  - {colored(record, 'green')}")
+        else:
+            print(colored("  Not found", "red"))
+    print("\n" + "=" * 40)
+
+if __name__ == "__main__":
+    domain = input("Enter domain to check DNS records: ").strip()
+    results = check_dns_records(domain)
+    display_results(domain, results)
+```
+## Task Reminder
+
+```py
+import tkinter as tk
+from tkinter import ttk
+import csv
+import time
+import threading
+from datetime import datetime, timedelta
+from win10toast import ToastNotifier  
+
+reminders = []  # List to store all reminders
+
+def check_reminders():
+    while True:
+        current_time = datetime.now()
+        for reminder in reminders[:]:
+            if current_time >= reminder["remind_time"]:
+                show_custom_notification(reminder["task_name"], reminder["description"])
+                reminders.remove(reminder)
+        time.sleep(10)
+
+threading.Thread(target=check_reminders, daemon=True).start()
+
+def show_custom_notification(task_name, description):
+    toaster = ToastNotifier()
+    toaster.show_toast(
+        title=f"Reminder: {task_name}",
+        msg=f"Description: {description}",
+        icon_path="icon.ico",
+        duration=10,
+        threaded=True
+    )
+
+def set_reminder():
+    task_name = task_name_entry.get()
+    description = description_entry.get("1.0", tk.END).strip()
+    time_minutes = float(time_entry.get())
+    remind_time = datetime.now() + timedelta(minutes=time_minutes)
+
+    print(f'''
+          Task Name: {task_name}\n
+          Task Description: {description} \n
+          Remind Time: {remind_time}\n''')
+    print('Task added! I will remind you when the time comes.')
+
+    reminders.append({
+        "task_name": task_name,
+        "description": description,
+        "remind_time": remind_time
+    })
+    
+    with open('reminders.csv', 'a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow([task_name, description, remind_time])
+    
+    clear_form_fields()
+
+def clear_form_fields():
+    task_name_entry.delete(0, tk.END)
+    description_entry.delete("1.0", tk.END)
+    time_entry.delete(0, tk.END)
+
+def create_gui():
+    global task_name_entry, description_entry, time_entry
+    root = tk.Tk()
+
+    root.title("Task Reminder")
+    root.geometry("500x400")
+    root.configure(bg="#ebebeb")
+
+    title_frame = tk.Frame(root, bg="#1f6abf", pady=10)
+    title_frame.pack(fill="x")
+    title_label = tk.Label(title_frame, text="Task Reminder", font=("Arial", 16, "bold"), fg="white", bg="#1f6abf")
+    title_label.pack()
+
+    form_frame = ttk.Frame(root, padding="20 20 20 10")
+    form_frame.pack(fill="both", expand=True, padx=20, pady=20)
+
+    ttk.Label(form_frame, text="Task Name:", font=("Arial", 10)).grid(row=0, column=0, sticky=tk.W, pady=5)
+    task_name_entry = ttk.Entry(form_frame, width=40, font=("Arial", 10))
+    task_name_entry.grid(row=0, column=1, padx=5, pady=5)
+
+    ttk.Label(form_frame, text="Description:", font=("Arial", 10)).grid(row=1, column=0, sticky=tk.W, pady=5)
+    description_entry = tk.Text(form_frame, width=40, height=4, font=("Arial", 10))
+    description_entry.grid(row=1, column=1, padx=5, pady=5)
+
+    ttk.Label(form_frame, text="Time to Remind (minutes):", font=("Arial", 10)).grid(row=2, column=0, sticky=tk.W, pady=5)
+    time_entry = ttk.Entry(form_frame, width=40, font=("Arial", 10))
+    time_entry.grid(row=2, column=1, padx=5, pady=5)
+
+    button_frame = tk.Frame(root, bg="#ebebeb")
+    button_frame.pack(pady=10)
+
+    set_button = tk.Button(button_frame, text="Set Reminder", command=set_reminder, font=("Arial", 10, "bold"), bg="#1f6abf", fg="white", width=15)
+    set_button.pack(side="left", padx=10)
+
+    add_button = tk.Button(button_frame, text="Clear", command=clear_form_fields, font=("Arial", 10, "bold"), bg="#dadada", fg="black", width=15)
+    add_button.pack(side="left", padx=10)
+    
+    root.mainloop()
+
+if __name__ == "__main__":
+    create_gui()
+```
