@@ -7,9 +7,9 @@ date: 2024-12-10
 lastUpdated: 2024-12-15
 ---
 
-# Part 1 [video](https://youtu.be/RwjY_sC3HDY?si=PTt1jyMCVgOvKhse)
+## Part 1 [video](https://youtu.be/RwjY_sC3HDY?si=PTt1jyMCVgOvKhse)
 
-## Get Youtube subscribers count
+### Get Youtube subscribers count
 
 ```sh frame="none"
 pip install requests bs4
@@ -40,7 +40,7 @@ else:
     print("Subscriber count not found!")
 ```
 
-## Extract all images from the website
+### Extract all images from the website
 
 ```sh frame="none"
 pip install requests bs4
@@ -93,7 +93,7 @@ for i, img in enumerate(soup.find_all("img")):
 print("Images downloaded successfully.")
 ```
 
-## Convert Images to PDF
+### Convert Images to PDF
 
 ```sh frame="none"
 pip install Pillow
@@ -119,9 +119,9 @@ def images_to_pdf(image_folder, output_pdf):
 images_to_pdf("img", "output.pdf")
 ```
 
-# Part 2 [video](https://youtu.be/MFezaZSBwhs)
+## Part 2 [video](https://youtu.be/MFezaZSBwhs)
 
-## Clipboard logger
+### Clipboard logger
 
 ```py
 # pip install pyperclip
@@ -142,7 +142,7 @@ def log_clipboard():
 log_clipboard()
 ```
 
-## Break Reminder
+### Break Reminder
 
 ```py
 # pip install plyer
@@ -162,7 +162,7 @@ def break_notifier():
 break_notifier()
 ```
 
-## Unseen E-Mails
+### Unseen E-Mails
 
 ```py
 import imaplib  
@@ -187,7 +187,7 @@ def unseen_emails():
 unseen_emails()
 ```
 
-## Find space
+### Find space
 
 ```py
 import shutil  
@@ -199,7 +199,7 @@ def check_disk_usage(folder):
 check_disk_usage("C:")
 ```
 
-## Screenshot generator
+### Screenshot generator
 
 ```py
 # pip install pillow pyautogui
@@ -217,8 +217,8 @@ def take_screenshots():
 take_screenshots()
 ```
 
-# Part 3 [video](https://youtu.be/0L_jxZWyhVg)
-## Send WhatsApp message
+## Part 3 [video](https://youtu.be/0L_jxZWyhVg)
+### Send WhatsApp message
 
 ```py
 # Importing the Required Library
@@ -246,7 +246,7 @@ pywhatkit.sendwhats_image(phone_number,"image.png", message,
 print("WhatsApp message sent!")
 ```
 
-## DNS Lookup
+### DNS Lookup
 
 ```py
 import dns.resolver  # pip install dnspython
@@ -295,7 +295,7 @@ if __name__ == "__main__":
     results = check_dns_records(domain)
     display_results(domain, results)
 ```
-## Task Reminder
+### Task Reminder
 
 ```py
 import tkinter as tk
