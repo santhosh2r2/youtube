@@ -217,7 +217,7 @@ def take_screenshots():
 take_screenshots()
 ```
 
-# Part 3 [video](https://youtube.com)
+# Part 3 [video](https://youtu.be/0L_jxZWyhVg)
 ## Send WhatsApp message
 
 ```py
@@ -229,8 +229,14 @@ phone_number = "" # Enter the phone number
 message = "Hi, this is a test message!"
 
 # Sending the message via whatsapp message
-pywhatkit.sendwhatmsg(phone_number, message, 
-                                wait_time=10, tab_close=True)
+pywhatkit.sendwhatmsg(
+        phone_number,
+        message,
+        time_hour=datetime.datetime.now().hour,
+        time_min=datetime.datetime.now().minute + 1,
+        wait_time=10,
+        tab_close=False
+)
 
 # Sending the image via whatsapp message
 pywhatkit.sendwhats_image(phone_number,"image.png", message, 
@@ -239,7 +245,6 @@ pywhatkit.sendwhats_image(phone_number,"image.png", message,
 # Displaying a Success Message
 print("WhatsApp message sent!")
 ```
-
 
 ## DNS Lookup
 
