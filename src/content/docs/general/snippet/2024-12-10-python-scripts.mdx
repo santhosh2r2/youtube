@@ -295,6 +295,7 @@ if __name__ == "__main__":
     results = check_dns_records(domain)
     display_results(domain, results)
 ```
+
 ### Task Reminder
 
 ```py
@@ -399,4 +400,122 @@ def create_gui():
 
 if __name__ == "__main__":
     create_gui()
+```
+
+
+
+## Part 4 [video](https://youtu.be/mLV0iJgmzAk)
+### Archive older files
+```py
+def archive_older_files(folder, days=30):
+    import os
+    import shutil
+    from datetime import datetime, timedelta
+
+    def clean_downloads(folder_path, days):
+        # Create Archive folder if it doesn't exist
+        archive_folder = os.path.join(folder_path, "Archive")
+        if not os.path.exists(archive_folder):
+            os.makedirs(archive_folder)
+            
+        # Calculate the threshold date
+        now = datetime.now()
+        threshold = now - timedelta(days=days)
+
+        # Iterate over files in the folder
+        for filename in os.listdir(folder_path):
+            file_path = os.path.join(folder_path, filename)
+            # Check if it's a file and not a directory
+            if os.path.isfile(file_path):
+                # Get the last modified time of the file
+                file_mtime = datetime.fromtimestamp(os.path.getmtime(file_path))
+                # Move the file to Archive if it's older than the threshold
+                if file_mtime < threshold:
+                    shutil.move(file_path, os.path.join(archive_folder, filename))
+    clean_downloads(folder, days)
+archive_older_files(r"path\to\folder", 30)
+
+```
+### Organize folder
+```py
+def organize_folder(folder):
+    import os
+    import shutil
+
+    def organize_files(folder_path):
+        # Iterate over files in the folder
+        for filename in os.listdir(folder_path):
+            # Get the file extension
+            ext = filename.split('.')[-1]
+            # Create a folder for the extension if it doesn't exist
+            ext_folder = os.path.join(folder_path, ext.upper())
+            os.makedirs(ext_folder, exist_ok=True)
+            # Move the file to the extension folder
+            shutil.move(os.path.join(folder_path, filename), os.path.join(ext_folder, filename))
+
+    organize_files(folder)
+organize_folder(r"path\to\folder")
+```
+### Merge PDF files
+```py
+def merge_pdf_files(folder_path):
+    # pip install PyPDF2
+    from PyPDF2 import PdfMerger
+    import os
+
+    def get_pdf_files(folder):
+        return [os.path.join(folder_path, f) for f in os.listdir(folder) if f.endswith('.pdf')]
+
+    def merge_pdfs(pdf_list, output):
+        merger = PdfMerger()
+        for pdf in pdf_list:
+            merger.append(pdf)
+        merger.write(output)
+        merger.close()
+
+    #folder_path = r"C:\Users\Santhosh Balaji R\Downloads\PDF"
+    pdf_files = get_pdf_files(folder_path)
+    print(pdf_files)
+
+    merge_pdfs(pdf_files, r'output\merged.pdf')
+merge_pdf_files(r"path\to\folder")
+```
+
+### Convert CSV files to Excel files
+```py
+def batch_convert_csv_to_excel(folder):
+    # pip install pandas openpyxl
+    import os
+    import pandas as pd
+
+    def csv_to_excel_folder(folder_path):
+        for filename in os.listdir(folder_path):
+            if filename.endswith('.csv'): 
+                csv_file = os.path.join(folder_path, filename)
+                excel_file = os.path.join(folder_path, filename.replace('.csv', '.xlsx'))
+                
+                try:
+                    df = pd.read_csv(csv_file)
+                    df.to_excel(excel_file, index=False)
+                    print(f"Converted: {csv_file} -> {excel_file}")
+                except Exception as e:
+                    print(f"Failed to convert {csv_file}: {e}")
+
+    csv_to_excel_folder(folder)
+batch_convert_csv_to_excel(r"path\to\folder")
+```
+
+### Rename multiple files at once
+```py
+def batch_rename_files(folder, name):
+    import os
+
+    def rename_files(folder_path, prefix):
+        for count, filename in enumerate(os.listdir(folder_path)):
+            ext = filename.split('.')[-1]
+            new_name = f"{prefix}_{count}.{ext}"
+            os.rename(os.path.join(folder_path, filename), os.path.join(folder_path, new_name))
+
+    rename_files(folder, name)
+batch_rename_files(r"path\to\folder", "Document")
 ```
