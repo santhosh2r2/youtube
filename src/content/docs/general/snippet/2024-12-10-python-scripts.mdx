@@ -4,7 +4,7 @@ type: content
 authors: sramesh
 tags: [python, BeautifulSoup]
 date: 2024-12-10
-lastUpdated: 2024-12-15
+lastUpdated: 2025-01-10
 ---
 
 ## Part 1 [video](https://youtu.be/RwjY_sC3HDY?si=PTt1jyMCVgOvKhse)
@@ -518,4 +518,76 @@ def batch_rename_files(folder, name):
 
     rename_files(folder, name)
 batch_rename_files(r"path\to\folder", "Document")
+```
+## Part 5 [video](https://youtu.be/mLV0iJgmzAk)
+### Email inbox cleaner
+```py
+def email_inbox_cleaner():
+    import imaplib
+
+    # Connect to the email server
+    mail = imaplib.IMAP4_SSL('imap.gmail.com')
+    mail.login('username', 'password')
+
+    # Select the inbox
+    mail.select('inbox')
+
+    # Search for emails with "unsubscribe" in the subject
+    status, messages = mail.search(None, 'SUBJECT "outlook"')
+
+    # Mark emails for deletion
+    for num in messages[0].split():
+        mail.store(num, '+FLAGS', '\\Deleted')
+        print(num)
+
+    print(mail)
+    # Permanently delete marked emails
+    mail.expunge()
+    mail.logout()
+email_inbox_cleaner()
+```
+### Summarize expenses
+```py
+def summarize_expenses():
+    import pandas as pd
+
+    # Load the bank statement
+    # Ensure your bank statement CSV has 'Description' and 'Amount' columns
+    data = pd.read_csv(r'bank_statement.csv', sep=",")
+
+    # Categorize expenses based on keywords in the description
+    def categorize(description):
+        if 'restaurant' in description.lower():
+            return 'Food'
+        elif 'uber' in description.lower() or 'taxi' in description.lower():
+            return 'Transport'
+        elif 'amazon' in description.lower():
+            return 'Shopping'
+        else:
+            return 'Other'
+
+    data['Category'] = data['Description'].apply(categorize)
+
+    # Summarize expenses by category
+    summary = data.groupby('Category')['Amount'].sum()
+    print(summary)
+summarize_expenses()
+```
+### Password generator
+```py
+def generate_password(length=15):
+    import random
+    import string
+
+    # Define reusable character pools
+    LETTERS = string.ascii_letters  # a-z, A-Z
+    DIGITS = string.digits          # 0-9
+    SPECIAL_CHARACTERS = "!@#$%^&*()-_=+[]{}|;:',.<>?/`~"
+
+    # Combine pools to create the character set
+    characters = LETTERS + DIGITS + SPECIAL_CHARACTERS
+    
+    # Randomly choose characters to form the password
+    return ''.join(random.choice(characters) for _ in range(length))
+print(generate_password())
 ```
