@@ -29,9 +29,12 @@ All the commands are executed with elevate privileges.
     reagentc /disable
     ```
 
-2. Use diskpart to remove the recovery partition
+2. Use `diskpart` to remove the recovery partition. Open `Command Prompt` with administrator rights and execute the commands below.
 
     ```sh frame="none"
+    #Enter Disk Partition program using the command below.
+    diskpart
+
     list disk
 
     select disk <disk_nr> # where <disk_nr> is the disk needing the recovery partition removed
