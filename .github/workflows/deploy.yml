@@ -16,29 +16,7 @@ permissions:
 
 jobs:
 
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup PNPM
-        uses: pnpm/action-setup@v4
-      
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Install Playwright browsers
-        run: pnpm exec playwright install
-
-
-      - name: Install, build, and upload your site
-        uses: withastro/action@v2
-        with:
-          package-manager: pnpm@latest
-
   bump:
-    needs: build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
@@ -90,6 +68,28 @@ jobs:
           else
             echo "No changes to commit"
           fi
+
+  build:
+    needs: bump
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v4
+      
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install
+
+
+      - name: Install, build, and upload your site
+        uses: withastro/action@v2
+        with:
+          package-manager: pnpm@latest
 
   deploy:
     needs: bump
