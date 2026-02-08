@@ -13,6 +13,10 @@ export interface Props {
 // replaced dynamically
 const buildDate = __DATE__;
 
+// Import version from project root VERSION.txt (raw import)
+import versionRaw from '../../VERSION.txt?raw';
+const version = (versionRaw || '').split('\n')[0].trim();
+
 const { title } = Astro.props as Props;
 ---
 
@@ -22,8 +26,8 @@ const { title } = Astro.props as Props;
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="msapplication-TileColor" content="#FFFFFF" />
     <meta name="theme-color" content="#ffffff" />
-    <title>{title}</title>
-    <meta name="description" content={title} />
+    <title>{title} — {version}</title>
+    <meta name="description" content={`${title} — ${version}`} />
     <base href="/youtube/" />
     <link rel="manifest" href="/youtube/manifest.webmanifest" />
   </head>

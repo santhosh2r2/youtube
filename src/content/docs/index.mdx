@@ -31,6 +31,10 @@ import LatestArticles from "../../components/LatestArticles.astro";
 import Splash from "../../components/Splash.astro";
 import ProjectThumbnails from "../../components/ProjectThumbnails.astro";
 
+// Import version from project root
+import versionRaw from '../../../VERSION.txt?raw';
+const version = (versionRaw || '').split('\n')[0].trim();
+
 <div class="grid-two-columns">
 
   <div>
@@ -54,3 +58,5 @@ Bookmark this page for quick-reference
 </Aside>
 
 [![Built with Starlight](https://astro.badg.es/v2/built-with-starlight/tiny.svg)](https://starlight.astro.build)
+
+<p style="margin-top:1rem; opacity:0.85">Version: {version}</p>
