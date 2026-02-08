@@ -96,5 +96,8 @@ export default defineConfig({
   markdown: {
     rehypePlugins: [[rehypeMermaid, { strategy: "img-svg", dark: true }]],
   },
+  image: {
+    service: { entrypoint: 'astro/assets/services/noop' },
+  },
 
 });
