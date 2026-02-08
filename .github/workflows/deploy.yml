@@ -92,7 +92,7 @@ jobs:
           package-manager: pnpm@latest
 
   deploy:
-    needs: bump
+    needs: build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     environment:
