@@ -6,6 +6,7 @@ import AstroPWA from "@vite-pwa/astro";
 import manifest from "./webmanifest.json";
 
 import rehypeMermaid from "rehype-mermaid";
+import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
@@ -91,6 +92,9 @@ export default defineConfig({
       devOptions: {
         enabled: true,
       },
+    }),
+    sitemap({
+      filter: (page) => !page.includes('/admin'),
     }),
   ],
   markdown: {
