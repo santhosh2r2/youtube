@@ -10,9 +10,24 @@ import { Steps, Aside , FileTree, Tabs, TabItem} from '@astrojs/starlight/compon
 
 ## Introduction
 
-Here is an easy way to programmatically create a merge-request in GITLAB. 
+### Automating GitLab Merge Requests with Python
+In the world of DevOps and software engineering, manual tasks are the enemy of productivity. While creating a Merge Request (MR) in GitLab only takes a minute, doing it hundreds of times for version bumps, configuration updates, or boilerplate synchronization adds up quickly.
 
-This comes in handy, when you have to update multiple projects simulatenously.
+In this guide, we will walk through how to programmatically create branches, commit file changes, and open Merge Requests using the python-gitlab library.
+
+#### Why Automate MRs?
+Automating this workflow is incredibly useful for:
+
+- **Bot updates**: Automatically updating dependency versions.
+- **Template synchronization**: Rolling out config changes across multiple repositories.
+- **CI/CD Pipelines**: Triggering MRs based on build artifacts.
+
+#### Prerequisites
+Before diving into the code, you will need a few things set up:
+
+- **GitLab Personal Access Token**: Generate this in your User Settings > Preferences > Access Tokens.
+- **Python Libraries**: You will need to install the GitLab wrapper and dotenv for security.
+- **Local Files**: For this tutorial, ensure you have a `src` folder with an `info.json` file inside it.
 
 > Jump to complete code [here](#complete-code)
 
@@ -80,7 +95,12 @@ poetry add python-gitlab python-dotenv
         print(f"Branch '{NEW_BRANCH}' created.")
     ```
 
-6. Get User ID
+6. Get User ID. 
+
+    :::note
+    Make sure the user exists in the gitlab instance and the username is correct.
+    :::
+
     ```py
     user = gl.users.list(username=ASSIGNEE_USERNAME)[0]
     assignee_id = user.id
@@ -166,6 +186,8 @@ poetry add python-gitlab python-dotenv
     ```
 </Steps>
 </Aside>
+
+
 
 ### Complete code
 
@@ -305,3 +327,8 @@ GITLAB_TOKEN=<your-token-here>
 ```
 </TabItem>
 </Tabs>
+
+
+## Summary
+By leveraging the `python-gitlab` library, you can turn a multi-step manual process into a script that runs in seconds. 
+This approach ensures consistency in your commits, reduces human error, and allows your team to focus on coding rather than administrative Git tasks.
