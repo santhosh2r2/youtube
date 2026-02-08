@@ -15,6 +15,35 @@ permissions:
   id-token: write
 
 jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8  # or specify your desired pnpm version
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install
+
+      - name: Install, build, and upload your site
+        uses: withastro/action@v2
+        with:
+          package-manager: pnpm@latest
+
   bump:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
@@ -68,38 +97,8 @@ jobs:
             echo "No changes to commit"
           fi
 
-
-  build:
-    needs: bump
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup PNPM
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9  # or specify your desired pnpm version
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Install Playwright browsers
-        run: pnpm exec playwright install
-
-      - name: Install, build, and upload your site
-        uses: withastro/action@v2
-        with:
-          package-manager: pnpm@latest
-
   deploy:
-    needs: build
+    needs: bump
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     environment:
