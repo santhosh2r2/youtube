@@ -1,7 +1,4 @@
 ---
-import ReloadPrompt from "../components/ReloadPrompt.astro";
-import InstallPrompt from "../components/InstallPrompt.astro";
-
 import "../styles/global.css";
 
 export interface Props {
@@ -24,18 +21,11 @@ const { title } = Astro.props as Props;
     <title>{title} — {version}</title>
     <meta name="description" content={`${title} — ${version}`} />
     <base href="/youtube/" />
-    <link rel="manifest" href="/youtube/manifest.webmanifest" />
   </head>
   <body>
     <!-- Main App will be loaded here -->
     <slot />
-
-    <!-- PWA function for the reload prompt -->
-    <ReloadPrompt />
     <footer>
-
-      <!-- PWA function for BeforeInstall browser event -->
-      <InstallPrompt />
     </footer>
   </body>
 </html>

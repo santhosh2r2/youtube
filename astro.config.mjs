@@ -2,8 +2,6 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import starlightBlog from 'starlight-blog';
 import starlightImageZoom from 'starlight-image-zoom';
-import { VitePWA } from 'vite-plugin-pwa';
-import manifest from "./webmanifest.json";
 
 import rehypeMermaid from "rehype-mermaid";
 import sitemap from '@astrojs/sitemap';
@@ -12,23 +10,6 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   vite: {
     logLevel: 'info',
-    plugins: [
-      VitePWA({
-        mode: 'production',
-        registerType: 'prompt',
-        workbox: {
-          navigateFallback: '/youtube',
-          globPatterns: ['**/*.{css,js,html,svg,png,ico,txt,jpg}'],
-        },
-        experimental: {
-          directoryAndTrailingSlashHandler: true,
-        },
-        manifest,
-        devOptions: {
-          enabled: false,
-        },
-      }),
-    ],
   },
   build: {
     outDir: "../dist/youtube",
@@ -39,15 +20,6 @@ export default defineConfig({
   output: 'static',
   integrations: [
     starlight({
-      head: [
-        {
-          tag: "link",
-          attrs: {
-            href: "/youtube/manifest.webmanifest",
-            rel: "manifest"
-          }
-        },
-      ],
       title: 'Home',
       logo: {
         src: "./src/assets/pic.jpg",
