@@ -1,6 +1,4 @@
 ---
-//@ts-nocheck
-import { pwaInfo } from "virtual:pwa-info";
 import ReloadPrompt from "../components/ReloadPrompt.astro";
 import InstallPrompt from "../components/InstallPrompt.astro";
 
@@ -9,9 +7,6 @@ import "../styles/global.css";
 export interface Props {
   title: string;
 }
-
-// replaced dynamically
-const buildDate = __DATE__;
 
 // Import version from project root VERSION.txt (raw import)
 import versionRaw from '../../VERSION.txt?raw';
@@ -41,8 +36,6 @@ const { title } = Astro.props as Props;
 
       <!-- PWA function for BeforeInstall browser event -->
       <InstallPrompt />
-
-      <!-- Built at: {buildDate} -->
     </footer>
   </body>
 </html>

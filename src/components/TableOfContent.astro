@@ -1,77 +1,51 @@
 ---
 import { getCollection } from "astro:content";
-import { groupBy } from "./utlis";
+import { CardGrid } from "@astrojs/starlight/components";
+import { getDocsEntryHref, groupBy } from "./utils";
+import type { TocEntry } from "../models/content";
+import TocCard from "../components/helper/TocCard.astro";
+
+interface Props {
+    folder: string;
+}
 
 const { folder } = Astro.props;
 
-const collection: any[] = [];
+/** Extract the first sub-folder segment of an entry id, or "" if at the root. */
+function getSubFolderName(entryId: string): string {
+    const segments = entryId.split("/");
+    return segments.length > 2 ? segments[1] : "";
+}
 
-await getCollection("docs", (collectionEntry) => {
-    let data = collectionEntry.data;
-    if (
+const pages = await getCollection(
+    "docs",
+    ({ id, data }) =>
         !data.sidebar.hidden &&
         data.template !== "splash" &&
-        collectionEntry.id.toLowerCase().startsWith(folder + "/")
-    ) {
-        let isSubFolder = collectionEntry.id.match(/\//gi)?.length || 0;
-        let subFolderName = "";
-        if (isSubFolder > 1) {
-            let temp = collectionEntry.id.match(/(?<=\/)(.*?)(?=\/)/gi);
-            subFolderName = temp != null ? temp[0] : "";
-        }
-        
-        let { slug } = collectionEntry;
-        let { title } = data;
-        
-        //console.log({ slug: slug.replace(folder+"/", ""), subFolderName });
-        collection.push({
-            subFolderName,
-            slug: slug.replace(folder, "/youtube/"+folder),
-            title,
-        });
-    }
-});
-
-const groupedData = groupBy(collection, "subFolderName");
-const groupedCollection: any[] = Object.entries(groupedData).map(
-    ([key, value]) => ({
-        key,
-        value,
-    }),
+        id.toLowerCase().startsWith(folder + "/"),
 );
 
-// console.log(groupedCollection);
-// console.log(groupedCollection[1]);
+const entries: TocEntry[] = pages.map(({ id, data }) => ({
+    subFolderName: getSubFolderName(id),
+    slug: getDocsEntryHref(id),
+    title: data.title,
+}));
 
-import {  CardGrid } from "@astrojs/starlight/components";
-import TocCard from "../components/helper/TocCard.astro";
+const groupedCollection = Object.entries(groupBy(entries, "subFolderName")).map(
+    ([key, value]) => ({ key, value }),
+);
 ---
 
 {
-    groupedCollection.map(({ key, value }) => {
-        return (
-
-                    <h3>{key || "General"}</h3>
-                    <br />
-
-                    <CardGrid>
-                        {value.map(
-                            (p: {
-                                slug: string;
-                                title: string;
-                                subFolderName: string;
-                            }) => {
-                                return (
-                                    //<LinkCard title={p.title} href={p.slug} />
-                                    <TocCard
-                                        header={p.title}
-                                        link={p.slug}
-                                    />
-                                );
-                            },
-                        )}
-                    </CardGrid>
-
-        );
-    })
+    groupedCollection.map(({ key, value }) => (
+        <>
+            <h3>{key || "General"}</h3>
+            <br />
+            <CardGrid>
+                {value.map((entry) => (
+                    <TocCard header={entry.title} link={entry.slug} />
+                ))}
+            </CardGrid>
+        </>
+    ))
 }

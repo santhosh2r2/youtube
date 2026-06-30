@@ -1,56 +1,36 @@
 ---
 import { getCollection } from "astro:content";
+import { getDocsEntryHref } from "./utils";
+import type { Article } from "../models/content";
 
+const WORDS_PER_MINUTE = 200; // Average adult reading speed.
+const ARTICLES_TO_SHOW = 5;
 
-type Article  ={
-  title: string,
-  url: string,
-  tags: string[] | undefined,
-  createdDate: Date | undefined, //ISO string
-  duration: number, //in minutes
+/** Estimate reading time, in whole minutes, for a block of text. */
+function calculateReadingTime(text: string): number {
+  const words = text.trim().split(/\s+/).filter(Boolean).length;
+  return Math.ceil(words / WORDS_PER_MINUTE);
 }
 
-let latestArticles : Article[]= [];
+/** Newest blog posts, sorted by publish date (most recent first). */
+async function getLatestArticles(limit: number): Promise<Article[]> {
+  const blogEntries = await getCollection("docs", ({ id }) => id.startsWith("blog/"));
 
-
-async function getLatestArticles(showTopX: number){
-
-  let articles: Article[]= [];
-
-  await getCollection("docs", (collectionEntry) => {
-    let { data, body , slug} = collectionEntry;
-    
-    if(slug.includes("blog/")){
-      let {date, title, tags } = data;
-      articles.push({
-        createdDate: date,
-        title,
-        tags,
-        url: slug,
-        duration : calculateReadingTime(body)
-      })
-    }
-  });
-
-  articles.sort((a, b) =>  {
-    if(a.createdDate && b.createdDate)
-    return b.createdDate.getTime() -a.createdDate.getTime();
-  return 0
-  });
-
-  latestArticles = articles.slice(0, showTopX);
-  
-}
-function calculateReadingTime(text: string) : number{
-  const wordsPerMinute = 200; // Average reading speed
-  const words = text.split(/\s+/).length;
-  const minutes = Math.ceil(words / wordsPerMinute);
-  return minutes;
+  return blogEntries
+    .map<Article>(({ data, body, id }) => ({
+      title: data.title,
+      url: getDocsEntryHref(id),
+      tags: data.tags,
+      createdDate: data.date,
+      duration: calculateReadingTime(body ?? ""),
+    }))
+    .sort(
+      (a, b) => (b.createdDate?.getTime() ?? 0) - (a.createdDate?.getTime() ?? 0),
+    )
+    .slice(0, limit);
 }
 
-await getLatestArticles(5)
-
-
+const latestArticles = await getLatestArticles(ARTICLES_TO_SHOW);
 ---
 
 <!-- <div class="latest-articles"> -->
@@ -62,7 +42,7 @@ await getLatestArticles(5)
           ・ <span class="card-date">{article.createdDate?.toLocaleDateString()}</span>
           ・ <span class="card-date">{article.duration} min</span>
         </div>
-        {article.tags && article.tags.length > 0 && article.tags.length > 0 && (
+        {article.tags && article.tags.length > 0 && (
           <div class="card-tags">
             {article.tags.map(tag => (
               <span class="card-tag">{tag}</span>
@@ -73,32 +53,6 @@ await getLatestArticles(5)
     </a>
   ))}
 <!-- </div> -->
-
-<style is:global>
-  :root {
-    --color-background: #ffffff;
-    --color-text: #333333;
-    --color-secondary-text: #666666;
-    --color-link: #3498db;
-    --color-link-hover: #2980b9;
-    --color-card-shadow: rgba(0, 0, 0, 0.1);
-    --color-card-hover-shadow: rgba(0, 0, 0, 0.2);
-    --color-tag-background: #e0e0e0;
-    --color-tag-text: #333333;
-  }
-
-  [data-theme='dark'] {
-    --color-background: #1e1e1e;
-    --color-text: #e0e0e0;
-    --color-secondary-text: #aaaaaa;
-    --color-link: #82cfff;
-    --color-link-hover: #66b3ff;
-    --color-card-shadow: rgba(0, 0, 0, 0.6);
-    --color-card-hover-shadow: rgba(0, 0, 0, 0.8);
-    --color-tag-background: #333333;
-    --color-tag-text: #e0e0e0;
-  }
-</style>
 
 <style>
   .latest-articles {

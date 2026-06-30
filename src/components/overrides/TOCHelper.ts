@@ -1,7 +1,5 @@
-//#ts-nocheck
-import type { Props } from "@astrojs/starlight/props";
+import type { MarkdownHeading } from 'astro';
 
-type MarkdownHeading = Props["headings"][-1];
 export type TOCItem = MarkdownHeading & {
   subheadings: TOCItem[];
 };

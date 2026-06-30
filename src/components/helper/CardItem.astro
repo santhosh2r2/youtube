@@ -1,12 +1,12 @@
 ---
-// @ts-nocheck
 // CardItem.astro
-
+// Note: StarlightIcon is the internal type for Starlight's icon union.
+import type { StarlightIcon } from '@astrojs/starlight/types';
 import { Icon } from '@astrojs/starlight/components';
 
 interface Props {
   title: string;
-  icon: string;
+  icon: StarlightIcon;
   iconColor: string;
   url: string;
 }

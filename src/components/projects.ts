@@ -1,4 +1,9 @@
-export const projects = [
+import { parseProjects, type Project } from '../models/content';
+
+export type { Project };
+
+/** Raw project entries; validated against `projectSchema` at build time. */
+const projectData = [
     {
         title: "Batch File Executor",
         description: "Executes selected batch file",
@@ -14,3 +19,5 @@ export const projects = [
         tags: [".net", "python", "IoT", "OPC-UA", "docker"],
     },
 ];
+
+export const projects: Project[] = parseProjects(projectData);

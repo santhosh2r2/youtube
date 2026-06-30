@@ -1,48 +1,17 @@
 ---
 import CardItem from './helper/CardItem.astro';
+import { parseNavCards } from '../models/content';
 
-const cards = [
-  {
-    title: "Tutorials",
-    icon: "rocket",
-    iconColor:"orange",
-    url:"/youtube/tutorial"
-  },
-  {
-    title: "Tips and Tricks",
-    icon: "list-format",
-    iconColor:"green",
-    url:"/youtube/general/tips-and-tricks"
-  },
-  {
-    title: "Cookbooks",
-    icon: "document",
-    iconColor:"purple",
-    url:"/youtube/general/cookbook"
-
-  },
-  {
-    title: "Installations",
-    icon: "setting",
-    iconColor:"accent",
-    url:"/youtube/general/install"
-  },
-  {
-    title: "Snippets",
-    icon: "document",
-    iconColor:"orange",
-    url:"/youtube/general/snippet"
-  },
-  {
-    title: "Setup",
-    icon: "setting",
-    iconColor:"red-accent",
-    url:"/youtube/general/setup"
-  },
-];
-
+const cards = parseNavCards([
+  { title: "Tutorials", icon: "rocket", iconColor: "orange", url: "/youtube/tutorial" },
+  { title: "Tips and Tricks", icon: "list-format", iconColor: "green", url: "/youtube/general/tips-and-tricks" },
+  { title: "Cookbooks", icon: "document", iconColor: "purple", url: "/youtube/general/cookbook" },
+  { title: "Installations", icon: "setting", iconColor: "accent", url: "/youtube/general/install" },
+  { title: "Snippets", icon: "document", iconColor: "orange", url: "/youtube/general/snippet" },
+  { title: "Setup", icon: "setting", iconColor: "red-accent", url: "/youtube/general/setup" },
+]);
 ---
 
-  {cards.map(({ title, icon, iconColor ,url}) => (
-    <CardItem title={title} icon={icon} iconColor={iconColor} url={url}/>
+  {cards.map(({ title, icon, iconColor, url }) => (
+    <CardItem title={title} icon={icon} iconColor={iconColor} url={url} />
   ))}

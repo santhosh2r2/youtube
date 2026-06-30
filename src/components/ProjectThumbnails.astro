@@ -1,39 +1,13 @@
 ---
-//@ts-nocheck
-import { projects } from "./projects"
-
-// Generate a random light color in RGB format
-function randomLightColor() {
-    const r = Math.floor(Math.random() * 128) + 128; // Values between 128-255
-    const g = Math.floor(Math.random() * 128) + 128;
-    const b = Math.floor(Math.random() * 128) + 128;
-    return `rgb(${r}, ${g}, ${b})`;
-}
-
-// Function to darken an RGB color
-function generateDarkColorForLight(lightColor) {
-    // Extract RGB values from the light color (e.g., "rgb(200, 180, 250)")
-    const rgbValues = lightColor.match(/\d+/g).map(Number);
-
-    // Reduce each RGB channel to create a darker shade
-    const darkValues = rgbValues.map(value => Math.floor(value * 0.5)); // 50% brightness
-    return `rgb(${darkValues.join(", ")})`;
-}
-
-function getColors(){
-
-    const lightColor = randomLightColor();
-    const darkColor = generateDarkColorForLight(lightColor);
-
-    return `background-color:${lightColor}; color:${darkColor}`
-}
+import { projects } from "./projects";
+import { getStableColorStyle } from "./utils";
 ---
 
 <div>
 {
     projects.map(({title, link}) => (
     <a 
-        style={getColors()}
+        style={getStableColorStyle(title)}
         href={link}
         {title}
         >

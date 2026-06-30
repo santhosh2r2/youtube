@@ -2,7 +2,7 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import starlightBlog from 'starlight-blog';
 import starlightImageZoom from 'starlight-image-zoom';
-import AstroPWA from "@vite-pwa/astro";
+import { VitePWA } from 'vite-plugin-pwa';
 import manifest from "./webmanifest.json";
 
 import rehypeMermaid from "rehype-mermaid";
@@ -12,9 +12,23 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   vite: {
     logLevel: 'info',
-    define: {
-      __DATE__: `'${new Date().toISOString()}'`,
-    },
+    plugins: [
+      VitePWA({
+        mode: 'production',
+        registerType: 'prompt',
+        workbox: {
+          navigateFallback: '/youtube',
+          globPatterns: ['**/*.{css,js,html,svg,png,ico,txt,jpg}'],
+        },
+        experimental: {
+          directoryAndTrailingSlashHandler: true,
+        },
+        manifest,
+        devOptions: {
+          enabled: false,
+        },
+      }),
+    ],
   },
   build: {
     outDir: "../dist/youtube",
@@ -44,12 +58,28 @@ export default defineConfig({
         MarkdownContent: "./src/components/overrides/MarkdownContent.astro",
         // Sidebar: './src/components/overrides/Sidebar.astro',
       },
-      social: {
-        youtube: "https://www.youtube.com/channel/UCR_Fuegjqal0Fvy6En2Bs3Q?sub_confirmation=1",
-        linkedin: "https://www.linkedin.com/in/santhosh-balaji-ramesh/",
-        github: 'https://github.com/santhosh2r2/youtube',
-        email: "mailto:santhosh.mwpa@gmail.com"
-      },
+      social: [
+        {
+          icon: 'youtube',
+          label: 'YouTube',
+          href: 'https://www.youtube.com/channel/UCR_Fuegjqal0Fvy6En2Bs3Q?sub_confirmation=1',
+        },
+        {
+          icon: 'linkedin',
+          label: 'LinkedIn',
+          href: 'https://www.linkedin.com/in/santhosh-balaji-ramesh/',
+        },
+        {
+          icon: 'github',
+          label: 'GitHub',
+          href: 'https://github.com/santhosh2r2/youtube',
+        },
+        {
+          icon: 'email',
+          label: 'Email',
+          href: 'mailto:santhosh.mwpa@gmail.com',
+        },
+      ],
       favicon: "/image/pic.jpg",
       lastUpdated: true,
       editLink: {
@@ -70,28 +100,22 @@ export default defineConfig({
         }),
       ],
       sidebar: [
-        { collapsed: false, label: 'General', autogenerate: { directory: 'general', collapsed: true } },
-        { collapsed: true, label: 'Tutorials', autogenerate: { directory: 'tutorial', } },
-        { collapsed: true, label: 'Projects', autogenerate: { directory: 'projects', } },
+        {
+          collapsed: false,
+          label: 'General',
+          items: [{ autogenerate: { directory: 'general', collapsed: true } }],
+        },
+        {
+          collapsed: true,
+          label: 'Tutorials',
+          items: [{ autogenerate: { directory: 'tutorial' } }],
+        },
+        {
+          collapsed: true,
+          label: 'Projects',
+          items: [{ autogenerate: { directory: 'projects' } }],
+        },
       ],
-    }),
-    // registerType: "prompt",
-    // mainfest.json > id -- this field needs to be changed (or versioned)
-    //                       in order to generate the prompt
-    AstroPWA({
-      mode: "production",
-      registerType: "prompt",
-      workbox: {
-        navigateFallback: "/youtube",
-        globPatterns: ["**/*.{css,js,html,svg,png,ico,txt,jpg}"],
-      },
-      experimental: {
-        directoryAndTrailingSlashHandler: true,
-      },
-      manifest: manifest,
-      devOptions: {
-        enabled: true,
-      },
     }),
     sitemap({
       filter: (page) => !page.includes('/admin'),

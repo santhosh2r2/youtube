@@ -1,10 +1,14 @@
 ---
-import type { Props } from "@astrojs/starlight/props";
+import type { MarkdownHeading } from 'astro';
 import { buildToc } from "./TOCHelper";
 import TOCHeading from "./TOCHeading.astro";
 
-const { headings } = Astro.props;
-const toc = buildToc(headings);
+export interface Props { headings?: MarkdownHeading[] }
+
+// Starlight 0.41 no longer passes `headings` as a prop to the TableOfContents
+// override; the flat heading list now lives on the route data.
+const headings = Astro.props.headings ?? Astro.locals.starlightRoute.headings;
+const toc = buildToc(headings ?? []);
 ---
 
 <h2>On this page</h2>
@@ -45,5 +49,5 @@ const toc = buildToc(headings);
 </style>
 
 <script>
-  import "./toc.js";
+  import "./toc.ts";
 </script>
